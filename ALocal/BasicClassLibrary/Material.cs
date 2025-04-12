@@ -13,18 +13,20 @@ namespace BasicClassLibrary
         {
             EntryId = entryId;
             Entry = entry;
-            this.name = name;
-            this.kind = kind;
-            this.path = path;
+            this.Name = name;
+            this.Kind = kind;
+            this.Path = path;
         }
+
+        public int Id { get; set; }
 
         // Navigation Properties
         public int? EntryId { get; set; }
         public Entry? Entry { get; set; }
 
         // Properties
-        public string name { get; set; }
-        public string kind { get; set; }
-        public string path { get; set; }
+        public string Name { get; set; }
+        public string Kind { get; set; }
+        public string Path { get; set; }
     }
 }
