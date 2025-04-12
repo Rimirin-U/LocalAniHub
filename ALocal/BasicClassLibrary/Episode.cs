@@ -9,9 +9,8 @@ namespace BasicClassLibrary
     public class Episode : IEntryNavigation
     {
         // Constructor
-        public Episode(int id, int? entryId, Entry? entry, int episodeNumber)
+        public Episode(int? entryId, Entry? entry, int episodeNumber)
         {
-            Id = id;
             EntryId = entryId;
             Entry = entry;
             EpisodeNumber = episodeNumber;
