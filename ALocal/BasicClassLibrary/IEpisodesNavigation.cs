@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public interface IEntryNavigation
+    public interface IEpisodesNavigation
     {
-        public int? EntryId { get; set; }    // 外键
-        public Entry? Entry { get; set; }    // 导航属性
+        public ICollection<int> EpisodesId { get; set; }
+        public ICollection<Episode> Episodes { get; set; }
     }
 }
