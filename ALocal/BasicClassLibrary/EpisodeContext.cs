@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class MaterialContext : DbContext
+    public class EpisodeContext : DbContext
     {
-        public DbSet<Material> Materials { get; set; }
+        public DbSet<Episode> Episodes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "data/materials.db");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "data/episodes.db");
             optionsBuilder.UseSqlite($"Data source={path}");
         }
     }
