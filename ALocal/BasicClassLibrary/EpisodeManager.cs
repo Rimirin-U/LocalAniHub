@@ -19,20 +19,21 @@ namespace BasicClassLibrary
 
         public Episode? FindById(int id)
         {
-            Episode? episode;
             using (var context = new EpisodeContext())
             {
-                episode = context.Episodes
+                return context.Episodes
                     .SingleOrDefault(ep => ep.Id == id);
             }
-            return episode;
         }
 
         public List<Episode> FindByEntryId(int entryId)
         {
             using (var context = new EpisodeContext())
             {
-                //
+                return context.Episodes
+                    .Where(ep => ep.EntryId == entryId)
+                    .OrderBy(ep => ep.Id)
+                    .ToList();
             }
         }
     }
