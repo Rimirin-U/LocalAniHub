@@ -9,6 +9,8 @@ namespace BasicClassLibrary
 {
     public partial class AppDbContext : DbContext
     {
+        public DbSet<Entry> Entries { get; set; }
+        public DbSet<EntryMetadata> EntryMetadata { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), "data/data.db");
