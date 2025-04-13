@@ -4,30 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
+//条目元数据类
 namespace BasicClassLibrary
 {
     // 实体类：条目元数据
-    public class EntryMetadata
+    public enum MetadataType
+    {
+        Date,       // 日期型（数据项为日期）
+        Time,       // 时间型（数据项为时间）
+        Text,       // 普通数据（数据项为字符串）
+        Link,       // 链接数据（数据项为链接）
+        EntryLink,  // 链接条目（数据项为其他条目（id））
+        Tag         // tag（无数据项）
+    }
+    public class EntryMetadata : IEntryNavigation
     {
         public int Id { get; set; } // 主键
-        public int EntryId { get; set; } // 外键 每个元数据属于一个条目
-        public string? Key { get; set; } // 元数据键 表明元数据的类型
-        public MetadataType Type { get; set; } // 元数据类型 IEntryMetadata里面有枚举
-        public object? Value { get; set; } // 元数据值
-
+        public int? EntryId { get; set; } // 外键 每个元数据属于一个条目
+        public string Key { get; set; } // 元数据键 表明元数据的类型
+        public MetadataType Type { get; set; } // 元数据类型
+        public object Value { get; set; } // 元数据值
         // 导航属性
         public Entry? Entry { get; set; } // 和条目关联
     }
-
-    // 实现接口：条目元数据
-    public class EntryMetadataService : IEntryMetadata
+    public class EntryMetadataService
     {
         private readonly AppDbContext _context;
         private readonly int _entryId;
-        //IEntryNavigation
-        public int? EntryId { get; set; }    // 外键
-        public Entry? Entry { get; set; }    // 导航属性
+
         public EntryMetadataService(AppDbContext context, int entryId)
         {
             _context = context;
