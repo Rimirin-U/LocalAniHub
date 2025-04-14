@@ -9,6 +9,6 @@ namespace BasicClassLibrary
 {
     public interface IVideoPlay
     {
-        public void Play(string path);
+        public void Play(string videoPath, string playerPath);
     }
 }

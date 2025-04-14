@@ -8,15 +8,9 @@ namespace BasicClassLibrary
 {
     public class VideoPlayWithPotPlayer : IVideoPlay
     {
-        public void Play(string path)
+        public void Play(string videoPath, string playerPath)
         {
-            // get player path
-            string playerPath = GlobalSettingsService.Instance
-                                .GetValue("playerPath");
-            if (string.IsNullOrEmpty(playerPath)) throw new ArgumentException("VideoPlayer: wrong player path");
-
-            // play
-            System.Diagnostics.Process.Start(playerPath,path);
+            System.Diagnostics.Process.Start(playerPath, playerPath);
         }
     }
 }

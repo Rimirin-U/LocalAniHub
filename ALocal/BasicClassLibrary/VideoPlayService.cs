@@ -10,15 +10,21 @@ namespace BasicClassLibrary
     {
         public VideoPlayService()
         {
+            // get player type
             int playerType;
             try
             {
-                playerType = int.Parse(GlobalSettingsService.Instance.GetValue("playerType"));
+                playerType = int.Parse(GlobalSettingsService.Instance.GetValue("defaultPlayerType"));
             }
             catch (Exception)
             {
                 throw new ArgumentException("VideoPlayerService: wrong playerType");
             }
+
+            // get player path
+            this.playerPath = GlobalSettingsService.Instance
+                                .GetValue("playerPath");
+            if (string.IsNullOrEmpty(playerPath)) throw new ArgumentException("VideoPlayService: wrong player path");
 
             switch (playerType)
             {
@@ -30,12 +36,27 @@ namespace BasicClassLibrary
                     break;
             }
         }
-
-        private IVideoPlay VideoPlay { get; set; }
-
-        public void Play(string path)
+        public VideoPlayService(int playerType,string playerPath)
         {
-            VideoPlay.Play(path);
+            if(string.IsNullOrEmpty(playerPath)) throw new ArgumentException("VideoPlayService: wrong player path");
+            this.playerPath = playerPath;
+            switch (playerType)
+            {
+                case 0:
+                    VideoPlay = new VideoPlayWithPotPlayer();
+                    break;
+                default:
+                    VideoPlay = new VideoPlayWithPotPlayer();
+                    break;
+            }
+        }
+
+        private IVideoPlay VideoPlay;
+        private string playerPath;
+
+        public void Play(string videoPath)
+        {
+            VideoPlay.Play(videoPath, playerPath);
         }
     }
 }
