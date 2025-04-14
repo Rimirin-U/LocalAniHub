@@ -23,7 +23,7 @@ namespace BasicClassLibrary
 
             // get player path
             this.playerPath = GlobalSettingsService.Instance
-                                .GetValue("playerPath");
+                                .GetValue("defaultPlayerPath");
             if (string.IsNullOrEmpty(playerPath)) throw new ArgumentException("VideoPlayService: wrong player path");
 
             switch (playerType)
