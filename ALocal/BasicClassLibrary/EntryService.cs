@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace video_management
+namespace BasicClassLibrary
 {
     // 条目服务实现
     public class EntryService : IEntryService
