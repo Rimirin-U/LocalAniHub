@@ -9,6 +9,6 @@ namespace BasicClassLibrary
 {
     public interface IResourceSearch
     {
-        public List<SyndicationFeed> search(string kw);
+        public List<SyndicationFeed> search(string keyWord);
     }
 }
