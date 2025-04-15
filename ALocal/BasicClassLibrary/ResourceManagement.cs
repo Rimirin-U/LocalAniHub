@@ -1,46 +1,45 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace BasicClassLibrary
 {
-    public class Resource;//资源类，后续合并需要删掉
-    //几个问题：资源对象是否应该区分元数据（核心数据）和其他数据
-    //是否也应该用数据库来存储资源对象
-    //本代码中暂未实现数据库的相关操作，将资源全部存储在了资源列表中List<Resource> _resources
-    public class ResourceManagement:IDisposable
+    public class ResourceManagement : IDisposable
     {
-        private string _parentFolderPath;//父文件夹路径
-        private readonly List<Resource> _resources = new List<Resource>();
+        private readonly string _parentFolderPath; // 父文件夹路径
+        private readonly AppDbContext _dbContext;  // 数据库上下文
         private readonly object _lock = new object(); // 线程安全锁
-        // 构造函数：初始化父文件夹路径
-        public void ResourceManager(string parentFolderPath)
-        {
-            _parentFolderPath = parentFolderPath;
 
-            // 确保父文件夹存在
-            Directory.CreateDirectory(_parentFolderPath);
-        }
-        public void AddResource(string sourceFilePath, Resource resource)//接收源文件路径（资源拉取下来所存放的路径）
+        public ResourceManagement()
         {
-            lock (_lock) // 确保线程安全
+            _parentFolderPath = GlobalSettingsService.Instance.GetValue("defaultParentFolderPath"); // 从全局设置中读取路径
+            if (string.IsNullOrEmpty(_parentFolderPath)) throw new ArgumentException("ResourceManagement: wrong parentfolder path ");
+            _dbContext = new AppDbContext();                    // 初始化数据库上下文
+        }
+
+        // 添加资源-这个实现有点问题（创建资源对象这里还是有问题）
+        // 添加资源
+        public void AddResource(string sourceFilePath, int episodeId, string translatedName)
+        {
+            lock (_lock)
             {
                 try
                 {
-                    // 验证输入参数
+                    // 验证源文件路径是否有效
                     if (string.IsNullOrEmpty(sourceFilePath) || !File.Exists(sourceFilePath))
                         throw new ArgumentException("源文件路径无效或文件不存在");
 
                     // 创建作品文件夹
-                    string workFolder = Path.Combine(_parentFolderPath, resource.ResourceName);//根据作品名称创建子文件夹路径-资源对象应该有这部作品的名字
+                    string workFolder = Path.Combine(_parentFolderPath, translatedName);
                     Directory.CreateDirectory(workFolder);
 
                     // 目标文件路径
                     string fileName = Path.GetFileName(sourceFilePath);
-                    string destFilePath = Path.Combine(workFolder, fileName);//构建目标文件路径
+                    string destFilePath = Path.Combine(workFolder, fileName);
 
-                    // 处理文件名冲突，通过在文件名后面添加序号解决冲突
+                    // 处理文件名冲突
                     int count = 1;
                     while (File.Exists(destFilePath))
                     {
@@ -51,76 +50,72 @@ namespace BasicClassLibrary
                     // 移动文件到目标路径
                     File.Move(sourceFilePath, destFilePath);
 
+                    // 创建新的资源对象（怎么读取资源中的EpisodeNumber、这部作品的名字等等信息）！！！
+                    var resource = new Resource
+                    {
+                        EpisodeId = episodeId,
+                        ImportData = DateTime.Now,
+                        ResourcePath = destFilePath
+                    };
 
-                    // 将资源添加到内存列表
-                    _resources.Add(resource);
-
-                }
-                catch (IOException ex)
-                {
-                    throw new InvalidOperationException("无法完成资源添加操作", ex);
+                    // 将资源对象添加到数据库
+                    _dbContext.Resources.Add(resource);
+                    _dbContext.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("发生未知错误", ex);
+                    throw new Exception("发生错误", ex);
                 }
             }
         }
-        // 按作品名称查找资源ID
-        public List<string> FindResourcesByWorkName(string workName)
+
+        // 按作品名称和集数查找资源ID列表
+        public List<int> FindResourcesByWorkNameAndEpisode(string translatedName, int episodeNumber)
         {
-            lock (_lock) // 确保线程安全
+            lock (_lock)
             {
-                return _resources
-                    .Where(r => r.ResourceName == workName)
+                return _dbContext.Resources
+                    .Include(r => r.Episode)
+                    .ThenInclude(e => e.Entry)
+                    .Where(r => r.Episode.Entry.TranslatedName == translatedName && r.Episode.EpisodeNumber == episodeNumber)
                     .Select(r => r.ResourceId)
                     .ToList();
             }
         }
-        public List<string> FindResourcesByEpisode(int episode)
+        // 按ID返回资源元数据对象
+        public Resource GetResourceById(int id)
         {
-            lock (_lock) // 确保线程安全
+            lock (_lock)
             {
-                return _resources
-                    .Where(r => r.Episode == episode)
-                    .Select(r => r.ResourceId)
-                    .ToList();
+                return _dbContext.Resources.FirstOrDefault(r => r.ResourceId == id);
             }
         }
-        //按Id返回对应的资源对象
-        public Resource GetResourceById(string id)
+        // 删除资源
+        public void DeleteResource(int id)
         {
-            lock (_lock) // 确保线程安全
+            lock (_lock)
             {
-                return _resources.FirstOrDefault(r => r.ResourceId == id);
-            }
-        }
-        //删除资源
-        public void DeleteResource(string id)
-        {
-            lock (_lock) // 确保线程安全
-            {
-                var resource = _resources.FirstOrDefault(r => r.ResourceId == id);
+                var resource = _dbContext.Resources.FirstOrDefault(r => r.ResourceId == id);
                 if (resource == null)
-                {
                     throw new ArgumentException("未找到指定ID的资源");
-                }
 
                 // 删除文件
-                if (File.Exists(resource.FilePath))
+                if (File.Exists(resource.ResourcePath))
                 {
-                    File.Delete(resource.FilePath);
+                    File.Delete(resource.ResourcePath);
                 }
 
-                // 从内存列表中移除资源
-                _resources.Remove(resource);
+                // 从数据库中删除资源
+                _dbContext.Resources.Remove(resource);
+                _dbContext.SaveChanges();
             }
         }
-        // 实现 IDisposable 接口，释放资源
+
+        // 实现 IDisposable 接口
         public void Dispose()
         {
-            // 清空所有资源（这里可以扩展为持久化保存逻辑）
-            _resources.Clear();
+            _dbContext.Dispose();
         }
+
     }
 }
