@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class EntrySearchInYucWiki : IEntrySearch
+    public class EntryFetchInYucWiki : IEntryFetch
     {
         private const string BaseUrl = "https://yuc.wiki/202504/";//存储目标网站的地址
         private readonly HttpClient _httpClient;//HttpClient 是 .NET 中用于发送 HTTP 请求和接收 HTTP 响应的核心类
 
-        public EntrySearchInYucWiki(HttpClient httpClient)//构造函数（依赖注入：注入HttpClient实例）
-        {
-            _httpClient = httpClient;
+        public EntryFetchInYucWiki()//构造函数
+        { 
+            _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri(BaseUrl);
         }
 
-        public List<EntryInfoSet> Search()
+        public List<EntryInfoSet> Fetch()
         {
             try
             {

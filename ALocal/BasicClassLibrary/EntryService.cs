@@ -7,52 +7,57 @@ using System.Threading.Tasks;
 namespace BasicClassLibrary
 {
     // 条目服务实现
-    public class EntryService : IEntryService
+    public class EntryService
     {
         //定义为readonly,防止被意外修改
-        private readonly IEntryFetcher fetcher;
-        private readonly IEntryManager manager;
-        private readonly IEpisodeManager episodeManager;
+        private readonly EntryFetch fetch;//条目拉取
+        private readonly EntryManager manager;//条目管理
+        private readonly EpisodeManager episodeManager;//单集管理
         //条目服务的构造函数
         public EntryService(
-            IEntryFetcher fetcher1,
-            IEntryManager manager1,
-            IEpisodeManager episodeManager1)
+            EntryFetch fetch1,
+            EntryManager manager1,
+            EpisodeManager episodeManager1)
         {
-            fetcher = fetcher1;
+            fetch = fetch1;
             manager = manager1;
             episodeManager = episodeManager1;
         }
-        public IEntryFetcher Fetcher
+        public EntryFetch Fetch
         {
             get
             {
-                return fetcher;
+                return fetch;
             }
         }
-        public IEntryManager Manager
+        public EntryManager Manager
         {
             get
             {
                 return manager;
             }
         }
-        public IEpisodeManager EpisodeManager
+        public EpisodeManager EpisodeManager
         {
             get
             {
                 return episodeManager;
             }
         }
-
-        public void AddEntryWithEpisodes(Entry entry, List<Episode> episodes)
+        public void AddEntryWithEpisodes(Entry entry)
         {
-            manager.AddEntry(entry); // 添加条目
-                                     //初始化所有Episode对象
-            foreach (var episode in episodes)
+            manager.AddEntry(entry); // 添加主条目
+
+            // 自动生成并关联EpisodeCount个单集
+            for (int i = 1; i <= entry.EpisodeCount; i++) 
             {
-                episode.EntryId = entry.Id;
-                episodeManager.AddEpisode(episode);
+                var episode = new Episode
+                {
+                    EntryId = entry.Id,//关联到当前条目
+                    EpisodeNumber = i//集数
+                };
+
+                episodeManager.AddEpisode(episode); // 添加单集
             }
         }
     }
