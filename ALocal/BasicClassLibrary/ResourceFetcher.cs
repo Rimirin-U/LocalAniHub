@@ -31,6 +31,6 @@ namespace BasicClassLibrary
             {
                 _downloader.DownloadResource(feed, destinationPath);
             }
-        }
+        }  
     }
 }
