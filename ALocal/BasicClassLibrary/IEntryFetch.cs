@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public interface IEntrySearch
+    public interface IEntryFetch
     {
         public List<EntryInfoSet> Search();
     }
