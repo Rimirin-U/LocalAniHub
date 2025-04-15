@@ -32,7 +32,7 @@ namespace BasicClassLibrary
             LogWithType("Watch", logEntry);
         }
 
-        public static void LogReview(int  noteId)
+        public static void LogReview(int noteId)
         {
             var logEntry = new ReviewLogEntry { NoteId = noteId };
             LogWithType("Review", logEntry);
@@ -63,11 +63,7 @@ namespace BasicClassLibrary
                 _logger.Write(logEvent);
             }
         }
-    }
-
-    // 日志查询服务
-    public static class LogQueryService
-    {
+        // 日志查询服务
         // 获取日志的泛型方法
         public static List<T> GetLogs<T>(string logType, DateTime? start = null, DateTime? end = null) where T : LogEntry
         {
