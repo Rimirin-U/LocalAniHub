@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class Note : IEntriesNavigation, IEpisodesNavigation
+    public class Note : IEntityWithId,IEntriesNavigation, IEpisodesNavigation
     {
         public Note()
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class Episode : IEntryNavigation
+    public class Episode : IEntityWithId,IEntryNavigation
     {
         // Constructor
         public Episode(int? entryId, Entry? entry, int episodeNumber)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class Material : IEntryNavigation
+    public class Material : IEntityWithId, IEntryNavigation
     {
         // Constructor
         public Material(int? entryId, Entry? entry, string name, string kind, string path)
@@ -28,5 +29,10 @@ namespace BasicClassLibrary
         public string Name { get; set; }
         public string Kind { get; set; }
         public string Path { get; set; }
+    }
+
+    public partial class AppDbContext : DbContext
+    {
+        public DbSet<Material> Materials { get; set; }
     }
 }
