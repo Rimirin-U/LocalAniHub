@@ -28,4 +28,9 @@ namespace BasicClassLibrary
             BroadcastTime = broadcastTime;
         }
     }
+    //关于数据库的上下文
+    public partial class AppDbContext : DbContext
+    {
+        public DbSet<EntryTimeInfo> EntryTimeInfos { get; set; }
+    }
 }
