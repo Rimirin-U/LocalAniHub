@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class Entry//条目核心
+    public class Entry: IEntityWithId              //条目核心
     {
         //核心数据
-        public int ID {  get; set; }
+        public int Id {  get; set; }
         public string TranslatedName { get; set; }//译名
         public string OriginalName {  get; set; }//原名
         public DateTime ReleaseDate { get; set; }//上映时间
@@ -24,7 +24,7 @@ namespace BasicClassLibrary
         public bool AutoClearResources {  get; set; }//是否自动清除资源
         public Entry(int id,string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,string category,int episodeCount,bool hasUpdateTime,bool autoClearResources)    
         {
-            ID = id;
+            Id = id;
             TranslatedName = translatedName;
             OriginalName = originalName;
             ReleaseDate = releaseDate;
@@ -39,7 +39,5 @@ namespace BasicClassLibrary
         {
             public DbSet<Entry>Entries { get; set; }
         }
-
-
     }
 }
