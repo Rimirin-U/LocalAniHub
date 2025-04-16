@@ -4,99 +4,75 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 //条目元数据类
 namespace BasicClassLibrary
 {
     // 实体类：条目元数据
-    public enum MetadataType
-    {
-        Date,       // 日期型（数据项为日期）
-        Time,       // 时间型（数据项为时间）
-        Text,       // 普通数据（数据项为字符串）
-        Link,       // 链接数据（数据项为链接）
-        EntryLink,  // 链接条目（数据项为其他条目（id））
-        Tag         // tag（无数据项）
-    }
+    //public enum MetadataType
+    //{
+    //    Date,       // 日期型（数据项为日期）
+    //    Time,       // 时间型（数据项为时间）
+    //    Text,       // 普通数据（数据项为字符串）
+    //    Link,       // 链接数据（数据项为链接）
+    //    EntryLink,  // 链接条目（数据项为其他条目（id））
+    //    Tag         // tag（无数据项）
+    //}
     public class EntryMetadata : IEntryNavigation
     {
-        public int Id { get; set; } // 主键
-        public int? EntryId { get; set; } // 外键 每个元数据属于一个条目
-        public string Key { get; set; } // 元数据键 表明元数据的类型
-        public MetadataType Type { get; set; } // 元数据类型
-        public object Value { get; set; } // 元数据值
-        // 导航属性
-        public Entry? Entry { get; set; } // 和条目关联
-    }
-    public class EntryMetadataService
-    {
-        private readonly AppDbContext _context;
-        private readonly int _entryId;
+        public int MetadataId { get; set; } // 主键
 
-        public EntryMetadataService(AppDbContext context, int entryId)
+        public int? EntryId { get; set; } // 外键
+        public Entry? Entry { get; set; } // 导航属性
+
+        // 核心字典属性，存储元数据
+        private Dictionary<string, string> _metadataValues { get; set; } = new();
+
+        // 索引器实现快速访问
+        public string this[string key]
         {
-            _context = context;
-            _entryId = entryId;
+            get => _metadataValues.TryGetValue(key, out var value) ? value : null;
+            set => _metadataValues[key] = value;
         }
-        // 增加 更新
-        public void AddOrUpdateMetadata(string key, MetadataType type, object? value = null)
+        //eg:set metadata["上映日期"] = "2025-01-01";  // 设置键 "上映日期" 对应的值为 "2025-01-01"
+        //  :get var releaseDate = metadata["上映日期"];  // 获取 "上映日期" 对应的值
+        //       Console.WriteLine(releaseDate);  // 输出：2025-01-01
+
+        // 将元数据字典转换为 JSON 格式进行存储
+        [JsonIgnore]
+        private string MetadataJson
         {
-            var metadata = _context.EntryMetadata.FirstOrDefault(m => m.EntryId == _entryId && m.Key == key);
-            if (metadata == null)
-            {
-                metadata = new EntryMetadata
-                {
-                    EntryId = _entryId,
-                    Key = key,
-                    Type = type,
-                    Value = value
-                };
-                _context.EntryMetadata.Add(metadata);
-            }
-            else
-            {
-                metadata.Type = type;
-                metadata.Value = value;
-            }
-            _context.SaveChanges();
+            get => JsonConvert.SerializeObject(_metadataValues);
+            set => _metadataValues = string.IsNullOrEmpty(value)
+                ? new Dictionary<string, string>()
+                : JsonConvert.DeserializeObject<Dictionary<string, string>>(value)!;
         }
-        // 删除
-        public bool RemoveMetadata(string key)
+
+        // 删除指定键的元数据
+        public void RemoveMetadata(string key)
         {
-            var metadata = _context.EntryMetadata.FirstOrDefault(m => m.EntryId == _entryId && m.Key == key);
-            if (metadata != null)
+            if (!_metadataValues.Remove(key))
             {
-                _context.EntryMetadata.Remove(metadata);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        // 获取元数据键
-        public IEnumerable<string> MetadataKeys
-        {
-            get
-            {
-                return _context.EntryMetadata
-                    .Where(m => m.EntryId == _entryId)
-                    .Select(m => m.Key);
+                throw new KeyNotFoundException($"键 '{key}' 不存在，删除元数据失败。");
             }
         }
-        // 按类型获取元数据子集（用于分类操作）
-        public IReadOnlyDictionary<string, object?> GetMetadataByType(MetadataType type)
+        //eg:bool isRemoved = metadata.RemoveMetadata("导演");  // 删除 "导演" 键对应的元数据
+        //   Console.WriteLine(isRemoved);  // 输出：True 或 False，表示是否成功删除
+
+        // 获取指定键的元数据
+        public string? GetMetadataValue(string key)
         {
-            return _context.EntryMetadata
-                .Where(m => m.EntryId == _entryId && m.Type == type)
-                .ToDictionary(m => m.Key, m => m.Value);
+            return _metadataValues.TryGetValue(key, out var value) ? value : null;
         }
-        // 获取单个元数据的类型和值
-        public (MetadataType type, object? value) GetMetadata(string key)
+        //eg:var director = metadata.GetMetadataValue("导演");  // 获取 "导演" 对应的值
+        //Console.WriteLine(director);  // 输出：张三
+
+        // 添加或更新元数据
+        public void AddOrUpdateMetadata(string key, string value)
         {
-            var metadata = _context.EntryMetadata.FirstOrDefault(m => m.EntryId == _entryId && m.Key == key);
-            if (metadata != null)
-            {
-                return (metadata.Type, metadata.Value);
-            }
-            throw new KeyNotFoundException($"Metadata with key '{key}' not found.");
+            _metadataValues[key] = value;
         }
+        //eg:metadata.AddOrUpdateMetadata("编剧", "李四");   // 添加或更新 "编剧" 键对应的值
+        //metadata.AddOrUpdateMetadata("上映日期", "2025-02-01");  // 更新已存在的 "上映日期"
     }
 }
