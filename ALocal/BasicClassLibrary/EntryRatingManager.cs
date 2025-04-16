@@ -10,7 +10,7 @@ namespace BasicClassLibrary
     {
         public EntryRatingManager() : base(new AppDbContext()) { }
 
-        public static Func<EntryRating, bool> ByEntryId(int entryId) => (o => o.EntryId == entryId);
+        public static readonly Func<int, Func<EntryRating, bool>> ByEntryId = (entryId => (o => o.EntryId == entryId));
         public static readonly Func<EntryRating, bool> All = (o => true);
     }
 }
