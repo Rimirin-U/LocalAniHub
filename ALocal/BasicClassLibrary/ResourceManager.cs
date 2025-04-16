@@ -8,9 +8,9 @@ using System.Threading;
 
 namespace BasicClassLibrary
 {
-    public class ResourceManagement: Manager<Resource>
+    public class ResourceManager: Manager<Resource>
     {
-        public ResourceManagement() : base(new AppDbContext()){ }
+        public ResourceManager() : base(new AppDbContext()){ }
         private void PutResourceIntoDestination(Resource resource)
         {
             // 从全局设置中读取父文件夹路径
