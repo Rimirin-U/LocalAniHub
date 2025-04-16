@@ -9,6 +9,7 @@ namespace BasicClassLibrary
 {
     public class EntryManager : Manager<Entry>
     {
+        public EntryManager():base(new AppDbContext()) { }
         // 自定义查询谓词
         //查询所有条目
         public static readonly Func<Entry, bool> All =

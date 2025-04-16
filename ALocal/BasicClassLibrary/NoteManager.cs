@@ -8,6 +8,8 @@ namespace BasicClassLibrary
 {
     public class NoteManager:Manager<Note>
     {
+        //构造函数
+        public NoteManager():base(new AppDbContext()) { }
         // 根据作品ID查找关联笔记
         public static Func<Note, bool> ByEntryId(int entryId) =>
             n => n.EntryId == entryId;
