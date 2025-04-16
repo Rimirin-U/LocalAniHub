@@ -21,11 +21,11 @@ namespace BasicClassLibrary
             private readonly ResourceManager _resourceManager;
             private readonly ResourceDownload _resourceDownload;
 
-            // 构造函数，注入依赖
+            // 构造函数
             public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
             {
-                _resourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
-                _resourceDownload = resourceDownload ?? throw new ArgumentNullException(nameof(resourceDownload));
+                _resourceManager = resourceManager;
+                _resourceDownload = resourceDownload;
             }
 
             // 将现有资源加入资源管理
