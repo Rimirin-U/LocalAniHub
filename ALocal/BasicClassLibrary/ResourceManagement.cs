@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace BasicClassLibrary
 {
-    public class ResourceManagement : IDisposable
+   /* public class ResourceManagement : IDisposable
     {
         private readonly string _parentFolderPath; // 父文件夹路径
         private readonly AppDbContext _dbContext;  // 数据库上下文
@@ -117,5 +117,18 @@ namespace BasicClassLibrary
             _dbContext.Dispose();
         }
 
+    }*/
+    public class RecourseManagement: Manager<Resource>
+    {
+        private readonly string _parentFolderPath; // 父文件夹路径
+        public ResourceManagement()
+        {
+            _parentFolderPath = GlobalSettingsService.Instance.GetValue("defaultParentFolderPath"); // 从全局设置中读取路径
+            if (string.IsNullOrEmpty(_parentFolderPath)) throw new ArgumentException("ResourceManagement: wrong parentfolder path ");
+        } 
+
+
+
     }
+
 }

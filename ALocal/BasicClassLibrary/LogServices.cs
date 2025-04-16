@@ -12,11 +12,13 @@ using Serilog.Events;
 using Serilog.Sinks.SQLite;
 using Serilog.Context;
 using Serilog.Parsing;
+using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace BasicClassLibrary
 {
     // 日志记录服务
-    public static class LoggerService
+    /*public static class LoggerService
     {
         // 静态日志记录器实例
         private static readonly ILogger _logger = LoggerConfig.CreateLogger();
@@ -115,6 +117,142 @@ namespace BasicClassLibrary
                 }
             }
             return logs;
+        }
+    }*/
+    public static class LoggerService
+    {
+        private static readonly ILogger _logger = LoggerConfig.CreateLogger();
+
+        // 记录观看日志
+        public static void LogWatch(int episodeId)
+        {
+            var logEntry = new WatchLogEntry { EpisodeId = episodeId };
+            LogWithType("Watch", logEntry);
+        }
+
+        // 记录评价日志
+        public static void LogReview(int noteId)
+        {
+            var logEntry = new ReviewLogEntry { NoteId = noteId };
+            LogWithType("Review", logEntry);
+        }
+
+        // 记录评分日志
+        public static void LogRating(int entryId, int score)
+        {
+            var logEntry = new RatingLogEntry { EntryId = entryId, Score = score };
+            LogWithType("Rating", logEntry);
+        }
+
+        // 通用日志记录方法
+        private static void LogWithType<T>(string logType, T logEntry) where T : LogEntry
+            //logType：日志类型（如 "Watch"、"Review" 或 "Rating"）。
+            //logEntry：具体的日志条目对象（如 WatchLogEntry、ReviewLogEntry 或 RatingLogEntry）
+        {
+            try
+            {
+                var logEvent = new LogEvent(
+                    DateTimeOffset.Now,
+                    Serilog.Events.LogEventLevel.Information,
+                    null,
+                    new MessageTemplateParser().Parse("[{LogType}] {Data}"),
+                    new List<LogEventProperty>
+                    {
+                        new LogEventProperty("LogType", new ScalarValue(logType)),
+                        new LogEventProperty("Data", new ScalarValue(logEntry))
+                    });
+
+                using (LogContext.PushProperty("LogType", logType))
+                {
+                    _logger.Write(logEvent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Failed to log event of type {logType}: {ex.Message}");
+            }
+        }
+
+        // 查询日志
+        public static List<T> GetLogs<T>(string logType, DateTime? start = null, DateTime? end = null) where T : LogEntry
+        {
+            const string connectionString = "Data Source=logs.db";
+            var logs = new List<T>();
+
+            try
+            {
+                var query = BuildQuery(logType, start, end, out var parameters);
+
+                using (var conn = new SqliteConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var cmd = new SqliteCommand(query, conn))
+                    {
+                        cmd.Parameters.AddRange(parameters.ToArray());
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var json = reader["LogEvent"]?.ToString();
+                                if (!string.IsNullOrEmpty(json) && TryParseLogEntry<T>(json, reader, out var logEntry))
+                                {
+                                    logs.Add(logEntry);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error retrieving logs for type {logType}: {ex.Message}");
+            }
+
+            return logs;
+        }
+
+        // 构建查询字符串
+        private static string BuildQuery(string logType, DateTime? start, DateTime? end, out List<SqliteParameter> parameters)
+           // parameters：SQL 查询所需的参数列表。
+        {
+            var query = new StringBuilder("SELECT * FROM Logs WHERE LogType = @logType");
+            parameters = new List<SqliteParameter> { new SqliteParameter("@logType", DbType.String) { Value = logType } };
+
+            if (start.HasValue)
+            {
+                query.Append(" AND Timestamp >= @start");
+                parameters.Add(new SqliteParameter("@start", DbType.DateTime) { Value = start.Value });
+            }
+
+            if (end.HasValue)
+            {
+                query.Append(" AND Timestamp <= @end");
+                parameters.Add(new SqliteParameter("@end", DbType.DateTime) { Value = end.Value });
+            }
+
+            return query.ToString();
+        }
+
+        // 反序列化日志条目
+        private static bool TryParseLogEntry<T>(string json, SqliteDataReader reader, out T logEntry) where T : LogEntry
+        {
+            logEntry = null;
+
+            try
+            {
+                logEntry = JsonConvert.DeserializeObject<T>(json);
+                if (logEntry != null && reader["Timestamp"] is string timestampStr && DateTime.TryParse(timestampStr, out var timestamp))
+                {
+                    logEntry.Timestamp = timestamp;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Failed to parse log entry: {ex.Message}");
+            }
+
+            return false;
         }
     }
 }
