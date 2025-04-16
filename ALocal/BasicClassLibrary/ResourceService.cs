@@ -18,69 +18,53 @@ namespace BasicClassLibrary
     }
     public class ResourceService
     {
-        private readonly ResourceManagement _resourceManager;
-        private readonly ResourceFetcher _resourceFetcher;
+            private readonly ResourceManager _resourceManager;
+            private readonly ResourceDownload _resourceDownload;
 
-        public ResourceService(ResourceManagement resourceManager, ResourceFetcher resourceFetcher)
-        {
-            _resourceManager = resourceManager;
-            _resourceFetcher = resourceFetcher;
-        }
+            // 构造函数，注入依赖
+            public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
+            {
+                _resourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
+                _resourceDownload = resourceDownload ?? throw new ArgumentNullException(nameof(resourceDownload));
+            }
 
-        // 添加现有资源到指定作品和集数
-        //sourceFilePath:现有资源的完整物理路径 workName:目标作品的名称 episode:资源所属的集数
-        public void AddExistingResource(string sourceFilePath, string workName, int episode)
-        {
-            // 构造目标路径：父文件夹/作品名称/集数/文件名
-            string fileName = Path.GetFileName(sourceFilePath);
-            string destDirectory = Path.Combine(_resourceManager._parentFolderPath, workName, $"Episode_{episode}");
-            Directory.CreateDirectory(destDirectory);
-            string destFilePath = Path.Combine(destDirectory, fileName);
+            // 将现有资源加入资源管理
+            public void AddExistingResource(string sourceFilePath, int episode)
+            {
+                if (string.IsNullOrWhiteSpace(sourceFilePath))
+                {
+                    throw new ArgumentException("Source file path cannot be null or empty.", nameof(sourceFilePath));
+                }
 
-            // 移动文件
-            File.Move(sourceFilePath, destFilePath);
+                if (episode <= 0)
+                {
+                    throw new ArgumentException("Episode number must be positive.", nameof(episode));
+                }
 
-            // 创建Resource对象（假设ResourceId由外部生成或自增）
-            var resource = new Resource(
-                episodeId: episode,
-                episode: null, // 导航属性可能需要额外处理
-                importData: DateTime.Now,
-                path: destFilePath
-            )
-            { ResourceId = GenerateResourceId() }; // 需实现ID生成逻辑
+                _resourceManager.AddResource(sourceFilePath, episode);
+            }
 
-            _resourceManager.AddResource(destFilePath, resource);
-        }
+            // 下载指定资源为指定作品的指定集数
+            public void DownloadAndAddResource(ResourceItem resourceItem, int episode)
+            {
+                if (resourceItem == null)
+                {
+                    throw new ArgumentNullException(nameof(resourceItem));
+                }
 
-        // 下载并添加资源到指定作品和集数
-        public void DownloadAndAddResource(string keyword, string workName, int episode)
-        {
-            string destDirectory = Path.Combine(_resourceManager._parentFolderPath, workName, $"Episode_{episode}");
-            Directory.CreateDirectory(destDirectory);
+                if (string.IsNullOrWhiteSpace(resourceItem.DownloadUrl))
+                {
+                    throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
+                }
 
-            // 记录下载前的文件列表
-            var filesBefore = Directory.GetFiles(destDirectory);
+                if (episode <= 0)
+                {
+                    throw new ArgumentException("Episode number must be positive.", nameof(episode));
+                }
 
-            // 下载资源
-            _resourceFetcher.FetchResource(keyword, destDirectory);
-
-            // 获取新下载的文件
-            var filesAfter = Directory.GetFiles(destDirectory);
-            var newFile = filesAfter.Except(filesBefore).FirstOrDefault();
-
-            if (newFile == null) throw new FileNotFoundException("Download failed");
-
-            // 创建Resource对象
-            var resource = new Resource(
-                episodeId: episode,
-                episode: null,
-                importData: DateTime.Now,
-                path: newFile
-            )
-            { ResourceId = GenerateResourceId() };
-
-            _resourceManager.AddResource(newFile, resource);
-        }
+                // 下载资源
+                _resourceDownload.Download(resourceItem.DownloadUrl);
+            }
 
         // 资源清理（按时间/大小）
         public void CleanupResources(CleanupMode mode, object parameter)
@@ -157,13 +141,5 @@ namespace BasicClassLibrary
 //        // 清理资源（保持总大小小于1GB）
 //        service.CleanupResources(CleanupMode.BySize, 1024L * 1024 * 1024);
 //
-//需要补充到资源管理：
-//public List<Resource> GetAllResources()
-//{
-//    lock (_lock)
-//    {
-//        return new List<Resource>(_resources);
-//    }
-//}
     }
 }
