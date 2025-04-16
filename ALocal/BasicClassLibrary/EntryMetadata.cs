@@ -18,9 +18,9 @@ namespace BasicClassLibrary
     //    EntryLink,  // 链接条目（数据项为其他条目（id））
     //    Tag         // tag（无数据项）
     //}
-    public class EntryMetadata : IEntryNavigation
+    public class EntryMetadata : IEntryNavigation, IEntityWithId
     {
-        public int MetadataId { get; set; } // 主键
+        public int Id { get; set; } // 主键
 
         public int? EntryId { get; set; } // 外键
         public Entry? Entry { get; set; } // 导航属性
@@ -31,7 +31,7 @@ namespace BasicClassLibrary
         // 索引器实现快速访问
         public string this[string key]
         {
-            get => _metadataValues.TryGetValue(key, out var value) ? value : null;
+            get => _metadataValues.TryGetValue(key, out string? value) ? value : string.Empty;
             set => _metadataValues[key] = value;
         }
         //eg:set metadata["上映日期"] = "2025-01-01";  // 设置键 "上映日期" 对应的值为 "2025-01-01"
@@ -74,5 +74,9 @@ namespace BasicClassLibrary
         }
         //eg:metadata.AddOrUpdateMetadata("编剧", "李四");   // 添加或更新 "编剧" 键对应的值
         //metadata.AddOrUpdateMetadata("上映日期", "2025-02-01");  // 更新已存在的 "上映日期"
+    }
+    public partial class AppDbContext : DbContext
+    {
+        public DbSet<EntryMetadata> EntryMetadatas { get; set; }
     }
 }
