@@ -33,19 +33,47 @@ namespace BasicClassLibrary
                 var apiResponse = JsonConvert.DeserializeObject<YucWikiApiResponse>(json);
                 //反序列化JSON：使用 JsonConvert（Newtonsoft.Json库）将JSON字符串转换为 YucWikiApiResponse 对象。
 
+
+                //// 3. 转换为EntryInfoSet列表
+                //return apiResponse?.Entries.Select(item => new EntryInfoSet(
+                //    translatedName: item.TranslatedName,
+                //    originalName: item.OriginalName,
+                //    releaseDate: DateTime.Parse(item.ReleaseDate),
+                //    category: item.Category,
+                //    metadata: new Dictionary<string, string>
+                //    {
+                //        ["CoverUrl"] = item.CoverUrl??string.Empty,
+                //        ["Author"] = item.Author?? string.Empty,
+                //        ["Description"] = item.Description ?? string.Empty
+                //    }.AsReadOnly()
+                //)).ToList() ?? new List<EntryInfoSet>();
                 // 3. 转换为EntryInfoSet列表
-                return apiResponse?.Entries.Select(item => new EntryInfoSet(
-                    translatedName: item.TranslatedName,
-                    originalName: item.OriginalName,
-                    releaseDate: DateTime.Parse(item.ReleaseDate),
-                    category: item.Category,
-                    metadata: new Dictionary<string, string>
+                return apiResponse?.Entries?.Select(item =>
+                {
+                    // 安全解析日期，处理可能的 null 或无效格式
+                    DateTime? parsedDate = null;
+                    if (!string.IsNullOrWhiteSpace(item.ReleaseDate))
                     {
-                        ["CoverUrl"] = item.CoverUrl,
-                        ["Author"] = item.Author,
-                        ["Description"] = item.Description
-                    }.AsReadOnly()
-                )).ToList() ?? new List<EntryInfoSet>();
+                        DateTime tempDate;
+                        if (DateTime.TryParse(item.ReleaseDate, out tempDate))
+                        {
+                            parsedDate = tempDate;
+                        }
+                    }
+
+                    return new EntryInfoSet(
+                        translatedName: item.TranslatedName ?? string.Empty,
+                        originalName: item.OriginalName ?? string.Empty,
+                        releaseDate: parsedDate ?? DateTime.MinValue, // 提供默认值
+                        category: item.Category ?? string.Empty,
+                        metadata: new Dictionary<string, string>
+                        {
+                            ["CoverUrl"] = item.CoverUrl ?? string.Empty,
+                            ["Author"] = item.Author ?? string.Empty,
+                            ["Description"] = item.Description ?? string.Empty
+                        }.AsReadOnly()
+                    );
+                })?.ToList() ?? new List<EntryInfoSet>();
             }
             catch (Exception ex)
             {
@@ -57,31 +85,31 @@ namespace BasicClassLibrary
         private class YucWikiApiResponse
         {
             [JsonProperty("entries")]
-            public List<YucWikiEntry> Entries { get; set; }
+            public List<YucWikiEntry>? Entries { get; set; }
         }
 
         private class YucWikiEntry
         {
             [JsonProperty("translated_name")]
-            public string TranslatedName { get; set; }
+            public string? TranslatedName { get; set; }
 
             [JsonProperty("original_name")]
-            public string OriginalName { get; set; }
+            public string? OriginalName { get; set; }
 
             [JsonProperty("release_date")]
-            public string ReleaseDate { get; set; }
+            public string? ReleaseDate { get; set; }
 
             [JsonProperty("category")]
-            public string Category { get; set; }
+            public string? Category { get; set; }
 
             [JsonProperty("cover_url")]
-            public string CoverUrl { get; set; }
+            public string? CoverUrl { get; set; }
 
             [JsonProperty("author")]
-            public string Author { get; set; }
+            public string? Author { get; set; }
 
             [JsonProperty("description")]
-            public string Description { get; set; }
+            public string? Description { get; set; }
         }
     }
 
