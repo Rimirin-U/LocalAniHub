@@ -9,7 +9,7 @@ namespace BasicClassLibrary
     // 日志基类
     public abstract class LogEntry
     {
-        public DateTime Timestamp { get; set; }
+        //public DateTime Timestamp { get; set; }
     }
 
     // 观看记录
