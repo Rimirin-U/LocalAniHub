@@ -12,32 +12,32 @@ namespace BasicClassLibrary
         public EntryManager():base(new AppDbContext()) { }
         // 自定义查询谓词
         //查询所有条目
-        public static readonly Func<Entry, bool> All =
+        public readonly static  Func<Entry, bool> All =
             entry => true;
         //按名称查询
         //按译名查询
         //这是一个静态方法，它接受一个字符串参数 name，并返回一个 Func<Entry, bool> 类型的委托。
         //该委托用于筛选 Entry 对象，判断其 TranslatedName 属性是否包含指定的 name，并且不区分大小写。
-        public static Func<Entry, bool> ByTranslatedName(string name) =>
-            e => e.TranslatedName.Contains(name, StringComparison.OrdinalIgnoreCase);
+        public readonly static Func<string,Func<Entry, bool>> ByTranslatedName =
+            name=>(e => e.TranslatedName.Contains(name, StringComparison.OrdinalIgnoreCase));
         //按原名查询
-        public static Func<Entry, bool> ByOriginalName(string name) =>
-            e => e.OriginalName.Contains(name, StringComparison.OrdinalIgnoreCase);
+        public readonly static Func<string,Func<Entry, bool>> ByOriginalName =
+        name=>e => e.OriginalName.Contains(name, StringComparison.OrdinalIgnoreCase);
         //按日期范围查询
         //按上映时间查询
-        public static Func<Entry, bool> ByReleaseDateRange(DateTime start, DateTime end) =>
-            e => e.ReleaseDate >= start && e.ReleaseDate <= end;
+        public readonly static Func<DateTime,DateTime,Func<Entry, bool>> ByReleaseDateRange =
+        (start,end)=>e => e.ReleaseDate >= start && e.ReleaseDate <= end;
         //按收藏日期查询
-        public static Func<Entry, bool> ByCollectionDateRange(DateTime start, DateTime end) =>
-            e => e.CollectionDate >= start && e.CollectionDate <= end;
+        public readonly static Func<DateTime,DateTime,Func<Entry, bool>> ByCollectionDateRange=
+        (start,end)=>e => e.CollectionDate >= start && e.CollectionDate <= end;
 
         // 按类别查询
-        public static Func<Entry, bool> ByCategory(string category) =>
-            e => e.Category.Equals(category, StringComparison.OrdinalIgnoreCase);
+        public readonly static Func<string,Func<Entry, bool>> ByCategory =
+        category=>e => e.Category.Equals(category, StringComparison.OrdinalIgnoreCase);
 
         // 按集数查询
-        public static Func<Entry, bool> ByEpisodeCount(int min, int? max = null) =>
-            e => e.EpisodeCount >= min && (max == null || e.EpisodeCount <= max);
+        public readonly static Func<int,int?,Func<Entry, bool>> ByEpisodeCount =
+           (min,max)=> e => e.EpisodeCount >= min && (max == null || e.EpisodeCount <= max);
 
     }
     //public class EntryManager

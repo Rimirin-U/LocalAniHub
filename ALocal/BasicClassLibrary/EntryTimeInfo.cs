@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +8,11 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class EntryTimeInfo : IEntryNavigation
+    //public partial class AppDbContext : DbContext
+    //{
+    //    public DbSet<EntryTimeInfo> EntryTimeInfos{ get; set; }
+    //}
+    public class EntryTimeInfo : IEntryNavigation,IEntityWithId
     {
         public int Id { get; set; }//主键
         public int? EntryId { get; set; }//外键
