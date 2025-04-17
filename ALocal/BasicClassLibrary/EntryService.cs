@@ -13,15 +13,21 @@ namespace BasicClassLibrary
         private readonly EntryFetch fetch;//条目拉取
         private readonly EntryManager manager;//条目管理
         private readonly EpisodeManager episodeManager;//单集管理
+        private readonly EntryRatingManager entryRatingManager;//评分管理
+        private readonly EntryMatadataManager entryMatadataManager;//播出时间管理
         //条目服务的构造函数
         public EntryService(
-            EntryFetch fetch1,
-            EntryManager manager1,
-            EpisodeManager episodeManager1)
+            EntryFetch fetch,
+            EntryManager manager,
+            EpisodeManager episodeManager,
+            EntryRatingManager entryRatingManager,
+            EntryMatadataManager entryMatadataManager)
         {
-            fetch = fetch1;
-            manager = manager1;
-            episodeManager = episodeManager1;
+            this.fetch = fetch;
+            this.manager = manager;
+            this.episodeManager = episodeManager;
+            this.entryRatingManager = entryRatingManager;
+            this.entryMatadataManager = entryMatadataManager;
         }
         public EntryFetch Fetch
         {
@@ -30,7 +36,7 @@ namespace BasicClassLibrary
                 return fetch;
             }
         }
-        public EntryManager Manager
+        public EntryManager EntryManager
         {
             get
             {
@@ -42,6 +48,20 @@ namespace BasicClassLibrary
             get
             {
                 return episodeManager;
+            }
+        }
+        public EntryRatingManager EntryRatingManager
+        {
+            get
+            {
+                return entryRatingManager;
+            }
+        }
+        public EntryMatadataManager EntryMatadataManager
+        {
+            get
+            {
+                return entryMatadataManager;
             }
         }
         public void AddEntryWithEpisodes(Entry entry)
