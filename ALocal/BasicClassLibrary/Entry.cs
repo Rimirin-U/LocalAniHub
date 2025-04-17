@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
+
     public class Entry: IEntityWithId              //条目核心
     {
         //核心数据
