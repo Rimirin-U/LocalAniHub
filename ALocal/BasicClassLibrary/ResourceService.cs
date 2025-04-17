@@ -18,58 +18,41 @@ namespace BasicClassLibrary
     }
     public class ResourceService
     {
-            private readonly ResourceManager _resourceManager;
-            private readonly ResourceDownload _resourceDownload;
+        private readonly ResourceManager _resourceManager;
+        private readonly ResourceDownload _resourceDownload;
 
-            // 构造函数
-            public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
-            {
-                _resourceManager = resourceManager;
-                _resourceDownload = resourceDownload;
-            }
+        // 构造函数
+        public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
+        {
+            _resourceManager = resourceManager;
+            _resourceDownload = resourceDownload;
+        }
 
-            // 将现有资源加入资源管理
-            public void AddExistingResource(string sourceFilePath, int episode)
-            {
-                if (string.IsNullOrWhiteSpace(sourceFilePath))
-                {
-                    throw new ArgumentException("Source file path cannot be null or empty.", nameof(sourceFilePath));
-                }
-
-                if (episode <= 0)
-                {
-                    throw new ArgumentException("Episode number must be positive.", nameof(episode));
-                }
-
-                _resourceManager.AddResource(sourceFilePath, episode);
-            }
+        // 将现有资源加入资源管理
+        public void AddExistingResource(Resource resource)
+        {
+            _resourceManager.AddResource(resource);
+        }
 
             // 下载指定资源为指定作品的指定集数
-            public void DownloadAndAddResource(ResourceItem resourceItem, int episode)
+        public void DownloadAndAddResource(ResourceItem resourceItem)
+        {
+            if (resourceItem == null)
             {
-                if (resourceItem == null)
-                {
-                    throw new ArgumentNullException(nameof(resourceItem));
-                }
-
-                if (string.IsNullOrWhiteSpace(resourceItem.DownloadUrl))
-                {
-                    throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
-                }
-
-                if (episode <= 0)
-                {
-                    throw new ArgumentException("Episode number must be positive.", nameof(episode));
-                }
-
-                // 下载资源
-                _resourceDownload.Download(resourceItem.DownloadUrl);
+                throw new ArgumentNullException(nameof(resourceItem));
             }
+            if (string.IsNullOrWhiteSpace(resourceItem.DownloadUrl))
+            {
+                throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
+            }
+                // 下载资源
+            _resourceDownload.Download(resourceItem.DownloadUrl);
+        }
 
         // 资源清理（按时间/大小）
         public void CleanupResources(CleanupMode mode, object parameter)
         {
-            var allResources = _resourceManager.GetAllResources();
+            var allResources = _resourceManager.All();
 
             switch (mode)
             {
@@ -93,53 +76,59 @@ namespace BasicClassLibrary
 
         private void CleanupBySize(List<Resource> resources, long maxSizeBytes)
         {
-            long totalSize = resources.Sum(r => new FileInfo(r.ResourcePath).Length);
+            // 获取所有有效资源（有路径且文件存在）
+            var validResources = resources
+                .Where(r => !string.IsNullOrWhiteSpace(r.ResourcePath) && File.Exists(r.ResourcePath))
+                .ToList();
+
+            // 计算总大小
+            long totalSize = validResources.Sum(r =>
+                r.ResourcePath != null ? new FileInfo(r.ResourcePath).Length : 0);
+
+            // 如果总大小已满足要求，直接返回
             if (totalSize <= maxSizeBytes) return;
 
-            var orderedResources = resources.OrderBy(r => r.ImportData).ToList();
-            foreach (var resource in orderedResources)
+            // 使用SortByImportData进行排序（从旧到新）
+            validResources.Sort(ResourceManager.SortByImportData);
+
+            // 按顺序删除最旧的资源，直到满足大小要求
+            foreach (var resource in validResources)
             {
                 if (totalSize <= maxSizeBytes) break;
 
-                long fileSize = new FileInfo(resource.ResourcePath).Length;
-                DeleteResourceWithFile(resource);
-                totalSize -= fileSize;
+                if (resource.ResourcePath != null)
+                {
+                    long fileSize = new FileInfo(resource.ResourcePath).Length;
+                    DeleteResourceWithFile(resource);
+                    totalSize -= fileSize;
+                }
             }
         }
 
         private void DeleteResourceWithFile(Resource resource)
         {
-            _resourceManager.DeleteResource(resource.ResourceId.ToString());
+            _resourceManager.DeleteResource(resource.Id.ToString());
             if (File.Exists(resource.ResourcePath))
             {
                 File.Delete(resource.ResourcePath);
             }
         }
 
-        private int _currentId = 0;
-        private int GenerateResourceId()
-        {
-            lock (_resourceManager)
-            {
-                return ++_currentId;
-            }
-        }
 //        使用示例
-//        var resourceManager = new ResourceManagement("D:/Resources");
-//        var fetcher = new ResourceFetcher(new ResourceSearch(), new ResourceDownloader());
-//        var service = new ResourceService(resourceManager, fetcher);
-
-//        // 添加本地文件
-//        service.AddExistingResource("C:/Downloads/video.mp4", "MySeries", 1);
-
-//        // 下载并管理
-//        service.DownloadAndAddResource("episode2", "MySeries", 2);
-
+//        //添加本地已有资源
+//        service.AddExistingResource(new Resource {
+//        Id = "movie-001",
+//        ResourcePath = "D:/Movies/Inception.mp4",
+//        ImportData = DateTime.Now.AddMonths(-2)
+//        });
+//        // 下载新资源
+//        service.DownloadAndAddResource(new ResourceItem {
+//        DownloadUrl = "https://example.com/new-movie.mp4"
+//        });
 //        // 清理资源（保留最近30天的）
 //        service.CleanupResources(CleanupMode.ByTime, DateTime.Now.AddDays(-30));
-
+//
 //        // 清理资源（保持总大小小于1GB）
 //        service.CleanupResources(CleanupMode.BySize, 1024L * 1024 * 1024);
-//
     }
 }

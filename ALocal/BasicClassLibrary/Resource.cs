@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 // 资源对象
 namespace BasicClassLibrary
 {
-    public class Resource:IEpisodeNavigation
+    public class Resource:IEpisodeNavigation, IEntityWithId
     {
-        public int ResourceId { get; set; } // 主键 资源ID
+        public int Id { get; set; } // 主键 资源ID
         //IEpisodeNavigation
         public int? EpisodeId { get; set; }    // 外键 对应集数ID
         public Episode? Episode { get; set; }    // 导航属性  
