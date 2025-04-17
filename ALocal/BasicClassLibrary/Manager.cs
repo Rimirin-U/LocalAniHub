@@ -46,5 +46,15 @@ namespace BasicClassLibrary
         {
             return [.. context.Set<T>().Where(predicate)];
         }
+
+        public virtual List<T> Query(Func<T, bool> predicate, Comparison<T> comparison)
+        {
+            // TODO:分页查询
+            List<T> lst = [.. context.Set<T>().Where(predicate)];
+            lst.Sort(comparison);
+            return lst;
+        }
+
+        public static readonly Comparison<T> SortById = ((o1, o2) => o1.Id > o2.Id ? 1 : o1.Id == o2.Id ? 0 : -1);
     }
 }
