@@ -46,7 +46,7 @@ namespace BasicClassLibrary
         }
         public void AddEntryWithEpisodes(Entry entry)
         {
-            manager.AddEntry(entry); // 添加主条目
+            manager.Add(entry); // 添加主条目
 
             // 自动生成并关联EpisodeCount个单集
             for (int i = 1; i <= entry.EpisodeCount; i++) 
@@ -57,7 +57,7 @@ namespace BasicClassLibrary
                     EpisodeNumber = i//集数
                 };
 
-                episodeManager.AddEpisode(episode); // 添加单集
+                episodeManager.Add(episode); // 添加单集
             }
         }
     }

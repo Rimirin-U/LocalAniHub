@@ -11,9 +11,7 @@ namespace BasicClassLibrary
     {
         public EntryManager():base(new AppDbContext()) { }
         // 自定义查询谓词
-        //查询所有条目
-        public readonly static  Func<Entry, bool> All =
-            entry => true;
+       
         //按名称查询
         //按译名查询
         //这是一个静态方法，它接受一个字符串参数 name，并返回一个 Func<Entry, bool> 类型的委托。

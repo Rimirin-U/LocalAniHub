@@ -11,9 +11,6 @@ namespace BasicClassLibrary
         //构造函数
         public EntryTimeInfoManager() : base(new AppDbContext()) { }
 
-        //查询所有
-        public readonly static Func<EntryTimeInfo, bool> All =
-            n => true;
 
         //根据条目ID查询
         public readonly static Func<int, Func<EntryTimeInfo, bool> > ByEntryId =
