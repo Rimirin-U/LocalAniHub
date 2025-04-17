@@ -45,21 +45,21 @@ namespace BasicClassLibrary
             }
         }
         // 记录观看日志
-        public static void LogWatch(int episodeId)
+        public static void AddLogWatch(int episodeId)
         {
             var logEntry = new WatchLogEntry { EpisodeId = episodeId };
             Log(logEntry);
         }
 
         // 记录评价日志
-        public static void LogReview(int noteId)
+        public static void AddLogReview(int noteId)
         {
             var logEntry = new ReviewLogEntry { NoteId = noteId };
             Log(logEntry);
         }
 
         // 记录评分日志
-        public static void LogRating(int entryId, int score)
+        public static void AddLogRating (int entryId, int score)
         {
             var logEntry = new RatingLogEntry { EntryId = entryId, Score = score };
             Log(logEntry);
