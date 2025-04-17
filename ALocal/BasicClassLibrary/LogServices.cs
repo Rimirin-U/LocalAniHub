@@ -17,6 +17,13 @@ using System.Data;
 
 namespace BasicClassLibrary
 {
+    //查询结果的完整信息:（包括时间戳、日志类型等）
+    public class LogResult<T> where T : LogEntry
+    {
+        public DateTime Timestamp { get; set; }
+        public required string LogType { get; set; }
+        public required T LogEntry { get; set; }
+    }
     public static class LoggerService
     {
         private static readonly ILogger _logger;
@@ -36,6 +43,26 @@ namespace BasicClassLibrary
                 Console.Error.WriteLine($"Failed to initialize LoggerService: {ex.Message}");
                 throw; // 抛出异常，让调用方处理
             }
+        }
+        // 记录观看日志
+        public static void LogWatch(int episodeId)
+        {
+            var logEntry = new WatchLogEntry { EpisodeId = episodeId };
+            Log(logEntry);
+        }
+
+        // 记录评价日志
+        public static void LogReview(int noteId)
+        {
+            var logEntry = new ReviewLogEntry { NoteId = noteId };
+            Log(logEntry);
+        }
+
+        // 记录评分日志
+        public static void LogRating(int entryId, int score)
+        {
+            var logEntry = new RatingLogEntry { EntryId = entryId, Score = score };
+            Log(logEntry);
         }
         // 通用日志记录方法（使用泛型 T 自动推断日志类型）
         private static void Log<T>(T logEntry) where T : LogEntry
@@ -67,10 +94,11 @@ namespace BasicClassLibrary
             }
         }
         // 查询日志（使用泛型 T 自动推断日志类型）
-        public static List<T> GetLogs<T>(DateTime? start = null, DateTime? end = null) where T : LogEntry
+        public static List<LogResult<T>> GetLogs<T>(DateTime? start = null, DateTime? end = null) where T : LogEntry
         {
             const string connectionString = "Data Source=logs.db";
-            var logs = new List<T>();
+            // var logs = new List<T>();
+            var logs = new List<LogResult<T>>();
 
             try
             {
@@ -88,10 +116,21 @@ namespace BasicClassLibrary
                         {
                             while (reader.Read())
                             {
-                                var json = reader["LogEvent"]?.ToString();
+                                /*var json = reader["LogEvent"]?.ToString();
                                 if (!string.IsNullOrEmpty(json) && TryParseLogEntry<T>(json, reader, out var logEntry))
                                 {
                                     logs.Add(logEntry);
+                                }*/
+                                var timestamp = reader["Timestamp"] != DBNull.Value ? (DateTime)reader["Timestamp"] : default;
+                                var json = reader["LogEvent"]?.ToString();
+                                if (!string.IsNullOrEmpty(json) && TryParseLogEntry<T>(json, reader, out var logEntry))
+                                {
+                                    logs.Add(new LogResult<T>
+                                    {
+                                        Timestamp = timestamp,
+                                        LogType = logType,
+                                        LogEntry = logEntry
+                                    });
                                 }
                             }
                         }
@@ -155,7 +194,6 @@ Id	Timestamp	        LogType	        LogEvent
 3	2025-04-16 16:10:00	RatingLogEntry	{"EntryId": 789, "Score": 5}
 
  */
-
 
 
 // 日志记录服务
