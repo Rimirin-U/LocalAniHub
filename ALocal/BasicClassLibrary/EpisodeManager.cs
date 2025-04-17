@@ -13,7 +13,6 @@ namespace BasicClassLibrary
 
         public readonly static Func<int, Func<Episode, bool>> ByEntryId = (entryId =>
                                                                           (ep => ep.EntryId == entryId));
-        public readonly static Func<Episode, bool> All = (ep => true);
     }
 }
 }

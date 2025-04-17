@@ -24,7 +24,7 @@ namespace BasicClassLibrary
 
         public void Download(string url)
         {
-
+            throw new NotImplementedException();
         }
     }
 }
