@@ -47,6 +47,8 @@ namespace BasicClassLibrary
                 //        ["Description"] = item.Description ?? string.Empty
                 //    }.AsReadOnly()
                 //)).ToList() ?? new List<EntryInfoSet>();
+
+
                 // 3. 转换为EntryInfoSet列表
                 return apiResponse?.Entries?.Select(item =>
                 {
