@@ -68,7 +68,11 @@ namespace BasicClassLibrary
             RemoveById(id);
         }
 
-       // public Func<Resource,bool> ByEntryId(int entryId)
+        //按照导入时间排序-升序
+        public static readonly Comparison<Resource> SortByImportData = (x, y) =>
+    x.ImportData.CompareTo(y.ImportData);
+
+        // public Func<Resource,bool> ByEntryId(int entryId)
     }
 }
 
