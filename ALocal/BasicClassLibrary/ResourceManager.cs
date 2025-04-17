@@ -14,7 +14,7 @@ namespace BasicClassLibrary
         private void PutResourceIntoDestination(Resource resource)
         {
             // 从全局设置中读取父文件夹路径
-            string _parentFolderPath = GlobalSettingsService.Instance.GetValue("defaultParentFolderPath");
+            string _parentFolderPath = GlobalSettingsService.Instance.GetValue("defaultResourceParentFolderPath");
             if (string.IsNullOrEmpty(_parentFolderPath))
             {
                 throw new ArgumentException("ResourceManagement: 父文件夹路径无效或未设置");
