@@ -8,7 +8,7 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
-
+//资源服务
 namespace BasicClassLibrary
 {
     public class ResourceService
