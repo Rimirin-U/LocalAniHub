@@ -8,7 +8,6 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
-using System.Resources;
 
 namespace BasicClassLibrary
 {
