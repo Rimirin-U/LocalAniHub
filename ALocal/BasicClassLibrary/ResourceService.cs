@@ -8,14 +8,10 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
+using System.Resources;
 
 namespace BasicClassLibrary
 {
-    public enum CleanupMode
-    {
-        ByTime,
-        BySize
-    }
     public class ResourceService
     {
         private readonly ResourceManager _resourceManager;
@@ -49,20 +45,26 @@ namespace BasicClassLibrary
             _resourceDownload.Download(resourceItem.DownloadUrl);
         }
 
-        // 资源清理（按时间/大小）
-        public void CleanupResources(CleanupMode mode, object parameter)
+        // 按天数清理旧资源
+        public void CleanupByDays(int daysToKeep)
         {
-            var allResources = _resourceManager.All();
+            if (daysToKeep <= 0)
+                throw new ArgumentException("Days to keep must be positive.", nameof(daysToKeep));
 
-            switch (mode)
-            {
-                case CleanupMode.ByTime:
-                    CleanupByTime(allResources, (DateTime)parameter);
-                    break;
-                case CleanupMode.BySize:
-                    CleanupBySize(allResources, (long)parameter);
-                    break;
-            }
+            var threshold = DateTime.Now.AddDays(-daysToKeep);
+            var resources = _resourceManager.All();
+            CleanupByTime(resources, threshold);
+        }
+
+        // 按最大存储空间(MB)清理
+        public void CleanupByMaxSizeMB(int maxSizeMB)
+        {
+            if (maxSizeMB <= 0)
+                throw new ArgumentException("Max size must be positive.", nameof(maxSizeMB));
+
+            var maxSizeBytes = (long)maxSizeMB * 1024 * 1024;
+            var resources = _resourceManager.All();
+            CleanupBySize(resources, maxSizeBytes);
         }
 
         private void CleanupByTime(List<Resource> resources, DateTime threshold)
@@ -76,22 +78,17 @@ namespace BasicClassLibrary
 
         private void CleanupBySize(List<Resource> resources, long maxSizeBytes)
         {
-            // 获取所有有效资源（有路径且文件存在）
             var validResources = resources
                 .Where(r => !string.IsNullOrWhiteSpace(r.ResourcePath) && File.Exists(r.ResourcePath))
                 .ToList();
 
-            // 计算总大小
             long totalSize = validResources.Sum(r =>
                 r.ResourcePath != null ? new FileInfo(r.ResourcePath).Length : 0);
 
-            // 如果总大小已满足要求，直接返回
             if (totalSize <= maxSizeBytes) return;
 
-            // 使用SortByImportData进行排序（从旧到新）
             validResources.Sort(ResourceManager.SortByImportData);
 
-            // 按顺序删除最旧的资源，直到满足大小要求
             foreach (var resource in validResources)
             {
                 if (totalSize <= maxSizeBytes) break;
@@ -113,22 +110,5 @@ namespace BasicClassLibrary
                 File.Delete(resource.ResourcePath);
             }
         }
-
-//        使用示例
-//        //添加本地已有资源
-//        service.AddExistingResource(new Resource {
-//        Id = "movie-001",
-//        ResourcePath = "D:/Movies/Inception.mp4",
-//        ImportData = DateTime.Now.AddMonths(-2)
-//        });
-//        // 下载新资源
-//        service.DownloadAndAddResource(new ResourceItem {
-//        DownloadUrl = "https://example.com/new-movie.mp4"
-//        });
-//        // 清理资源（保留最近30天的）
-//        service.CleanupResources(CleanupMode.ByTime, DateTime.Now.AddDays(-30));
-//
-//        // 清理资源（保持总大小小于1GB）
-//        service.CleanupResources(CleanupMode.BySize, 1024L * 1024 * 1024);
     }
 }
