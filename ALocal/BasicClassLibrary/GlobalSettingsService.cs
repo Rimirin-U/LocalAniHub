@@ -32,9 +32,12 @@ namespace BasicClassLibrary
        
             // 条目拉取相关设置
             {"defaultEntryFetchSource", "0"}, // 0: 自yuc.wiki（默认值）
+
+            //资源拉取数据源
+            {"defaultResourceSearchSource","0" },//0:自AnimesGarden（默认值）
             
             // 资源管理相关设置
-            {"defaultparentFolderPath", ""},  // 路径（默认值：还没想好）
+            {"defaultparentFolderPath", ""},  // 路径（默认值）
             
             // 下载相关设置
             //在代码中通过该键名（如 GetValue("downloadPath")）获取或设置对应的路径值。
