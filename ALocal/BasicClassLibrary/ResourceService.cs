@@ -14,10 +14,10 @@ namespace BasicClassLibrary
     public class ResourceService
     {
         private readonly ResourceManager _resourceManager;
-        private readonly ResourceDownload _resourceDownload;
+        private readonly BtDownload _resourceDownload;
 
         // 构造函数
-        public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
+        public ResourceService(ResourceManager resourceManager, BtDownload resourceDownload)
         {
             _resourceManager = resourceManager;
             _resourceDownload = resourceDownload;
@@ -26,7 +26,7 @@ namespace BasicClassLibrary
         // 将现有资源加入资源管理
         public void AddExistingResource(Resource resource)
         {
-            _resourceManager.AddResource(resource);
+            _resourceManager.Addresource(resource);
         }
 
             // 下载指定资源为指定作品的指定集数
@@ -44,14 +44,14 @@ namespace BasicClassLibrary
             _resourceDownload.Download(resourceItem.DownloadUrl);
         }
 
-        // 按天数清理旧资源
+        // 修复 CS0176 和 CS7036 错误
         public void CleanupByDays(int daysToKeep)
         {
             if (daysToKeep <= 0)
                 throw new ArgumentException("Days to keep must be positive.", nameof(daysToKeep));
 
             var threshold = DateTime.Now.AddDays(-daysToKeep);
-            var resources = _resourceManager.All();
+            var resources = _resourceManager.Query(r => true); // 使用 Query 方法代替 All
             CleanupByTime(resources, threshold);
         }
 
@@ -62,7 +62,7 @@ namespace BasicClassLibrary
                 throw new ArgumentException("Max size must be positive.", nameof(maxSizeMB));
 
             var maxSizeBytes = (long)maxSizeMB * 1024 * 1024;
-            var resources = _resourceManager.All();
+            var resources = _resourceManager.Query(r => true); // 使用 Query 方法代替 All
             CleanupBySize(resources, maxSizeBytes);
         }
 
@@ -103,7 +103,7 @@ namespace BasicClassLibrary
 
         private void DeleteResourceWithFile(Resource resource)
         {
-            _resourceManager.DeleteResource(resource.Id.ToString());
+            _resourceManager.DeleteResource(resource.Id);
             if (File.Exists(resource.ResourcePath))
             {
                 File.Delete(resource.ResourcePath);
