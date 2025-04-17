@@ -71,8 +71,9 @@ namespace BasicClassLibrary
         //按照导入时间排序-升序
         public static readonly Comparison<Resource> SortByImportData = (x, y) =>
     x.ImportData.CompareTo(y.ImportData);
-
-        // public Func<Resource,bool> ByEntryId(int entryId)
+        //按照资源对应的条目的id进行查找
+        public static Func<int, Func<Resource, bool>> ByEntryId = (entryId =>
+    (resource => resource.Episode.EntryId == entryId));
     }
 }
 
