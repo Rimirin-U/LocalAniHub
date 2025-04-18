@@ -29,7 +29,7 @@ namespace BasicClassLibrary
             _resourceManager.Addresource(resource);
         }
 
-            // 下载指定资源为指定作品的指定集数
+        // 下载指定资源为指定作品的指定集数
         public void DownloadAndAddResource(ResourceItem resourceItem)
         {
             if (resourceItem == null)
@@ -44,7 +44,7 @@ namespace BasicClassLibrary
             _resourceDownload.Download(resourceItem.DownloadUrl);
         }
 
-        // 修复 CS0176 和 CS7036 错误
+        // 按最大保存日期清理
         public void CleanupByDays(int daysToKeep)
         {
             if (daysToKeep <= 0)
