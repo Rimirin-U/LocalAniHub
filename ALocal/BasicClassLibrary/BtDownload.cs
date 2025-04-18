@@ -12,7 +12,7 @@ namespace BasicClassLibrary
         {
             try
             {
-                downloadPath = int.Parse(GlobalSettingsService.Instance.GetValue("downloadPath"));
+                downloadPath = GlobalSettingsService.Instance.GetValue("downloadPath");
             }
             catch (Exception)
             {
