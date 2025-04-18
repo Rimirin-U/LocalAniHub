@@ -6,7 +6,7 @@ namespace BasicClassLibrary
 {
     public class ResourceSearch
     {
-        private IResourceSearch resourceSearch;
+        
         public ResourceSearch()
         {
             int sourceType;
@@ -41,14 +41,14 @@ namespace BasicClassLibrary
                     break;
             }
         }
-
+        private IResourceSearch resourceSearch;
 
         public async Task<List<ResourceItem>> SearchAsync(string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
                 throw new ArgumentException("Keyword cannot be null or empty");
 
-            return await resourceSearch.SearchAsync(keyword);
+            return await resourceSearch.Search(keyword);
         }
     }
 

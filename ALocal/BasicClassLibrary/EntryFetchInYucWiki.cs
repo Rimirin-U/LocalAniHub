@@ -18,7 +18,7 @@ namespace BasicClassLibrary
             _httpClient.BaseAddress = new Uri(BaseUrl);
         }
 
-        public List<EntryInfoSet> Fetch()
+        public List<EntryInfoSet> Search()
         {
             try
             {

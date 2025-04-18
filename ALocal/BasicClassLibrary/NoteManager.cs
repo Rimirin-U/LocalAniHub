@@ -11,12 +11,12 @@ namespace BasicClassLibrary
         //构造函数
         public NoteManager():base(new AppDbContext()) { }
         // 根据作品ID查找关联笔记
-        public readonly static Func<int,Func<Note, bool>> ByEntryId =
-            entryId=> (n => n.EntryId == entryId);
+        public readonly static Func<ICollection<int>, Func<Note, bool>> ByEntriesId =
+            entriesId=> (n => n.EntriesId == entriesId);
 
         // 根据剧集ID查找关联笔记
-        public readonly static Func<int,Func<Note, bool>> ByEpisodeId =
-        episodeId=>( n => n.EpisodeId == episodeId);
+        public readonly static Func<ICollection<int>, Func<Note, bool>> ByEpisodesId =
+        episodesId=>( n => n.EpisodesId == episodesId);
 
         // 根据关键字搜索笔记内容
         public readonly static Func<string,Func<Note, bool>> ByKeyword =
@@ -24,7 +24,7 @@ namespace BasicClassLibrary
 
         // 获取未关联任何作品或剧集的笔记
         public readonly static Func<Note, bool> OrphanNotes =
-            n => n.EntryId == null && n.EpisodeId == null;
+            n => n.EntriesId == null && n.EpisodesId == null;
     }
     //public class NoteService
     //{

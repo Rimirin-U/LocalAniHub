@@ -8,10 +8,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    //public partial class AppDbContext : DbContext
-    //{
-    //    public DbSet<EntryTimeInfo> EntryTimeInfos{ get; set; }
-    //}
+    
     public class EntryTimeInfo : IEntryNavigation,IEntityWithId
     {
         public int Id { get; set; }//主键
