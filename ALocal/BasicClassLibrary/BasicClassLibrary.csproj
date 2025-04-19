@@ -18,8 +18,4 @@
     <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tracker\" />
-  </ItemGroup>
-
 </Project>
