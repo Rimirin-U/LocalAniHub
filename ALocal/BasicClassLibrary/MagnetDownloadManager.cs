@@ -28,7 +28,7 @@ namespace BasicClassLibrary
 
         private readonly ClientEngine clientEngine;
         private readonly TrackerManager trackerManager;
-        private readonly TorrentManager? manager;
+        private TorrentManager? manager;
 
         public async Task Initialize()
         {
@@ -36,7 +36,7 @@ namespace BasicClassLibrary
             MonoTorrent.MagnetLink magnetLink = MonoTorrent.MagnetLink.Parse(MagnetUrl);
 
             // initialize manager
-            var manager = await clientEngine.AddAsync(magnetLink, SavePath);
+            manager = await clientEngine.AddAsync(magnetLink, SavePath);
 
             // add trackers
             foreach (Tracker tracker in trackerManager.Query(TrackerManager.All))
@@ -60,6 +60,7 @@ namespace BasicClassLibrary
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
             await manager.StartAsync();
+            await manager.WaitForMetadataAsync();
         }
         public async Task Pause()
         {
