@@ -11,31 +11,34 @@ namespace BasicClassLibrary
     public class MagnetDownloadManager
     {
         // initialize
-        public MagnetDownloadManager(string magnetUrl, ClientEngine clientEngine, TrackerManager trackerManager)
+        public MagnetDownloadManager(string magnetUrl,string savePath, ClientEngine clientEngine, TrackerManager trackerManager)
         {
-            savePath = GlobalSettingsService.Instance.GetValue("downloadPath");
-            Directory.CreateDirectory(savePath);
+            // SavePath = GlobalSettingsService.Instance.GetValue("downloadPath");
+            SavePath = savePath;
+            Directory.CreateDirectory(SavePath);
 
             this.clientEngine = clientEngine;
             this.trackerManager = trackerManager;
             MagnetUrl = magnetUrl;
             manager = null;
+
+            Initialize();
         }
 
         public string MagnetUrl { get; init; }
+        public string SavePath { get; init; }
 
-        private string savePath;
-        private ClientEngine clientEngine;
-        private TrackerManager trackerManager;
-        private TorrentManager? manager;
+        private readonly ClientEngine clientEngine;
+        private readonly TrackerManager trackerManager;
+        private readonly TorrentManager? manager;
 
-        public async void Initialize()
+        private async void Initialize()
         {
             // magnet link parse
             MonoTorrent.MagnetLink magnetLink = MonoTorrent.MagnetLink.Parse(MagnetUrl);
 
             // initialize manager
-            var manager = await clientEngine.AddAsync(magnetLink, savePath);
+            var manager = await clientEngine.AddAsync(magnetLink, SavePath);
 
             // add trackers
             foreach (Tracker tracker in trackerManager.Query(TrackerManager.All))
