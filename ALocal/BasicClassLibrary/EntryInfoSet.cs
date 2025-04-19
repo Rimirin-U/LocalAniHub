@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+//条目信息集
 namespace BasicClassLibrary
 {
     public class EntryInfoSet

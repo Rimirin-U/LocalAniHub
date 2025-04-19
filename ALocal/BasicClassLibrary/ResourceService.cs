@@ -40,7 +40,7 @@ namespace BasicClassLibrary
             {
                 throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
             }
-                // 下载资源
+            // 下载资源
             _resourceDownload.Download(resourceItem.DownloadUrl);
         }
 
