@@ -11,8 +11,16 @@ namespace BasicClassLibrary
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "data/data.db");
-            optionsBuilder.UseSqlite($"Data source={path}");
+            var dirPath = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            var dbPath = Path.Combine(dirPath, "data.db");
+
+            // 确保目录存在
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
     }
 }
