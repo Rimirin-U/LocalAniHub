@@ -20,18 +20,20 @@ namespace BasicClassLibrary
         private MonoTorrent.Client.ClientEngine clientEngine;
 
         // use default download path
-        public MagnetDownloadManager GetMagnetDownloadManager(string magnetUrl)
+        public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl)
         {
             MagnetDownloadManager manager = new(magnetUrl,
                 GlobalSettingsService.Instance.GetValue("downloadPath"),
                 clientEngine, TrackerManager);
+            await manager.Initialize();
             return manager;
         }
 
         // not use default download path
-        public MagnetDownloadManager GetMagnetDownloadManager(string magnetUrl,string downloadPath)
+        public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl,string downloadPath)
         {
             MagnetDownloadManager manager = new(magnetUrl,downloadPath, clientEngine, TrackerManager);
+            await manager.Initialize();
             return manager;
         }
     }

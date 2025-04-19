@@ -21,8 +21,6 @@ namespace BasicClassLibrary
             this.trackerManager = trackerManager;
             MagnetUrl = magnetUrl;
             manager = null;
-
-            Initialize();
         }
 
         public string MagnetUrl { get; init; }
@@ -32,7 +30,7 @@ namespace BasicClassLibrary
         private readonly TrackerManager trackerManager;
         private readonly TorrentManager? manager;
 
-        private async void Initialize()
+        public async Task Initialize()
         {
             // magnet link parse
             MonoTorrent.MagnetLink magnetLink = MonoTorrent.MagnetLink.Parse(MagnetUrl);
@@ -58,17 +56,17 @@ namespace BasicClassLibrary
                 );
         }
 
-        public async void Start()
+        public async Task Start()
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
             await manager.StartAsync();
         }
-        public async void Pause()
+        public async Task Pause()
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
             await manager.PauseAsync();
         }
-        public async void Stop()
+        public async Task Stop()
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
             await manager.StopAsync();
