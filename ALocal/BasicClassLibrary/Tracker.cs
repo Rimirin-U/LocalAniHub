@@ -1,4 +1,5 @@
 ﻿using Azure.Core.Pipeline;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,10 @@ namespace BasicClassLibrary
 
         public int Id { get; set; }
         public string Url { get; set; }
+    }
+
+    public partial class AppDbContext
+    {
+        DbSet<Tracker> Trackers { get; set; }
     }
 }
