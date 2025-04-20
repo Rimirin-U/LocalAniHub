@@ -14,10 +14,10 @@ namespace BasicClassLibrary
     public class ResourceService
     {
         private readonly ResourceManager _resourceManager;
-        private readonly BtDownload _resourceDownload;
+        private readonly ResourceDownload _resourceDownload;
 
         // 构造函数
-        public ResourceService(ResourceManager resourceManager, BtDownload resourceDownload)
+        public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
         {
             _resourceManager = resourceManager;
             _resourceDownload = resourceDownload;
@@ -28,15 +28,9 @@ namespace BasicClassLibrary
         {
             _resourceManager.Addresource(resource);
         }
-<<<<<<< Updated upstream
-
-        // 下载指定资源为指定作品的指定集数
-        public void DownloadAndAddResource(ResourceItem resourceItem)
-=======
         // 下载资源
         // 修改 DownloadAndAddResource 变为异步
         public async Task DownloadAndAddResource(ResourceItem resourceItem)
->>>>>>> Stashed changes
         {
             if (resourceItem == null)
             {
@@ -46,13 +40,8 @@ namespace BasicClassLibrary
             {
                 throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
             }
-<<<<<<< Updated upstream
-            // 下载资源
-            _resourceDownload.Download(resourceItem.DownloadUrl);
-=======
             // 下载资源并等待完成
             await _resourceDownload.GetMagnetDownloadManager(resourceItem.DownloadUrl);
->>>>>>> Stashed changes
         }
 
         // 按最大保存日期清理
