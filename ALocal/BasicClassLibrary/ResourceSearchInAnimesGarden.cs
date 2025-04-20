@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -11,7 +12,7 @@ namespace BasicClassLibrary
 {
    
 
-    public class ResourceSearchInAnimesGarden 
+    public class ResourceSearchInAnimesGarden : IResourceSearch
     {
         /*
         // 共享的HttpClient实例（静态，避免重复创建）
@@ -105,6 +106,11 @@ namespace BasicClassLibrary
         public static string SanitizeString(string? value)
         {
             return value?.Trim() ?? string.Empty; // 显式处理null
+        }
+
+        public List<SyndicationFeed> Search(string keyWord)
+        {
+            throw new NotImplementedException();
         }
     }
 }
