@@ -25,7 +25,7 @@ namespace BasicClassLibrary
 
         public TrackerManager TrackerManager { get; set; }
 
-        private MonoTorrent.Client.ClientEngine clientEngine;
+        private readonly MonoTorrent.Client.ClientEngine clientEngine;
 
         // use default download path
         public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl)
