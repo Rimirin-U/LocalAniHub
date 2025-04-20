@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class Note : IEntityWithId,IEntriesNavigation, IEpisodesNavigation
+    public class Note : IEntityWithId, IEntriesNavigation, IEpisodesNavigation
     {
         public Note()
         {
@@ -25,5 +26,10 @@ namespace BasicClassLibrary
         public ICollection<Episode> Episodes { get; set; }
 
         public string Content { get; set; }
+    }
+
+    public partial class AppDbContext : DbContext
+    {
+        DbSet<Note> notes { get; set; }
     }
 }

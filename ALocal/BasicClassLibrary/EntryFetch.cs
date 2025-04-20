@@ -47,7 +47,7 @@ namespace BasicClassLibrary
 
         public List<EntryInfoSet> Fetch()
         {
-            return entryFetch.Search();
+            return entryFetch.Fetch();
         }
     }
 }
