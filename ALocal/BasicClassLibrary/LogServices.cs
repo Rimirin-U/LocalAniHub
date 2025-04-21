@@ -17,6 +17,150 @@ using System.Data;
 
 namespace BasicClassLibrary
 {
+    //修改后
+    public class LoggerService
+    {
+        private static ILogger _logger;
+
+        // 静态构造函数，初始化日志服务
+        static LoggerService()
+        {
+            try
+            {
+                _logger = LoggerConfig.CreateLogger(); // 创建日志器
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Failed to initialize LoggerService: {ex.Message}");
+                throw; // 抛出异常以便调用方处理
+            }
+        }
+
+        // 添加观看日志
+        public static void AddLogWatch(int episodeId)
+        {
+            var logEntry = new WatchLogEntry(episodeId); // 创建观看日志条目
+            Log(logEntry); // 记录日志
+        }
+
+        // 添加评价日志
+        public static void AddLogReview(int noteId)
+        {
+            var logEntry = new ReviewLogEntry(noteId); // 创建评价日志条目
+            Log(logEntry); // 记录日志
+        }
+
+        // 添加评分日志
+        public static void AddLogRating(int entryId, int score)
+        {
+            var logEntry = new RatingLogEntry(entryId, score); // 创建评分日志条目
+            Log(logEntry); // 记录日志
+        }
+        private static void Log<T>(T logEntry) where T : LogEntry
+        {
+            try
+            {
+                string logType = typeof(T).Name; // 获取日志类型（类名）
+                string renderedMessage = $"[{logType}] {logEntry.Timestamp}"; // 设置 RenderedMessage
+                string properties = JsonConvert.SerializeObject(new { EpisodeId = (logEntry as WatchLogEntry)?.EpisodeId, NoteId = (logEntry as ReviewLogEntry)?.NoteId, EntryId = (logEntry as RatingLogEntry)?.EntryId, Score = (logEntry as RatingLogEntry)?.Score }); // 序列化附加属性信息
+
+                // 使用 Serilog 写入日志
+                _logger.ForContext("Level", "Information") // 假设所有日志都是 Information 级别
+                       .ForContext("Exception", "") // 如果没有异常，可以留空
+                       .ForContext("RenderedMessage", renderedMessage)
+                       .ForContext("Properties", properties)
+                       .Information("{RenderedMessage}", renderedMessage);
+
+                Console.WriteLine("Log entry successfully written to database.");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Failed to log event of type {typeof(T).Name}: {ex.Message}");
+                Console.Error.WriteLine($"Stack Trace: {ex.StackTrace}");
+            }
+        }
+
+        public static List<T> GetLogs<T>(DateTime? startDate = null, DateTime? endDate = null) where T : LogEntry
+        {
+            var logs = new List<T>(); // 存储查询结果
+
+            using (var conn = new SQLiteConnection(LoggerConfig.connectionString)) // 创建数据库连接
+            {
+                conn.Open(); // 打开连接
+                using (var cmd = conn.CreateCommand()) // 创建命令对象
+                {
+                    // 构建动态 SQL 查询
+                    var sql = @"
+                    SELECT * FROM Logs 
+                    WHERE Properties LIKE @logType"; // 注意：这里需要更新为更精确的匹配方式
+
+                    if (startDate.HasValue)
+                    {
+                        sql += " AND Timestamp >= @startDate"; // 添加起始时间条件
+                    }
+
+                    if (endDate.HasValue)
+                    {
+                        sql += " AND Timestamp <= @endDate"; // 添加结束时间条件
+                    }
+
+                    cmd.CommandText = sql; // 设置 SQL 查询语句
+
+                    // 绑定日志类型参数
+                    cmd.Parameters.AddWithValue("@logType", $"%\"{typeof(T).Name}\"%");
+
+                    // 绑定起始时间参数（如果存在）
+                    if (startDate.HasValue)
+                    {
+                        cmd.Parameters.AddWithValue("@startDate", startDate.Value);
+                    }
+
+                    // 绑定结束时间参数（如果存在）
+                    if (endDate.HasValue)
+                    {
+                        cmd.Parameters.AddWithValue("@endDate", endDate.Value);
+                    }
+
+                    using (var reader = cmd.ExecuteReader()) // 执行查询
+                    {
+                        while (reader.Read()) // 遍历查询结果
+                        {
+                            var logEventJson = reader["Properties"].ToString(); // 获取 Properties 字段的值
+
+                            var logEntry = DeserializeLogEntry<T>(logEventJson); // 反序列化日志事件
+                            if (logEntry != null) // 确保反序列化结果非空
+                            {
+                                logs.Add(logEntry); // 添加到结果列表
+                            }
+                        }
+                    }
+                }
+            }
+
+            return logs; // 返回查询结果
+        }
+
+        // 反序列化日志事件
+        private static T? DeserializeLogEntry<T>(string json) where T : LogEntry
+        {
+            try
+            {
+                var logEntry = JsonConvert.DeserializeObject<T>(json); // 将 JSON 转换为对象
+                if (logEntry == null)
+                {
+                    throw new InvalidOperationException("Deserialized log entry is null.");
+                }
+                return logEntry;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Failed to deserialize log entry: {ex.Message}");
+                return default; // 返回默认值（null）
+            }
+        }
+    }
+    /*
+    //修改前
     //查询结果的完整信息:（包括时间戳、日志类型等）
     public class LogResult<T> where T : LogEntry
     {
@@ -116,11 +260,7 @@ namespace BasicClassLibrary
                         {
                             while (reader.Read())
                             {
-                                /*var json = reader["LogEvent"]?.ToString();
-                                if (!string.IsNullOrEmpty(json) && TryParseLogEntry<T>(json, reader, out var logEntry))
-                                {
-                                    logs.Add(logEntry);
-                                }*/
+                              
                                 var timestamp = reader["Timestamp"] != DBNull.Value ? (DateTime)reader["Timestamp"] : default;
                                 var json = reader["LogEvent"]?.ToString();
                                 if (!string.IsNullOrEmpty(json) && TryParseLogEntry<T>(json, reader, out var logEntry))
@@ -183,119 +323,6 @@ namespace BasicClassLibrary
 
             return false;
         }
-    }
+    }*/
 }
-/*
- 假设程序运行成功，SQLite 数据库文件 logs.db 中将生成如下数据：
- 
-Id	Timestamp	        LogType	        LogEvent
-1	2025-04-16 15:49:00	WatchLogEntry	{"EpisodeId": 123}
-2	2025-04-16 16:00:00	ReviewLogEntry	{"NoteId": 456}
-3	2025-04-16 16:10:00	RatingLogEntry	{"EntryId": 789, "Score": 5}
-
- */
-
-
-// 日志记录服务
-/*public static class LoggerService
-{
-    // 静态日志记录器实例
-    private static readonly ILogger _logger = LoggerConfig.CreateLogger();
-    // 预定义常用模板提升性能
-    private static readonly MessageTemplate _baseTemplate
-        = new MessageTemplateParser().Parse("[{LogType}] {Data}");
-    // 记录观看日志方法
-    public static void LogWatch(int episodeId)
-    {
-        // 创建观看日志条目对象
-        var logEntry = new WatchLogEntry { EpisodeId = episodeId };
-        // 调用内部记录方法，指定日志类型为"Watch"
-        LogWithType("Watch", logEntry);
-    }
-
-    public static void LogReview(int noteId)
-    {
-        var logEntry = new ReviewLogEntry { NoteId = noteId };
-        LogWithType("Review", logEntry);
-    }
-
-    public static void LogRating(int entryId, int score)
-    {
-        var logEntry = new RatingLogEntry { EntryId = entryId, Score = score };
-        LogWithType("Rating", logEntry);
-    }
-    // 通用日志记录方法（泛型约束T必须继承自LogEntry）
-    private static void LogWithType<T>(string logType, T logEntry) where T : LogEntry
-    {
-        var logEvent = new LogEvent(
-            DateTimeOffset.Now,  // 当前时间作为时间戳
-            LogEventLevel.Information,// 日志级别设为Information
-            null,      // 异常对象（无异常时为null
-            _baseTemplate,
-            new List<LogEventProperty>// 日志属性列表
-            {
-                new LogEventProperty("LogType", new ScalarValue(logType)),// 添加LogType属性
-                new LogEventProperty("Data", new ScalarValue(logEntry)) // 添加数据对象
-            });
-        // 使用日志上下文推入LogType属性
-        using (LogContext.PushProperty("LogType", logType))
-        {
-            // 写入日志事件
-            _logger.Write(logEvent);
-        }
-    }
-    // 日志查询服务
-    // 获取日志的泛型方法
-    public static List<T> GetLogs<T>(string logType, DateTime? start = null, DateTime? end = null) where T : LogEntry
-    {
-        // 数据库连接字符串
-        const string connectionString = "Data Source=logs.db";
-        // 构建基础查询语句
-        var query = new StringBuilder("SELECT * FROM Logs WHERE LogType = @logType");
-        // 参数列表（初始包含logType参数）
-        var parameters = new List<SQLiteParameter> { new SQLiteParameter("@logType", logType) };
-        // 添加时间范围过滤条件
-        if (start.HasValue)
-        {
-            query.Append(" AND Timestamp >= @start");
-            parameters.Add(new SQLiteParameter("@start", start.Value));
-        }
-
-        if (end.HasValue)
-        {
-            query.Append(" AND Timestamp <= @end");
-            parameters.Add(new SQLiteParameter("@end", end.Value));
-        }
-        // 准备返回结果列表
-        var logs = new List<T>();
-        // 使用数据库连接
-        using (var conn = new SQLiteConnection(connectionString))
-        {
-            conn.Open();
-            // 创建命令对象
-            using (var cmd = new SQLiteCommand(query.ToString(), conn))
-            {
-                // 添加参数集合
-                cmd.Parameters.AddRange(parameters.ToArray());
-                // 执行查询
-                using (var reader = cmd.ExecuteReader())
-                {
-                    // 遍历结果集
-                    while (reader.Read())
-                    {
-                        //从LogEvent列获取JSON数据
-                        var json = reader["LogEvent"].ToString();
-                        // 反序列化为指定类型对象
-                        var logEntry = JsonConvert.DeserializeObject<T>(json);
-                        // 设置时间戳（从数据库原始字段获取）
-                        logEntry.Timestamp = Convert.ToDateTime(reader["Timestamp"]);
-                        logs.Add(logEntry);
-                        // 添加到结果列表
-                    }
-                }
-            }
-        }
-        return logs;
-    }
-}*/
 

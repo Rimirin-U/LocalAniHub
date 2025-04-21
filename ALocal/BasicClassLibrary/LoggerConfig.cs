@@ -13,8 +13,28 @@ using System.Data.SQLite;
 
 namespace BasicClassLibrary
 {
-    //后续这个文件可能需要看情况修改，因为自动建表一直存在问题，所以我就用了手动建表
-    //如果后续存在问题，再想办法修改回自动建表
+    //修改后
+    public class LoggerConfig
+    {
+        internal static readonly string connectionString = "Data Source=logs.db";
+
+        // 配置 Serilog 日志器，写入 SQLite 数据库
+        public static ILogger CreateLogger()
+        {
+            return new LoggerConfiguration()
+                .MinimumLevel.Debug() // 设置最低日志级别为 Debug
+                .WriteTo.SQLite(
+                    sqliteDbPath: Path.Combine(AppContext.BaseDirectory, "logs.db"), // 使用绝对路径
+                    tableName: "Logs",      // 日志表名
+                    storeTimestampInUtc: true, // 使用 UTC 时间戳
+                    batchSize: 1 // 批量写入大小
+                )
+                .CreateLogger(); // 创建并返回日志器
+        }
+        //如果表不存在，则自动创建，如果表已存在，则直接写入日志
+    }
+    /*
+    //修改前
      public class LoggerConfig
      {
          // 初始化数据库并手动创建表
@@ -60,33 +80,9 @@ namespace BasicClassLibrary
                  )
                  .CreateLogger();
          }
-     }
+     }*/
 }
 
-
-   /* public class LoggerConfig
-    {
-        public static ILogger CreateLogger()
-        {
-            return new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .Enrich.WithProperty("LogType", "")
-                .WriteTo.SQLite(
-                    sqliteDbPath: "logs.db",
-                    tableName: "Logs",
-                    storeTimestampInUtc: true,
-                    columnOptions: new ColumnOptions
-                    {
-                        AdditionalColumns = new Collection<SqlColumn>
-                        {
-                                new SqlColumn("LogType", SqlDbType.Text) // 使用正确的 SQLite 数据类型
-                        }
-                    },
-                    autoCreateSqlTable: true
-                )
-                .CreateLogger();
-        }
-    }*/
 
 
 
