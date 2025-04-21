@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -25,5 +26,9 @@ namespace BasicClassLibrary
             ImportData = importData;
             ResourcePath = path;
         }
+    }
+    public partial class AppDbContext : DbContext
+    {
+        public DbSet<Resource> Resources { get; set; }
     }
 }

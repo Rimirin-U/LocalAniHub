@@ -51,7 +51,7 @@ namespace BasicClassLibrary
                 throw new ArgumentException("Days to keep must be positive.", nameof(daysToKeep));
 
             var threshold = DateTime.Now.AddDays(-daysToKeep);
-            var resources = _resourceManager.Query(r => true); // 使用 Query 方法代替 All
+            var resources = _resourceManager.Query(r=>true);
             CleanupByTime(resources, threshold);
         }
 
@@ -61,8 +61,8 @@ namespace BasicClassLibrary
             if (maxSizeMB <= 0)
                 throw new ArgumentException("Max size must be positive.", nameof(maxSizeMB));
 
-            var maxSizeBytes = (long)maxSizeMB * 1024 * 1024;
-            var resources = _resourceManager.Query(r => true); // 使用 Query 方法代替 All
+            var maxSizeBytes = (long)maxSizeMB * 1024 * 1024;//转换为字节
+            var resources = _resourceManager.Query(r => true);
             CleanupBySize(resources, maxSizeBytes);
         }
 
@@ -73,6 +73,7 @@ namespace BasicClassLibrary
             {
                 DeleteResourceWithFile(resource);
             }
+            //删除导入日期早于设定日期的资源
         }
 
         private void CleanupBySize(List<Resource> resources, long maxSizeBytes)
@@ -80,14 +81,14 @@ namespace BasicClassLibrary
             var validResources = resources
                 .Where(r => !string.IsNullOrWhiteSpace(r.ResourcePath) && File.Exists(r.ResourcePath))
                 .ToList();
-
+            //资源路径存在并且不为空白
             long totalSize = validResources.Sum(r =>
                 r.ResourcePath != null ? new FileInfo(r.ResourcePath).Length : 0);
-
+            //目前资源总大小
             if (totalSize <= maxSizeBytes) return;
 
             validResources.Sort(ResourceManager.SortByImportData);
-
+            //按导入日期对资源进行排序 假设最早的排在最前面
             foreach (var resource in validResources)
             {
                 if (totalSize <= maxSizeBytes) break;
@@ -99,6 +100,7 @@ namespace BasicClassLibrary
                     totalSize -= fileSize;
                 }
             }
+            //依次删除最旧的文件，直到总大小不超过限制
         }
 
         private void DeleteResourceWithFile(Resource resource)
