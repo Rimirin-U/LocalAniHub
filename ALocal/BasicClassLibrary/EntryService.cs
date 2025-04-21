@@ -14,21 +14,25 @@ namespace BasicClassLibrary
         private readonly EntryManager manager;//条目管理
         private readonly EpisodeManager episodeManager;//单集管理
         private readonly EntryRatingManager entryRatingManager;//评分管理
-        private readonly EntryMatadataManager entryMatadataManager;//播出时间管理
+        private readonly EntryMetaDataManager entryMetaDataManager;//条目元数据管理
+        private readonly EntryTimeInfoManager entryTimeInfoManager;//条目播出时间
         //条目服务的构造函数
         public EntryService(
             EntryFetch fetch,
             EntryManager manager,
             EpisodeManager episodeManager,
             EntryRatingManager entryRatingManager,
-            EntryMatadataManager entryMatadataManager)
+            EntryMetaDataManager entryMetaDataManager,
+            EntryTimeInfoManager entryTimeInfoManager)
         {
             this.fetch = fetch;
             this.manager = manager;
             this.episodeManager = episodeManager;
             this.entryRatingManager = entryRatingManager;
-            this.entryMatadataManager = entryMatadataManager;
+            this.entryMetaDataManager = entryMetaDataManager;
+            this.entryTimeInfoManager = entryTimeInfoManager;
         }
+        
         public EntryFetch Fetch
         {
             get
@@ -57,11 +61,18 @@ namespace BasicClassLibrary
                 return entryRatingManager;
             }
         }
-        public EntryMatadataManager EntryMatadataManager
+        public EntryMetaDataManager EntryMetaDataManager
         {
             get
             {
-                return entryMatadataManager;
+                return entryMetaDataManager;
+            }
+        }
+        public EntryTimeInfoManager EntryTimeInfoManager
+        {
+            get
+            {
+                return entryTimeInfoManager;
             }
         }
         public void AddEntryWithEpisodes(Entry entry)
@@ -71,9 +82,10 @@ namespace BasicClassLibrary
             // 自动生成并关联EpisodeCount个单集
             for (int i = 1; i <= entry.EpisodeCount; i++) 
             {
-                var episode = new Episode
+                var episode = new Episode(entry.Id,entry,i)
                 {
                     EntryId = entry.Id,//关联到当前条目
+                    Entry = entry,
                     EpisodeNumber = i//集数
                 };
 

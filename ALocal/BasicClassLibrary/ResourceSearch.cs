@@ -6,8 +6,8 @@ namespace BasicClassLibrary
 {
     public class ResourceSearch
     {
-        private IResourceSearch resourceSearch;
-        public ResourceSearch()
+        
+        public ResourceSearch()//构造函数——从默认数据源拉取
         {
             int sourceType;
             try
@@ -29,7 +29,7 @@ namespace BasicClassLibrary
             }
         }
 
-        public ResourceSearch(int sourceType)
+        public ResourceSearch(int sourceType)//使用指定数据
         {
             switch (sourceType)
             {
@@ -41,7 +41,7 @@ namespace BasicClassLibrary
                     break;
             }
         }
-
+        private IResourceSearch resourceSearch;
 
         public async Task<List<ResourceItem>> SearchAsync(string keyword)
         {

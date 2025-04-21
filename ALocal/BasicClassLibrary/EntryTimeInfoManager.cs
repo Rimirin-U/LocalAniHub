@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    class EntryTimeInfoManager:Manager<EntryTimeInfo>
+   public class EntryTimeInfoManager:Manager<EntryTimeInfo>
     {
         //构造函数
         public EntryTimeInfoManager() : base(new AppDbContext()) { }
