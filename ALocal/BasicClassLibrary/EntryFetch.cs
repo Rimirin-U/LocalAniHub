@@ -45,9 +45,9 @@ namespace BasicClassLibrary
 
         private IEntryFetch entryFetch;
 
-        public List<EntryInfoSet> Fetch()
+        public async Task<List<EntryInfoSet>> FetchAsync()
         {
-            return entryFetch.Fetch();
+            return await entryFetch.FetchAsync();
         }
     }
 }
