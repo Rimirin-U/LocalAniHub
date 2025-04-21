@@ -7,7 +7,7 @@ namespace BasicClassLibrary
     public class ResourceSearch
     {
         
-        public ResourceSearch()
+        public ResourceSearch()//构造函数——从默认数据源拉取
         {
             int sourceType;
             try
@@ -29,7 +29,7 @@ namespace BasicClassLibrary
             }
         }
 
-        public ResourceSearch(int sourceType)
+        public ResourceSearch(int sourceType)//使用指定数据
         {
             switch (sourceType)
             {
@@ -48,7 +48,7 @@ namespace BasicClassLibrary
             if (string.IsNullOrWhiteSpace(keyword))
                 throw new ArgumentException("Keyword cannot be null or empty");
 
-            return await resourceSearch.Search(keyword);
+            return await resourceSearch.SearchAsync(keyword);
         }
     }
 

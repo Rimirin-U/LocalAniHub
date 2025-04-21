@@ -10,26 +10,33 @@ namespace BasicClassLibrary
     public class EntryFetchInYucWiki : IEntryFetch
     {
         private const string BaseUrl = "https://yuc.wiki/202504/";//存储目标网站的地址
-        private readonly HttpClient _httpClient;//HttpClient 是 .NET 中用于发送 HTTP 请求和接收 HTTP 响应的核心类
+       //private readonly HttpClient _httpClient;//HttpClient 是 .NET 中用于发送 HTTP 请求和接收 HTTP 响应的核心类
+        private readonly IHttpClientWrapper _httpClient;
+        //public EntryFetchInYucWiki()//构造函数
+        //{ 
+        //    _httpClient = new HttpClient();
+        //    _httpClient.BaseAddress = new Uri(BaseUrl);
+        //}
 
-        public EntryFetchInYucWiki()//构造函数
-        { 
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(BaseUrl);
+        public EntryFetchInYucWiki(IHttpClientWrapper httpClient)
+        {
+            _httpClient = httpClient;
         }
 
-        public List<EntryInfoSet> Search()
+
+        //public List<EntryInfoSet> Search()
+        public async Task<List<EntryInfoSet>> FetchAsync()//改成异步方法
         {
             try
             {
                 // 1. 从固定API端点获取数据
-                HttpResponseMessage response = _httpClient.GetAsync("api/entries").Result;
+                HttpResponseMessage response = await _httpClient.GetAsync("api/entries");
                 //同步请求：调用 GetAsync 发送GET请求到 api/entries（最终URL为 https://yuc.wiki/202504/api/entries）
                 //.Result：阻塞当前线程，等待异步操作完成
                 response.EnsureSuccessStatusCode();//确保请求成功
 
                 // 2. 解析JSON响应
-                string json = response.Content.ReadAsStringAsync().Result;//读取响应内容转化为字符串
+                string json =await response.Content.ReadAsStringAsync();//读取响应内容转化为字符串
                 var apiResponse = JsonConvert.DeserializeObject<YucWikiApiResponse>(json);
                 //反序列化JSON：使用 JsonConvert（Newtonsoft.Json库）将JSON字符串转换为 YucWikiApiResponse 对象。
 
