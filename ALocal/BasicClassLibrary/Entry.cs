@@ -35,10 +35,10 @@ namespace BasicClassLibrary
             HasUpdateTime = hasUpdateTime;
             AutoClearResources = autoClearResources;//感觉两个设置属性的初始化有点问题
         }
-        //关于数据库的上下文
-        public partial class AppDbContext : DbContext
-        {
-            public DbSet<Entry>Entries { get; set; }
-        }
+    }
+    //关于数据库的上下文
+    public partial class AppDbContext : DbContext
+    {
+        public DbSet<Entry> Entries { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace BasicClassLibrary
             Directory.CreateDirectory(resourceFolder); // 如果文件夹已存在，则不会抛出异常
 
             // 获取目标文件路径
-            string fileName = Path.GetFileName(resource.ResourcePath);
+            string fileName = Path.GetFileName(resource.ResourcePath?? string.Empty);
             string destFilePath = Path.Combine(resourceFolder, fileName);
 
             // 检查目标路径是否已存在同名文件
@@ -34,14 +34,29 @@ namespace BasicClassLibrary
                 throw new Exception($"文件命名冲突: {destFilePath}");
             }
 
-            // 移动文件到目标路径
             try
             {
+                // 确保源文件路径不为空
+                if (string.IsNullOrEmpty(resource.ResourcePath))
+                {
+                    throw new InvalidOperationException("Resource path is null or empty.");
+                }
+
+                // 确保目标文件路径不为空
+                if (string.IsNullOrEmpty(destFilePath))
+                {
+                    throw new InvalidOperationException("Destination file path is null or empty.");
+                }
+
+                // 移动文件
                 File.Move(resource.ResourcePath, destFilePath);
-                resource.ResourcePath = destFilePath; // 更新资源对象的路径
+
+                // 更新资源对象的路径
+                resource.ResourcePath = destFilePath;
             }
             catch (Exception ex)
             {
+                // 捕获异常并重新抛出更详细的错误信息
                 throw new Exception($"移动文件失败: {ex.Message}");
             }
         }
@@ -54,9 +69,14 @@ namespace BasicClassLibrary
         //删除资源所在的文件夹
         private void DeleteResourceFolder(int id)
         {
-            Resource resource = FindById(id);
+            Resource? resource = FindById(id);
             // 删除文件
-            if (File.Exists(resource.ResourcePath))
+            if (resource == null)
+            {
+                throw new InvalidOperationException("Resource not found.");
+            }
+
+            if (!string.IsNullOrEmpty(resource.ResourcePath) && File.Exists(resource.ResourcePath))
             {
                 File.Delete(resource.ResourcePath);
             }
@@ -72,8 +92,11 @@ namespace BasicClassLibrary
         public static readonly Comparison<Resource> SortByImportData = (x, y) =>
     x.ImportData.CompareTo(y.ImportData);
         //按照资源对应的条目的id进行查找
+        /*public static readonly Func<int, Func<Resource, bool>> ByEntryId = (entryId =>
+    (resource => resource.Episode.EntryId == entryId));*/
+
         public static readonly Func<int, Func<Resource, bool>> ByEntryId = (entryId =>
-    (resource => resource.Episode.EntryId == entryId));
+    resource => resource.Episode?.EntryId == entryId);//resource.Episode?.EntryId 表示如果 Episode 为 null，则直接返回 null，而不会尝试访问 EntryId。
     }
 }
 
