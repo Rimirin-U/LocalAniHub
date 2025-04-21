@@ -8,22 +8,12 @@ using Newtonsoft.Json;
 //条目元数据类
 namespace BasicClassLibrary
 {
-    // 实体类：条目元数据
-    //public enum MetadataType
-    //{
-    //    Date,       // 日期型（数据项为日期）
-    //    Time,       // 时间型（数据项为时间）
-    //    Text,       // 普通数据（数据项为字符串）
-    //    Link,       // 链接数据（数据项为链接）
-    //    EntryLink,  // 链接条目（数据项为其他条目（id））
-    //    Tag         // tag（无数据项）
-    //}
     public class EntryMetadata : IEntryNavigation, IEntityWithId
     {
         public int Id { get; set; } // 主键
 
-        public int? EntryId { get; set; } // 外键
-        public Entry? Entry { get; set; } // 导航属性
+        public int? EntryId { get; set; } // 外键 对应条目ID
+        public Entry? Entry { get; set; } // 导航属性 对应条目
 
         // 核心字典属性，存储元数据
         private Dictionary<string, string> _metadataValues { get; set; } = new();
