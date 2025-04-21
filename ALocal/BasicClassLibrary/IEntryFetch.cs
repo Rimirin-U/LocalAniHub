@@ -8,6 +8,6 @@ namespace BasicClassLibrary
 {
     public interface IEntryFetch
     {
-        public List<EntryInfoSet> Search();
+        public Task<List<EntryInfoSet>> FetchAsync();
     }
 }

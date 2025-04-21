@@ -55,6 +55,23 @@ namespace BasicClassLibrary
             return lst;
         }
 
+        // pageNum start with 1
+        public virtual List<T> Query(Func<T, bool> predicate, int pageNum,int pageSize)
+        { 
+            List<T> lst = [.. context.Set<T>().Where(predicate)
+                .Skip((pageNum - 1) * pageSize).Take(pageSize).ToList()];
+            return lst;
+        }
+
+        // pageNum start with 1
+        public virtual List<T> Query(Func<T, bool> predicate, int pageNum,int pageSize,Comparison<T> comparison)
+        { 
+            List<T> lst = [.. context.Set<T>().Where(predicate)
+                .Skip((pageNum - 1) * pageSize).Take(pageSize).ToList()];
+            lst.Sort(comparison);
+            return lst;
+        }
+
         public static readonly Func<T, bool> All = (t => true);
         public static readonly Comparison<T> SortById = ((o1, o2) => o1.Id > o2.Id ? 1 : o1.Id == o2.Id ? 0 : -1);
     }
