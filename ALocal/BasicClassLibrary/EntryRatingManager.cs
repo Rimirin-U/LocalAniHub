@@ -13,4 +13,3 @@ namespace BasicClassLibrary
         public static readonly Func<int, Func<EntryRating, bool>> ByEntryId = (entryId => (o => o.EntryId == entryId));
     }
 }
-}

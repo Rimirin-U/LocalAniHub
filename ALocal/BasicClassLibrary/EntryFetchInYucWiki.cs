@@ -10,18 +10,18 @@ namespace BasicClassLibrary
     public class EntryFetchInYucWiki : IEntryFetch
     {
         private const string BaseUrl = "https://yuc.wiki/202504/";//存储目标网站的地址
-       //private readonly HttpClient _httpClient;//HttpClient 是 .NET 中用于发送 HTTP 请求和接收 HTTP 响应的核心类
-        private readonly IHttpClientWrapper _httpClient;
-        //public EntryFetchInYucWiki()//构造函数
-        //{ 
-        //    _httpClient = new HttpClient();
-        //    _httpClient.BaseAddress = new Uri(BaseUrl);
-        //}
-
-        public EntryFetchInYucWiki(IHttpClientWrapper httpClient)
+        private readonly HttpClient _httpClient;//HttpClient 是 .NET 中用于发送 HTTP 请求和接收 HTTP 响应的核心类
+        //private readonly IHttpClientWrapper _httpClient;
+        public EntryFetchInYucWiki()//构造函数
         {
-            _httpClient = httpClient;
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri(BaseUrl);
         }
+
+        //public EntryFetchInYucWiki(IHttpClientWrapper httpClient)
+        //{
+        //    _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        //}
 
 
         //public List<EntryInfoSet> Search()
