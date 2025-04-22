@@ -33,6 +33,8 @@ namespace BasicClassLibrary
         }
         //如果表不存在，则自动创建，如果表已存在，则直接写入日志
     }
+
+
     /*
     //修改前
      public class LoggerConfig

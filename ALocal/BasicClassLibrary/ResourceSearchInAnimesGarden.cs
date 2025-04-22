@@ -84,10 +84,6 @@ namespace BasicClassLibrary
         {
             return value?.Trim() ?? string.Empty; // 显式处理null
         }
-        public List<SyndicationFeed> Search(string keyWord)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
    
