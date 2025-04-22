@@ -9,6 +9,6 @@ namespace BasicClassLibrary
 {
     public interface IResourceSearch
     {
-        public List<SyndicationFeed> Search(string keyWord);
+        public Task<List<ResourceItem>> SearchAsync(string keyword, CancellationToken ct = default);
     }
 }
