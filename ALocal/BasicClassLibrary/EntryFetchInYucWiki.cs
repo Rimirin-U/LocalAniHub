@@ -41,6 +41,10 @@ namespace BasicClassLibrary
                 //运用 XPath 表达式选取所有style属性包含float:left的div元素，这些元素被当作条目容器。
                 var entryNodes = htmlDoc.DocumentNode.SelectNodes("//div[contains(@style, 'float:left')]");
 
+                if (entryNodes == null)
+                {
+                    throw new EntrySearchException("yuc.wiki", "未找到任何条目节点");
+                }
                 if (entryNodes != null)
                 {
                     //对每一个条目节点进行遍历
