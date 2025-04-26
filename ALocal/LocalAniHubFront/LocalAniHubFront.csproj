@@ -27,13 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\wpfui-icon-256.png" />
-    <Resource Include="Assets\wpfui-icon-1024.png" />
+    <ProjectReference Include="..\BasicClassLibrary\BasicClassLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\Components\" />
-    <Folder Include="Views\Components\" />
+    <Resource Include="Assets\wpfui-icon-256.png" />
+    <Resource Include="Assets\wpfui-icon-1024.png" />
   </ItemGroup>
 
 </Project>

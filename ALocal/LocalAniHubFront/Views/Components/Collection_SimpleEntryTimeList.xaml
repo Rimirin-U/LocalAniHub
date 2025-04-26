@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="LocalAniHubFront.Views.Components.Collection_SimpleEntryTimeList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LocalAniHubFront.Views.Components"
+             xmlns:models="clr-namespace:LocalAniHubFront.Models"
+             
+             d:DataContext="{d:DesignInstance local:Collection_SimpleEntryTimeList,
+                                     IsDesignTimeCreatable=False}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Name="Collection_SimpleEntryTimeList">
+
+    <!--简单列表（收藏时间排序）-->
+    <!--其ViewModel在/ViewModels/Components中-->
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <!--按年分块-->
+            <!--每个年是一个YearBlock对象，存放在ViewModel中定义的YearBlocks列表中-->
+            <ItemsControl Name="Year"
+                ItemsSource="{Binding YearBlocks}">
+                <ItemsControl.ItemTemplate>
+                    <!--DataTemplate for YearBlock-->
+                    <DataTemplate DataType="{x:Type models:YearBlock}">
+                        <Grid
+                            Margin="0,72,0,0">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!--每一个YearBlock最上方是年份大标题（如：2024）-->
+                            <!--字号可能需要调整-->
+                            <TextBlock Name="YearTitle"
+                                       Grid.Row="0"
+                                       Text="{Binding Year}"
+                                       HorizontalAlignment="Left"
+                                       FontSize="48"
+                                       FontStyle="Normal"
+                                       FontWeight="Black"
+                                       />
+                            <!--标题下面是条目列表，因此需要嵌套的ItemsControl-->
+                            <!--每个YearBlock中有一个条目列表属性-->
+                            <!--其中存放收藏时间为当年的所有条目信息（按收藏时间排序）-->
+                            <!--这里的“条目信息”只需要存放一些必要信息（这里是原名、译名还有上映时间，可能还需要id）-->
+                            <!--同时还需要提供一个字符串供前端直接输出-->
+                            <!--以及打开对应条目的窗口的方法（可以暂缓）-->
+                            <ItemsControl Name="EntriesOfYear"
+                                          ItemsSource="{Binding EntryLines}">
+                                <ItemsControl.ItemTemplate>
+                                    <!--DataTemplate for Entry-->
+                                    <DataTemplate DataType="{x:Type models:EntryLine}">
+                                        <StackPanel
+                                            Margin="0,24,0,0"
+                                            HorizontalAlignment="Left"
+                                            Orientation="Horizontal">
+                                            <TextBlock Text="{Binding LineText}"
+                                                       Cursor="Hand">
+                                                <TextBlock.InputBindings>
+                                                    <MouseBinding Gesture="LeftClick" Command="{Binding OpenEntryWindow}"/>
+                                                </TextBlock.InputBindings>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <!--排列：垂直排列-->
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+                <!--排列：垂直排列-->
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+            </ItemsControl>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
