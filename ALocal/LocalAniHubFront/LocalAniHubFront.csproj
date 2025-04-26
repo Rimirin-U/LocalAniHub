@@ -18,7 +18,7 @@
     <PackageReference Include="WPF-UI" Version="4.0.2" />
     <PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0 "/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0 " />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +29,11 @@
   <ItemGroup>
     <Resource Include="Assets\wpfui-icon-256.png" />
     <Resource Include="Assets\wpfui-icon-1024.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\Components\" />
+    <Folder Include="Views\Components\" />
   </ItemGroup>
 
 </Project>
