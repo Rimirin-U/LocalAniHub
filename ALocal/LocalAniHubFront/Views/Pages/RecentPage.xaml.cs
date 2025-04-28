@@ -1,4 +1,4 @@
-﻿using LocalAniHubFront.ViewModels.Components;
+﻿using LocalAniHubFront.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +11,20 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Abstractions.Controls;
 
-namespace LocalAniHubFront.Views.Components
+namespace LocalAniHubFront.Views.Pages
 {
-    public partial class Collection_SimpleEntryTimeList : UserControl
+    public partial class RecentPage : INavigableView<RecentPageViewModel>
     {
-        public Collection_SimpleEntryTimeList()
+        public RecentPage(RecentPageViewModel viewModel)
         {
-            DataContext = new Collection_SimpleEntryTimeListViewModel();
+            ViewModel = viewModel;
+            DataContext = this;
             InitializeComponent();
         }
+
+        public RecentPageViewModel ViewModel { get; }
     }
 }
