@@ -12,7 +12,12 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Name="Recent_SeasonTable"
              ScrollViewer.CanContentScroll="False">
-    <Grid>
-            
-    </Grid>
+    <StackPanel>
+        <DataGrid
+            x:Name="UnifiedEntriesDataGrid"
+            Margin="0,24,0,24"
+            AutoGenerateColumns="False"
+            ItemsSource="{Binding UnifiedEntries}">
+        </DataGrid>
+    </StackPanel>
 </UserControl>
