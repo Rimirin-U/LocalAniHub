@@ -1,5 +1,4 @@
-﻿using LocalAniHubFront.ViewModels.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,11 +15,14 @@ using System.Windows.Shapes;
 
 namespace LocalAniHubFront.Views.Components
 {
-    public partial class Collection_SimpleEntryTimeList : UserControl
+    /// <summary>
+    /// Recent_SeasonTable.xaml 的交互逻辑
+    /// </summary>
+    public partial class Recent_SeasonTable : UserControl
     {
-        public Collection_SimpleEntryTimeList()
+        public Recent_SeasonTable()
         {
-            DataContext = new Collection_SimpleEntryTimeListViewModel();
+            DataContext = new Recent_SeasonTable();
             InitializeComponent();
         }
     }
