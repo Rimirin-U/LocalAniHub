@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalAniHubFront.ViewModels.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace LocalAniHubFront.Views.Pages
 {
-    /// <summary>
-    /// CollectionPage.xaml 的交互逻辑
-    /// </summary>
-    public partial class CollectionPage : Page
+    public partial class CollectionPage :INavigableView<CollectionViewModel>
     {
-        public CollectionPage()
+        public CollectionViewModel ViewModel { get; }
+
+        public CollectionPage(CollectionViewModel viewModel)
         {
+            ViewModel = viewModel;
+            DataContext = this;
             InitializeComponent();
         }
     }
