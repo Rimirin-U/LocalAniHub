@@ -21,7 +21,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         private string _selectedMode = "SimpleEntryTimeList"; // 设置默认值为第一个模式
 
         [ObservableProperty]
-        private UserControl _currentView = new UserControl();
+        private UserControl _currentView = new Collection_SimpleEntryTimeList(); // 默认视图
 
         private bool _isInitialized = false;
 
