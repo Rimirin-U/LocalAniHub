@@ -10,15 +10,17 @@
                                      IsDesignTimeCreatable=False}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             Name="Collection_SimpleEntryTimeList">
+             Name="Collection_SimpleEntryTimeList"
+             ScrollViewer.CanContentScroll="False">
 
     <!--简单列表（收藏时间排序）-->
     <!--其ViewModel在/ViewModels/Components中-->
 
     <ScrollViewer
         HorizontalScrollBarVisibility="Auto"
-        VerticalScrollBarVisibility="Auto">
-        <Grid>
+        VerticalScrollBarVisibility="Auto"
+        Margin="0,0,0,24">
+        <StackPanel>
             <!--按年分块-->
             <!--每个年是一个YearBlock对象，存放在ViewModel中定义的YearBlocks列表中-->
             <ItemsControl Name="Year"
@@ -27,7 +29,7 @@
                     <!--DataTemplate for YearBlock-->
                     <DataTemplate DataType="{x:Type models:YearBlock}">
                         <Grid
-                            Margin="0,72,0,0">
+                            Margin="0,36,0,0">
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -40,7 +42,7 @@
                                        Grid.Row="0"
                                        Text="{Binding Year}"
                                        HorizontalAlignment="Left"
-                                       FontSize="48"
+                                       FontSize="36"
                                        FontStyle="Normal"
                                        FontWeight="Black"
                                        />
@@ -56,10 +58,11 @@
                                     <!--DataTemplate for Entry-->
                                     <DataTemplate DataType="{x:Type models:EntryLine}">
                                         <StackPanel
-                                            Margin="0,24,0,0"
+                                            Margin="0,12,0,0"
                                             HorizontalAlignment="Left"
                                             Orientation="Horizontal">
                                             <TextBlock Text="{Binding LineText}"
+                                                       FontSize="16"
                                                        Cursor="Hand">
                                                 <TextBlock.InputBindings>
                                                     <MouseBinding Gesture="LeftClick" Command="{Binding OpenEntryWindow}"/>
@@ -89,6 +92,6 @@
                 </ItemsControl.ItemsPanel>
 
             </ItemsControl>
-        </Grid>
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

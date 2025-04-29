@@ -16,8 +16,26 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <!--下拉菜单，选择展示模式-->
+        <!--我们目前有且仅有Collection_SimpleEntryTimeListViewModel一种展示模式-->
+        <ComboBox
+            Grid.Row="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            ItemsSource="{Binding ViewModel.DisplayModes}"
+            SelectedItem="{Binding ViewModel.SelectedMode}">
+        </ComboBox>
+
+        <!--用于展示的列表-->
+        <ContentControl
+            Grid.Row="1"
+            Content="{Binding ViewModel.CurrentView}"/>
+        
     </Grid>
 </Page>
     

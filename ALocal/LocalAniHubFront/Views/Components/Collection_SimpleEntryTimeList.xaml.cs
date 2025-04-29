@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalAniHubFront.ViewModels.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace LocalAniHubFront.Views.Components
     {
         public Collection_SimpleEntryTimeList()
         {
-            DataContext = new Collection_SimpleEntryTimeList();
+            DataContext = new Collection_SimpleEntryTimeListViewModel();
             InitializeComponent();
         }
     }
