@@ -36,6 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Components\Setting_Page.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Components\Setting_TextBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
