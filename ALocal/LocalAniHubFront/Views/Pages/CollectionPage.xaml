@@ -28,7 +28,8 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             ItemsSource="{Binding ViewModel.DisplayModes}"
-            SelectedItem="{Binding ViewModel.SelectedMode}">
+            SelectedItem="{Binding ViewModel.SelectedMode}"
+            IsEditable="False">
         </ComboBox>
 
         <!--用于展示的列表-->
