@@ -17,9 +17,9 @@ using System.Windows.Shapes;
 
 namespace LocalAniHubFront.Views.Components
 {
-    public partial class Setting_Textbox : UserControl
+    public partial class Setting_Selection : UserControl
     {
-        public Setting_Textbox(SelectionSettingEntry settingEntry)
+        public Setting_Selection(SelectionSettingEntry settingEntry)
         {
             DataContext = new Setting_SelectionViewModel(settingEntry);// 该ViewModel构造函数传参
             InitializeComponent();
