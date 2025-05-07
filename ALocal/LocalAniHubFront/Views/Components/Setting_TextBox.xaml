@@ -32,7 +32,7 @@
             Grid.Column="1"
             VerticalAlignment="Top"
             Text="{Binding SettingText}"
-            LostFocus="{Binding OnLostFocus}"/>
+            LostFocus="{Binding LostFocusCommand}"/>
                 
     </Grid>
 </UserControl>

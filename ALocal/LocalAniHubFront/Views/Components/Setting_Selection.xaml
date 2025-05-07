@@ -33,7 +33,7 @@
             VerticalAlignment="Top"
             ItemsSource="{Binding Selections}"
             SelectedItem="{Binding Selected}"
-            SelectionChanged="{Binding OnSelectionChanged}"
+            SelectionChanged="{Binding SelectionChangedCommand}"
             IsEditable="False"/>
         <!--Selections为List<string>-->
         <!--注意初始化Selected-->
