@@ -30,9 +30,11 @@
         </ComboBox>
 
         <!--用于展示的列表-->
-        <ContentControl
+        <ui:Card>
+            <ContentControl
         Grid.Row="1"
         Content="{Binding ViewModel.CurrentView}"/>
+        </ui:Card>
 
     </Grid>
 </Page>
