@@ -12,7 +12,7 @@ namespace BasicClassLibrary
         private readonly NoteManager NoteManager;
         private readonly string BaseDirectory;
 
-        public NoteService(NoteManager noteManager, string baseDirectory)
+        public NoteService(NoteManager noteManager)
         {
             this.NoteManager = noteManager;
             BaseDirectory = "/base/NoteService";
