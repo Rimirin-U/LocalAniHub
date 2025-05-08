@@ -6,12 +6,14 @@
              xmlns:local="clr-namespace:LocalAniHubFront.Views.Components"
              xmlns:models="clr-namespace:LocalAniHubFront.Models"
              
-             d:DataContext="{d:DesignInstance local:Collection_SimpleEntryTimeList,
-                                     IsDesignTimeCreatable=False}"
+            
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Name="Recent_SeasonTable"
              ScrollViewer.CanContentScroll="False">
+
+    <!-- d:DataContext="{d:DesignInstance local:Collection_SimpleEntryTimeList,
+                         IsDesignTimeCreatable=False}"-->
     <StackPanel>
         <DataGrid
             x:Name="UnifiedEntriesDataGrid"
