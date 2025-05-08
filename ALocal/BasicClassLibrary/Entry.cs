@@ -8,6 +8,14 @@ using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
+    public enum State
+    {
+        NotWatched,    // 未看
+        Watching,      // 在看
+        Watched,       // 已看
+        GivenUp        // 抛弃
+    }
+
 
     public class Entry: IEntityWithId              //条目核心
     {
@@ -19,11 +27,13 @@ namespace BasicClassLibrary
         public DateTime CollectionDate { get; set; }//收藏日期
         public string Category {  get; set; }//类别
         public int EpisodeCount {  get; set; }//集数
+        public State State { get; set; }         // 观看状态
+
 
         //设置项
         public bool HasUpdateTime {  get; set; }//是否有更新时自动获取资源
         public bool AutoClearResources {  get; set; }//是否自动清除资源
-        public Entry(int id,string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,string category,int episodeCount,bool hasUpdateTime,bool autoClearResources)    
+        public Entry(int id,string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,string category,int episodeCount, State state, bool hasUpdateTime,bool autoClearResources)    
         {
             Id = id;
             TranslatedName = translatedName;
@@ -32,6 +42,7 @@ namespace BasicClassLibrary
             CollectionDate = collectionDate;
             Category = category;
             EpisodeCount = episodeCount;
+            State = state;
             HasUpdateTime = hasUpdateTime;
             AutoClearResources = autoClearResources;//感觉两个设置属性的初始化有点问题
         }

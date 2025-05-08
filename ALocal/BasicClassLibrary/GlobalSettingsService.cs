@@ -28,20 +28,27 @@ namespace BasicClassLibrary
         {
             // 视频播放相关设置
             {"defaultPlayerType", "0"},      // 0: PotPlayer（默认值）
+
             {"defaultPlayerPath", ""},       // 路径（默认值：空）
        
             // 条目拉取相关设置
             {"defaultEntryFetchSource", "0"}, // 0: 自yuc.wiki（默认值）
 
+            {"defaultResourceParentFolderPath" ,""},
+
+             // 下载相关设置
+            //在代码中通过该键名（如 GetValue("downloadPath")）获取或设置对应的路径值。
+            {"downloadPath", Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)} ,// 默认值：MyVideos文件夹
+
+
             //资源拉取数据源
             {"defaultResourceSearchSource","0" },//0:自AnimesGarden（默认值）
-            
-            // 资源管理相关设置
-            {"defaultparentFolderPath", ""},  // 路径（默认值）
-            
-            // 下载相关设置
-            //在代码中通过该键名（如 GetValue("downloadPath")）获取或设置对应的路径值。
-            {"downloadPath", Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)} // 默认值：MyVideos文件夹
+
+            {"defaultMaterialParentFolderPath", ""},
+
+            //收藏页面默认显示方式
+            {"defaultCollectionDisplayView", "0"} // 0: 简单列表（收藏时间排序，默认值）
+            //使用 SetValue("defaultCollectionDisplayView", "1") 修改值
         };
 
         // 私有构造函数：禁止外部 new 创建实例
