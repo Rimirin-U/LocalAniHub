@@ -13,53 +13,93 @@ namespace BasicClassLibrary
         public ResourceManager() : base(new AppDbContext()){ }
         private void PutResourceIntoDestination(Resource resource)
         {
-            // 从全局设置中读取父文件夹路径
-            string _parentFolderPath = GlobalSettingsService.Instance.GetValue("defaultResourceParentFolderPath");
-            if (string.IsNullOrEmpty(_parentFolderPath))
+            // 参数校验
+            if (resource == null)
             {
-                throw new ArgumentException("ResourceManagement: 父文件夹路径无效或未设置");
+                throw new ArgumentNullException(nameof(resource));
             }
 
-            // 创建以资源ID命名的文件夹
-            string resourceFolder = Path.Combine(_parentFolderPath, resource.Id.ToString());
-            Directory.CreateDirectory(resourceFolder); // 如果文件夹已存在，则不会抛出异常
-
-            // 获取目标文件路径
-            string fileName = Path.GetFileName(resource.ResourcePath?? string.Empty);
-            string destFilePath = Path.Combine(resourceFolder, fileName);
-
-            // 检查目标路径是否已存在同名文件
-            if (File.Exists(destFilePath))
+            if (resource.Id <= 0)
             {
-                throw new Exception($"文件命名冲突: {destFilePath}");
+                throw new ArgumentException("Resource must have a valid positive ID");
             }
 
-            try
+            // 获取原始路径并校验
+            string? sourcePath = resource.ResourcePath;
+            if (string.IsNullOrWhiteSpace(sourcePath))
             {
-                // 确保源文件路径不为空
-                if (string.IsNullOrEmpty(resource.ResourcePath))
-                {
-                    throw new InvalidOperationException("Resource path is null or empty.");
-                }
-
-                // 确保目标文件路径不为空
-                if (string.IsNullOrEmpty(destFilePath))
-                {
-                    throw new InvalidOperationException("Destination file path is null or empty.");
-                }
-
-                // 移动文件
-                File.Move(resource.ResourcePath, destFilePath);
-
-                // 更新资源对象的路径
-                resource.ResourcePath = destFilePath;
+                throw new ArgumentException("Resource path cannot be empty");
             }
-            catch (Exception ex)
+
+            // 校验源目录是否存在
+            if (!Directory.Exists(sourcePath))
             {
-                // 捕获异常并重新抛出更详细的错误信息
-                throw new Exception($"移动文件失败: {ex.Message}");
+                throw new DirectoryNotFoundException($"Source directory not found: {sourcePath}");
             }
+
+            // 构建目标路径
+            const string baseDestination = "/base/Resource";
+            string destinationPath = Path.Combine(baseDestination, resource.Id.ToString());
+
+            // 确保目标父目录存在
+            Directory.CreateDirectory(baseDestination);
+
+            // 执行移动操作（如果目标已存在会抛出异常）
+            Directory.Move(sourcePath, destinationPath);
+
+            // 更新资源路径
+            resource.ResourcePath = destinationPath;
         }
+        /* private void PutResourceIntoDestination(Resource resource)
+         {
+             // 从全局设置中读取父文件夹路径
+             string _parentFolderPath = GlobalSettingsService.Instance.GetValue("defaultResourceParentFolderPath");
+             if (string.IsNullOrEmpty(_parentFolderPath))
+             {
+                 throw new ArgumentException("ResourceManagement: 父文件夹路径无效或未设置");
+             }
+
+             // 创建以资源ID命名的文件夹
+             string resourceFolder = Path.Combine(_parentFolderPath, resource.Id.ToString());
+             Directory.CreateDirectory(resourceFolder); // 如果文件夹已存在，则不会抛出异常
+
+             // 获取目标文件路径
+             string fileName = Path.GetFileName(resource.ResourcePath?? string.Empty);
+             string destFilePath = Path.Combine(resourceFolder, fileName);
+
+             // 检查目标路径是否已存在同名文件
+             if (File.Exists(destFilePath))
+             {
+                 throw new Exception($"文件命名冲突: {destFilePath}");
+             }
+
+             try
+             {
+                 // 确保源文件路径不为空
+                 if (string.IsNullOrEmpty(resource.ResourcePath))
+                 {
+                     throw new InvalidOperationException("Resource path is null or empty.");
+                 }
+
+                 // 确保目标文件路径不为空
+                 if (string.IsNullOrEmpty(destFilePath))
+                 {
+                     throw new InvalidOperationException("Destination file path is null or empty.");
+                 }
+
+                 // 移动文件
+                 File.Move(resource.ResourcePath, destFilePath);
+
+                 // 更新资源对象的路径
+                 resource.ResourcePath = destFilePath;
+             }
+             catch (Exception ex)
+             {
+                 // 捕获异常并重新抛出更详细的错误信息
+                 throw new Exception($"移动文件失败: {ex.Message}");
+             }
+         }*/
+
         //添加资源
         public void Addresource(Resource resource)
         {
