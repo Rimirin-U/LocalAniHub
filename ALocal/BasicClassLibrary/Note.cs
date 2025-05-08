@@ -11,7 +11,7 @@ namespace BasicClassLibrary
     {
         public Note()
         {
-            this.Content = "";
+            this.NoteTitle = string.Empty;//笔记的名称
             this.EntriesId = new List<int>();
             this.Entries = new List<Entry>();
             this.EpisodesId = new List<int>();
@@ -20,6 +20,7 @@ namespace BasicClassLibrary
 
         public int Id { get; set; }
 
+        public string NoteTitle { get; set; } // 笔记名称
         public ICollection<int> EntriesId { get; set; }
         public ICollection<Entry> Entries { get; set; }
         public ICollection<int> EpisodesId { get; set; }
