@@ -8,11 +8,14 @@
         Title="RecentPage" Height="450" Width="800"
         
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        d:DataContext="{d:DesignInstance local:CollectionPage,
-                               IsDesignTimeCreatable=False}"
         ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
         ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <!--
+        d:DataContext="{d:DesignInstance local:CollectionPage,
+                               IsDesignTimeCreatable=False}"-->
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
