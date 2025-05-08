@@ -8,15 +8,10 @@ namespace BasicClassLibrary
 {
     public class MaterialService
     {
-        private readonly string _baseMaterialPath;
-        private readonly string _globalBasePath;
+        private readonly string _baseMaterialPath= @"/base/Material";
 
         public MaterialService()
         {
-            // 从全局配置获取基础路径（示例中使用固定值，实际应从配置读取）
-            _globalBasePath = GlobalSettingsService.BaseDirectory; // 假设配置中获取的路径，比如"/base"
-            _baseMaterialPath = Path.Combine(_globalBasePath, "Material"); // 创建路径 /base/Material
-
             // 确保素材基础目录存在
             Directory.CreateDirectory(_baseMaterialPath);
         }
