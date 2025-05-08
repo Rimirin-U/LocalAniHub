@@ -46,3 +46,4 @@ namespace LocalAniHubFront.Views.Components
             }
         }
     }
+}
