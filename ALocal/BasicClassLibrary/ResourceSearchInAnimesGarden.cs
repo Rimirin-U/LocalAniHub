@@ -34,7 +34,7 @@ namespace BasicClassLibrary
 
                 // 发送 GET 请求
                 var response = await _httpClient.GetAsync(url, ct);
-                Console.WriteLine($"响应状态码: {(int)response.StatusCode} {response.ReasonPhrase}");
+                //Console.WriteLine($"响应状态码: {(int)response.StatusCode} {response.ReasonPhrase}");
 
                 // 检查响应状态码
                 response.EnsureSuccessStatusCode();
@@ -54,16 +54,62 @@ namespace BasicClassLibrary
                     })
                     .ToList();
             }
+            /* catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+             {
+                 Console.WriteLine("服务器拒绝了请求。请检查 API 的访问权限或关键词是否正确。");
+             }
+             catch (Exception ex)
+             {
+                 Console.WriteLine($"搜索发生错误: {ex.Message}");
+             }
+
+             return new List<ResourceItem>();*/
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                Console.WriteLine("服务器拒绝了请求。请检查 API 的访问权限或关键词是否正确。");
+                throw new HttpRequestException(
+                    $"API访问被拒绝（关键词：{keyword}）",
+                    ex,
+                    System.Net.HttpStatusCode.Forbidden
+                );
+            }
+        }
+        //新添加的实现对多关键词进行搜索
+        public async Task<List<ResourceItem>> SearchMultipleKeywordsAsync(
+            IEnumerable<string> keywords,
+            CancellationToken ct = default)
+        {
+            try
+            {
+                // 预处理关键词：去空、去重、过滤无效值
+                var validKeywords = keywords
+                    .Where(k => !string.IsNullOrWhiteSpace(k))
+                    .Distinct()
+                    .ToList();
+
+                if (!validKeywords.Any())
+                {
+                    throw new ArgumentException("必须提供至少一个有效关键词");
+                }
+
+                // 并发执行所有搜索请求
+                var searchTasks = validKeywords
+                    .Select(keyword => SearchAsync(keyword, ct));
+
+                var resultsArrays = await Task.WhenAll(searchTasks);
+
+                // 合并结果并去重（基于 DownloadUrl）
+                var mergedResults = resultsArrays
+                    .SelectMany(results => results)
+                    .GroupBy(item => item.DownloadUrl)
+                    .Select(group => group.First())
+                    .ToList();
+
+                return mergedResults;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"搜索发生错误: {ex.Message}");
+                throw new AggregateException("多关键词搜索过程中发生一个或多个错误", ex);
             }
-
-            return new List<ResourceItem>();
         }
         private static DateTime? ParseDate(string? value) // 修改参数类型为string?
         {
