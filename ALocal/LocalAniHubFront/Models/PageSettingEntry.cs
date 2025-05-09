@@ -42,9 +42,10 @@ namespace LocalAniHubFront.Models
         // 打开设置页面的方法
         public void OpenSettingPage()
         {
-            //这里还没有实现
-            // 这里可以实现打开页面的逻辑，例如通过 NavigationService 或其他页面管理工具
-            //System.Diagnostics.Debug.WriteLine($"Opening settings page for key: {Key}");
+            //创建一个新的Windows类型的窗口
+            var window = new System.Windows.Window();
+            //显示窗口
+            window.Show();
         }
     }
 }

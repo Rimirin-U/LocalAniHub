@@ -27,7 +27,7 @@ namespace LocalAniHubFront.ViewModels.Components
         [RelayCommand]
         private void ShowSettingPageCommand()
         {
-            // 调用 PageSettingEntry 的 OpenSettingPage 方法
+            // 调用 PageSettingEntry的 OpenSettingPage 方法
             _entry.OpenSettingPage();
         }
     }
