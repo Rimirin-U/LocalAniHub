@@ -28,12 +28,12 @@ namespace BasicClassLibrary
         public string Category {  get; set; }//类别
         public int EpisodeCount {  get; set; }//集数
         public State State { get; set; }         // 观看状态
-
+        public string MaterialFolder { get; set; } // 素材子文件夹名称
 
         //设置项
         public bool HasUpdateTime {  get; set; }//是否有更新时自动获取资源
         public bool AutoClearResources {  get; set; }//是否自动清除资源
-        public Entry(int id,string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,string category,int episodeCount, State state, bool hasUpdateTime,bool autoClearResources)    
+        public Entry(int id,string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,string category,int episodeCount, State state,string materialFolder, bool hasUpdateTime,bool autoClearResources )    
         {
             Id = id;
             TranslatedName = translatedName;
@@ -43,6 +43,7 @@ namespace BasicClassLibrary
             Category = category;
             EpisodeCount = episodeCount;
             State = state;
+            MaterialFolder = materialFolder;
             HasUpdateTime = hasUpdateTime;
             AutoClearResources = autoClearResources;//感觉两个设置属性的初始化有点问题
         }
