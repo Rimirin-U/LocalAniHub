@@ -19,6 +19,9 @@ namespace BasicClassLibrary
         private Dictionary<string, string> _metadataValues { get; set; } = new();
         // 通过特殊前缀区分标签
         private const string TagPrefix = "__tag__";
+        // 维护所有键的列表
+        private List<string> _allKeys { get; set; } = new();
+
         // 索引器实现快速访问
         public string this[string key]
         {
@@ -34,9 +37,19 @@ namespace BasicClassLibrary
         private string MetadataJson
         {
             get => JsonConvert.SerializeObject(_metadataValues);
-            set => _metadataValues = string.IsNullOrEmpty(value)
-                ? new Dictionary<string, string>()
-                : JsonConvert.DeserializeObject<Dictionary<string, string>>(value)!;
+            set
+            {
+                _metadataValues = string.IsNullOrEmpty(value)
+                    ? new Dictionary<string, string>()
+                    : JsonConvert.DeserializeObject<Dictionary<string, string>>(value)!;
+                // 同步更新所有键的列表
+                _allKeys = _metadataValues.Keys.ToList();
+            }
+        }
+        // 获取所有键（包括普通元数据键和标签键）
+        public List<string> GetAllKeys()
+        {
+            return _allKeys;
         }
 
         // 删除指定键的元数据
@@ -46,6 +59,8 @@ namespace BasicClassLibrary
             {
                 throw new KeyNotFoundException($"键 '{key}' 不存在，删除元数据失败。");
             }
+            // 从所有键的列表中移除
+            _allKeys.Remove(key);
         }
         //eg:bool isRemoved = metadata.RemoveMetadata("导演");  // 删除 "导演" 键对应的元数据
         //   Console.WriteLine(isRemoved);  // 输出：True 或 False，表示是否成功删除
@@ -62,6 +77,11 @@ namespace BasicClassLibrary
         public void AddOrUpdateMetadata(string key, string value)
         {
             _metadataValues[key] = value;
+            // 如果键不存在于所有键的列表中，则添加
+            if (!_allKeys.Contains(key))
+            {
+                _allKeys.Add(key);
+            }
         }
         //eg:metadata.AddOrUpdateMetadata("编剧", "李四");   // 添加或更新 "编剧" 键对应的值
         //metadata.AddOrUpdateMetadata("上映日期", "2025-02-01");  // 更新已存在的 "上映日期"
@@ -70,19 +90,30 @@ namespace BasicClassLibrary
         {
             var key = $"{TagPrefix}{tag}";
             _metadataValues[key] = ""; // 值存空字符串
+            // 添加到所有键的列表中
+            if (!_allKeys.Contains(key))
+            {
+                _allKeys.Add(key);
+            }
         }
-        // 添加标签metadata.AddTag("动作");
-        public bool RemoveTag(string tag)
+        // 添加标签 eg:metadata.AddTag("动作");
+        public void RemoveTag(string tag)
         {
             var key = $"{TagPrefix}{tag}";
-            return _metadataValues.Remove(key);
+            var removed = _metadataValues.Remove(key);
+            // 如果删除成功，从所有键的列表中移除
+            if (removed)
+            {
+                _allKeys.Remove(key);
+            }
         }
-
-        public IEnumerable<string> GetTags()
+        // 获取所有标签
+        public List<string> GetTags()
         {
             return _metadataValues.Keys
                 .Where(k => k.StartsWith(TagPrefix))
-                .Select(k => k.Substring(TagPrefix.Length));
+                .Select(k => k.Substring(TagPrefix.Length))
+                .ToList();
         }
     }
     public partial class AppDbContext : DbContext
