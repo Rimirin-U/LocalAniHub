@@ -17,7 +17,8 @@ namespace BasicClassLibrary
 
         // 核心字典属性，存储元数据
         private Dictionary<string, string> _metadataValues { get; set; } = new();
-
+        // 通过特殊前缀区分标签
+        private const string TagPrefix = "__tag__";
         // 索引器实现快速访问
         public string this[string key]
         {
@@ -64,6 +65,25 @@ namespace BasicClassLibrary
         }
         //eg:metadata.AddOrUpdateMetadata("编剧", "李四");   // 添加或更新 "编剧" 键对应的值
         //metadata.AddOrUpdateMetadata("上映日期", "2025-02-01");  // 更新已存在的 "上映日期"
+        // 新增标签处理函数
+        public void AddTag(string tag)
+        {
+            var key = $"{TagPrefix}{tag}";
+            _metadataValues[key] = ""; // 值存空字符串
+        }
+        // 添加标签metadata.AddTag("动作");
+        public bool RemoveTag(string tag)
+        {
+            var key = $"{TagPrefix}{tag}";
+            return _metadataValues.Remove(key);
+        }
+
+        public IEnumerable<string> GetTags()
+        {
+            return _metadataValues.Keys
+                .Where(k => k.StartsWith(TagPrefix))
+                .Select(k => k.Substring(TagPrefix.Length));
+        }
     }
     public partial class AppDbContext : DbContext
     {
