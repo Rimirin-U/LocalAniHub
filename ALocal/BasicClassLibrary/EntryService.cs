@@ -82,13 +82,12 @@ namespace BasicClassLibrary
             // 自动生成并关联EpisodeCount个单集
             for (int i = 1; i <= entry.EpisodeCount; i++) 
             {
-                var episode = new Episode(
-                entry.Id, // 关联到当前条目的 EntryId
-                entry,    // 关联到当前条目的 Entry 对象
-                i,        // 集数
-                State.NotWatched // 初始状态为未观看
-               );
-
+                var episode = new Episode(entry.Id,entry,i)
+                {
+                    EntryId = entry.Id,//关联到当前条目
+                    Entry = entry,
+                    EpisodeNumber = i//集数
+                };
 
                 episodeManager.Add(episode); // 添加单集
             }
@@ -97,23 +96,6 @@ namespace BasicClassLibrary
         {
             // 使用 EntryManager 的 ByReleaseDateRange 查询条件
             return manager.Query(EntryManager.ByReleaseDateRange(startDate, endDate));
-        }
-
-        //计算某条目的第几集是否已经播出
-        public bool IsEpisodeAired(int entryId, int episodeNumber)
-        {
-            // 获取条目的播出时间信息
-            var entryTimeInfo = entryTimeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault();
-            if (entryTimeInfo == null)
-            {
-                throw new ArgumentException($"未找到条目ID {entryId} 的播出时间信息");
-            }
-
-            // 计算该集的播出时间
-            var episodeAirDate = entryTimeInfo.BroadcastTime.AddDays((episodeNumber - 1) * 7);
-
-            // 判断当前时间是否已经超过播出时间
-            return DateTime.Now >= episodeAirDate;
         }
     }
 
