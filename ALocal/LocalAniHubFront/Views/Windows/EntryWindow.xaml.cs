@@ -127,7 +127,6 @@ namespace LocalAniHubFront.Views.Windows
             // 添加ViewModel
             DataContext = new EntryWindowViewModel(entryId);
             InitializeComponent();
-            DataContext = this;
 
             var Page_MainInfo = new EntryWindow_MainInfo();
             Page_MainInfo.EntryId = entryId;
