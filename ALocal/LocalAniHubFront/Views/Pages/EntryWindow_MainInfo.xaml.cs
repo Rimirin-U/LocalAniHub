@@ -49,7 +49,7 @@ namespace LocalAniHubFront.Views.Pages
         protected void OnPropertyChanged([CallerMemberName] string name = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        //页面导航按钮
+        // 页面导航按钮
         private void ResourceButton_Click(object sender, RoutedEventArgs e)
         {
             var page = new EntryWindow_ResourceManage();
@@ -91,6 +91,17 @@ namespace LocalAniHubFront.Views.Pages
             page.EpisodeId = id;
             page.InitializeViewModel();
             NavigationService.Navigate(page);
+        }
+
+        // 评分
+        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock tb &&
+                int.TryParse(tb.Tag?.ToString(), out int value) &&
+                DataContext is EntryWindow_MainInfoViewModel vm)
+            {
+                vm.SetScore(value); // 调用 ViewModel 中的方法
+            }
         }
     }
 }
