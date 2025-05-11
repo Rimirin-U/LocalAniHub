@@ -9,11 +9,13 @@
       Title="CollectionPage"
       
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      d:DataContext="{d:DesignInstance local:CollectionPage,
-                                     IsDesignTimeCreatable=False}"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <!--
+      d:DataContext="{d:DesignInstance local:CollectionPage,
+                                     IsDesignTimeCreatable=False}"-->
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,14 +30,17 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             ItemsSource="{Binding ViewModel.DisplayModes}"
-            SelectedItem="{Binding ViewModel.SelectedMode}">
+            SelectedItem="{Binding ViewModel.SelectedMode}"
+            IsEditable="False">
         </ComboBox>
 
         <!--用于展示的列表-->
+        <ui:Card>
         <ContentControl
             Grid.Row="1"
             Content="{Binding ViewModel.CurrentView}"/>
-        
+        </ui:Card>
+
     </Grid>
 </Page>
     
