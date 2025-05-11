@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LocalAniHubFront.Views.Pages"
+             xmlns:helpers="clr-namespace:LocalAniHubFront.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -179,11 +180,17 @@
             <Setter Property="Margin" Value="8,0,0,8"/>
         </Style>
 
+        <helpers:ScoreToStyleConverter x:Key="ScoreToStyleConverter"
+                                 StyleIfLessThanThreshold="{StaticResource WhiteStar}"
+                                 StyleIfGreaterOrEqualThreshold="{StaticResource YellowStar}"/>
+
+
     </Page.Resources>
 
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"
         VerticalScrollBarVisibility="Visible">
+
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="MainInfoGridRow" Height="*"/>
@@ -235,6 +242,16 @@
                                    Text="轻百"/>
                             <TextBlock Style="{StaticResource TagTextStyle}"
                                    Text="扭曲"/>-->
+
+                            <!--Tags为一个String的ObservableCollection，存放着所有Tag-->
+                            <ItemsControl ItemsSource="{Binding Tags}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource TagTextStyle}"
+                                                   Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
                         </StackPanel>
                     </ScrollViewer>
@@ -288,6 +305,35 @@
                         <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
                             Content="13"/>-->
 
+                        <!--Episodes: ObservableCollection<EpisodeTempData>-->
+                        <!--public readonly record struct EpisodeTempData(int Number（第几集）, int EpisodeId（Episode Id）, int State);-->
+                        <!--State: 0->已看 1->未看/在看 2->未播出-->
+                        <!--注意State的计算，前两种情况都是在已播出的情况下的，若未播出直接归到第三种-->
+                        <ItemsControl ItemsSource="{Binding Episodes}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Number}"
+                                            Click="EpisodeButton_Click" Tag="{Binding EpisodeId}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding State}" Value="0">
+                                                        <Setter Property="Style" Value="{StaticResource EpisodeButton_Watched}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding State}" Value="1">
+                                                        <Setter Property="Style" Value="{StaticResource EpisodeButton_NotWatched}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding State}" Value="2">
+                                                        <Setter Property="Style" Value="{StaticResource EpisodeButton_NotAvailable}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
                     </WrapPanel>
 
                     <StackPanel x:Name="Stars"
@@ -295,21 +341,41 @@
                             Orientation="Horizontal"
                             VerticalAlignment="Top"
                             Margin="12,4,0,0">
-                        <!--后台读取分数
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource YellowStar}"/>
-                        <TextBlock Style="{StaticResource WhiteStar}"/>
-                        <TextBlock Style="{StaticResource WhiteStar}"/>
+                        <!--Score：评分-->
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=1}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=2}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=3}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=4}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=5}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=6}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=7}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=8}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=9}" />
+                        <TextBlock Style="{Binding Score,
+                                   Converter={StaticResource ScoreToStyleConverter},
+                                   ConverterParameter=10}" />
                         <TextBlock x:Name="Score"
                                    Style="{StaticResource BoldWhiteTextStyle}"
                                    Margin="8,0,0,0"
-                                   Text="8"/>-->
+                                   Text="8"/>
                     </StackPanel>
                 </Grid>
 
@@ -338,7 +404,9 @@
 
                 <Grid x:Name="MetaDataRowGrid"
                       Grid.Row="4"
-                      Margin="-8,16,0,0">
+                      Margin="-8,16,0,0"
+                      helpers:GridHelper.RowCount="{Binding RowCount}">
+                    <!--分行数量 = 元数据数量 / 3.0 向上取整-->
 
                     <!--均分三列-->
                     <Grid.ColumnDefinitions>
@@ -347,75 +415,38 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!--分行数量需要由后台根据元数据数量自行增加，初始为0，以下仅供演示-->
-                    <!--分行数量 = 元数据数量 / 3.0 向上取整
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>-->
+                    <!--每一个单元格中放入一个这个ScrollViewer-->
 
-                    <!--每一个单元格中放入一个这个ScrollViewer
-                    <ScrollViewer Grid.Row="0" Grid.Column="0" Style="{StaticResource MetadataScrollViewerStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
-                                   Text="原作"/>
-                            <TextBlock Margin="4,0,0,0"
-                                       Style="{StaticResource WhiteTextStyle}"
-                                       Text="ブシロード"/>
-                        </StackPanel>
-                    </ScrollViewer>
 
-                    <ScrollViewer Grid.Row="0" Grid.Column="1" Style="{StaticResource MetadataScrollViewerStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
-                                   Text="导演"/>
-                            <TextBlock Margin="4,0,0,0"
-                                       Style="{StaticResource WhiteTextStyle}"
-                                       Text="柿本广大"/>
-                        </StackPanel>
-                    </ScrollViewer>
-
-                    <ScrollViewer Grid.Row="0" Grid.Column="2" Style="{StaticResource MetadataScrollViewerStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
-                                   Text="系列构成"/>
-                            <TextBlock Margin="4,0,0,0"
-                                       Style="{StaticResource WhiteTextStyle}"
-                                       Text="绫奈由仁子"/>
-                        </StackPanel>
-                    </ScrollViewer>
-
-                    <ScrollViewer Grid.Row="1" Grid.Column="0" Style="{StaticResource MetadataScrollViewerStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
-                                   Text="音乐"/>
-                            <TextBlock Margin="4,0,0,0"
-                                       Style="{StaticResource WhiteTextStyle}"
-                                       Text="藤田淳平、藤间仁"/>
-                        </StackPanel>
-                    </ScrollViewer>
-
-                    <ScrollViewer Grid.Row="1" Grid.Column="1" Style="{StaticResource MetadataScrollViewerStyle}"
-                                  HorizontalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
-                                   Text="MyGO!!!!! &amp; Ave Mujica原案"/>
-                            <TextBlock Margin="4,0,0,0"
-                                       Style="{StaticResource WhiteTextStyle}"
-                                       Text="绫奈由仁子"/>
-                        </StackPanel>
-                    </ScrollViewer>
-
-                    <ScrollViewer Grid.Row="1" Grid.Column="2" Style="{StaticResource MetadataScrollViewerStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
-                                   Text="制作"/>
-                            <TextBlock Margin="4,0,0,0"
-                                       Style="{StaticResource WhiteTextStyle}"
-                                       Text="三次元"/>
-                        </StackPanel>
-                    </ScrollViewer>-->
-
+                    <!--Episodes: ObservableCollection<MetadataTempData>-->
+                    <!--Row和Column:按从左到右从上到下的顺序，例：-->
+                    <!--
+                    index  row  column
+                    0       0   0
+                    1       0   1
+                    2       0   2
+                    3       1   0
+                    4       1   1
+                    5       1   2
+                    6       2   0
+                    7       2   1
+                    8       2   2
+                    -->
+                    <ItemsControl ItemsSource="{Binding Metadata}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ScrollViewer Grid.Row="{Binding Row}" Grid.Column="{Binding Column}" Style="{StaticResource MetadataScrollViewerStyle}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                                   Text="{Binding KeyString}"/>
+                                        <TextBlock Margin="4,0,0,0"
+                                                   Style="{StaticResource WhiteTextStyle}"
+                                                   Text="{Binding ValueString}"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </Grid>
             </Grid>
 
@@ -425,25 +456,31 @@
               Margin="0,0,0,0">
                 <WrapPanel x:Name="BottonPanel"
                    FlowDirection="LeftToRight">
-                    <Button 
+                    <Button x:Name="ResourceButton"
                         Margin="8,0,0,0"
                         Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                        Content="&#xE714;"/>
-                    <Button 
+                        Content="&#xE714;"
+                        Click="ResourceButton_Click"/>
+                    <Button x:Name="NoteButton"
                         Margin="8,0,0,0"
                         Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                        Content="&#xE90A;"/>
-                    <Button 
+                        Content="&#xE90A;"
+                        Click="NoteButton_Click"/>
+                    <Button x:Name="HistoryButton"
                         Margin="8,0,0,0"
                         Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                        Content="&#xE81c;"/>
-                    <Button 
+                        Content="&#xE81c;"
+                        Click="HistoryButton_Click"/>
+                    <Button x:Name="MaterialButton"
                         Margin="8,0,0,0"
                         Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                        Content="&#xE8B9;"/>
+                        Content="&#xE8B9;"
+                        Click="MaterialButton_Click"/>
                 </WrapPanel>
             </Grid>
-
         </Grid>
+
+
+
     </ScrollViewer>
 </Page>

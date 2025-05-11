@@ -1,4 +1,5 @@
 ﻿using LocalAniHubFront.Helpers;
+using LocalAniHubFront.Views.Pages;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -130,6 +131,7 @@ namespace LocalAniHubFront.Views.Windows
 
             var Page_MainInfo = new EntryWindow_MainInfo();
             Page_MainInfo.EntryId = entryId;
+            Page_MainInfo.InitializeViewModel();
             EntryWindowFrame.Navigate(Page_MainInfo);
 
             // MaskRectangleHeightRatio平滑控制器、回弹逻辑、到顶逻辑
