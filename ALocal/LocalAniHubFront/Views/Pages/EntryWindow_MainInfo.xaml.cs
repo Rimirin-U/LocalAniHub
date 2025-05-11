@@ -36,7 +36,7 @@ namespace LocalAniHubFront.Views.Pages
         public EntryWindow_MainInfo()
         {
             //
-            
+            DataContext = new EntryWindow_MainInfoViewModel(EntryId);
             InitializeComponent();
         }
 

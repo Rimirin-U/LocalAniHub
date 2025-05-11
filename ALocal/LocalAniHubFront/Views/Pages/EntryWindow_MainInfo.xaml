@@ -210,7 +210,8 @@
 
                     <TextBlock x:Name="SubTitle"
                            Style="{StaticResource SubtitleTextStyle}"
-                           Text="迷途之子!!!!!"/>
+                           Text="{Binding SubTitle}"/>
+                    <!--要读设置来确定用哪个名称（原名/译名）-->
 
                     <ScrollViewer
                     Grid.Column="1"
@@ -221,9 +222,9 @@
                                 Orientation="Horizontal">
                             <TextBlock x:Name="Kind"
                                    Style="{StaticResource BoldGrayTextStyle}"
-                                   Text="原创动画"/>
+                                   Text="{Binding Kind}"/>
 
-                            <!--后台通过逻辑加入Tags，此处仅为示例-->
+                            <!--后台通过逻辑加入Tags，此处仅为示例
                             <TextBlock Style="{StaticResource TagTextStyle}"
                                    Text="乐队"/>
                             <TextBlock Style="{StaticResource TagTextStyle}"
@@ -233,7 +234,7 @@
                             <TextBlock Style="{StaticResource TagTextStyle}"
                                    Text="轻百"/>
                             <TextBlock Style="{StaticResource TagTextStyle}"
-                                   Text="扭曲"/>
+                                   Text="扭曲"/>-->
 
                         </StackPanel>
                     </ScrollViewer>
@@ -242,7 +243,7 @@
                            Grid.Column="2"
                            Style="{StaticResource GrayTextStyle}"
                                Margin="20,0,0,0"
-                           Text="在看"/>
+                           Text="{Binding State}"/>
                 </Grid>
 
                 <Grid x:Name="EpisodeAndStarRowGrid"
@@ -259,7 +260,7 @@
                         <!--抵消按钮的Margin-->
 
                         <!--后台根据集数及状态生成按钮，以下仅为示例-->
-                        <!--每个都要绑定对应的Click事件（转到对应的单集页面）-->
+                        <!--每个都要绑定对应的Click事件（转到对应的单集页面）
                         <Button Style="{StaticResource EpisodeButton_Watched}"
                             Content="1"/>
                         <Button Style="{StaticResource EpisodeButton_Watched}"
@@ -285,7 +286,7 @@
                         <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
                             Content="12"/>
                         <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
-                            Content="13"/>
+                            Content="13"/>-->
 
                     </WrapPanel>
 
@@ -294,7 +295,7 @@
                             Orientation="Horizontal"
                             VerticalAlignment="Top"
                             Margin="12,4,0,0">
-                        <!--后台读取分数-->
+                        <!--后台读取分数
                         <TextBlock Style="{StaticResource YellowStar}"/>
                         <TextBlock Style="{StaticResource YellowStar}"/>
                         <TextBlock Style="{StaticResource YellowStar}"/>
@@ -308,7 +309,7 @@
                         <TextBlock x:Name="Score"
                                    Style="{StaticResource BoldWhiteTextStyle}"
                                    Margin="8,0,0,0"
-                                   Text="8"/>
+                                   Text="8"/>-->
                     </StackPanel>
                 </Grid>
 
@@ -316,8 +317,9 @@
                            Grid.Row="2"
                            Margin="0,4,0,0"
                            Style="{StaticResource GrayTextStyle}"
-                           Text="2023.6.29起 每周四 22:00"/>
-
+                           Text="{Binding TimeString}"/>
+                <!--格式：2023.6.29起 每周四 22:00-->
+                <!--（开播日期，播出星期，播出时间）-->
                 <Border x:Name="BoarderLine"
                         Grid.Row="3"
                     Height="1" 
@@ -346,19 +348,17 @@
                     </Grid.ColumnDefinitions>
 
                     <!--分行数量需要由后台根据元数据数量自行增加，初始为0，以下仅供演示-->
-                    <!--分行数量 = 元数据数量 / 3.0 向上取整-->
+                    <!--分行数量 = 元数据数量 / 3.0 向上取整
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                    </Grid.RowDefinitions>-->
 
-                    <!--每一个单元格中放入一个这个ScrollViewer-->
+                    <!--每一个单元格中放入一个这个ScrollViewer
                     <ScrollViewer Grid.Row="0" Grid.Column="0" Style="{StaticResource MetadataScrollViewerStyle}">
                         <StackPanel Orientation="Horizontal">
-                            <!--键-->
                             <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
                                    Text="原作"/>
-                            <!--值-->
                             <TextBlock Margin="4,0,0,0"
                                        Style="{StaticResource WhiteTextStyle}"
                                        Text="ブシロード"/>
@@ -367,10 +367,8 @@
 
                     <ScrollViewer Grid.Row="0" Grid.Column="1" Style="{StaticResource MetadataScrollViewerStyle}">
                         <StackPanel Orientation="Horizontal">
-                            <!--键-->
                             <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
                                    Text="导演"/>
-                            <!--值-->
                             <TextBlock Margin="4,0,0,0"
                                        Style="{StaticResource WhiteTextStyle}"
                                        Text="柿本广大"/>
@@ -379,10 +377,8 @@
 
                     <ScrollViewer Grid.Row="0" Grid.Column="2" Style="{StaticResource MetadataScrollViewerStyle}">
                         <StackPanel Orientation="Horizontal">
-                            <!--键-->
                             <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
                                    Text="系列构成"/>
-                            <!--值-->
                             <TextBlock Margin="4,0,0,0"
                                        Style="{StaticResource WhiteTextStyle}"
                                        Text="绫奈由仁子"/>
@@ -391,10 +387,8 @@
 
                     <ScrollViewer Grid.Row="1" Grid.Column="0" Style="{StaticResource MetadataScrollViewerStyle}">
                         <StackPanel Orientation="Horizontal">
-                            <!--键-->
                             <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
                                    Text="音乐"/>
-                            <!--值-->
                             <TextBlock Margin="4,0,0,0"
                                        Style="{StaticResource WhiteTextStyle}"
                                        Text="藤田淳平、藤间仁"/>
@@ -404,10 +398,8 @@
                     <ScrollViewer Grid.Row="1" Grid.Column="1" Style="{StaticResource MetadataScrollViewerStyle}"
                                   HorizontalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Horizontal">
-                            <!--键-->
                             <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
                                    Text="MyGO!!!!! &amp; Ave Mujica原案"/>
-                            <!--值-->
                             <TextBlock Margin="4,0,0,0"
                                        Style="{StaticResource WhiteTextStyle}"
                                        Text="绫奈由仁子"/>
@@ -416,15 +408,13 @@
 
                     <ScrollViewer Grid.Row="1" Grid.Column="2" Style="{StaticResource MetadataScrollViewerStyle}">
                         <StackPanel Orientation="Horizontal">
-                            <!--键-->
                             <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
                                    Text="制作"/>
-                            <!--值-->
                             <TextBlock Margin="4,0,0,0"
                                        Style="{StaticResource WhiteTextStyle}"
                                        Text="三次元"/>
                         </StackPanel>
-                    </ScrollViewer>
+                    </ScrollViewer>-->
 
                 </Grid>
             </Grid>
