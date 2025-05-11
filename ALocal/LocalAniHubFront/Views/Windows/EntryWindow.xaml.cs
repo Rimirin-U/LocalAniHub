@@ -122,12 +122,16 @@ namespace LocalAniHubFront.Views.Windows
 
 
         // 构造函数
-        public EntryWindow(/*int entryId*/)
+        public EntryWindow(int entryId)
         {
             // 添加ViewModel
-            // DataContext = new EntryWindowViewModel(entryId);
+            DataContext = new EntryWindowViewModel(entryId);
             InitializeComponent();
             DataContext = this;
+
+            var Page_MainInfo = new EntryWindow_MainInfo();
+            Page_MainInfo.EntryId = entryId;
+            EntryWindowFrame.Navigate(Page_MainInfo);
 
             // MaskRectangleHeightRatio平滑控制器、回弹逻辑、到顶逻辑
             _initialMaskHeightRatio = _maskRectangleheightRatio;
