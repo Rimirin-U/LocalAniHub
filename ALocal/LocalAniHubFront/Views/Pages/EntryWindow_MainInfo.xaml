@@ -1,0 +1,459 @@
+﻿<Page x:Class="LocalAniHubFront.Views.Pages.EntryWindow_MainInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LocalAniHubFront.Views.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Page.Resources>
+        <!--阴影效果-->
+        <DropShadowEffect x:Key="DropShadow"
+                          Color="Black"
+                          BlurRadius="5"
+                          ShadowDepth="2"
+                          Opacity="0.5"/>
+
+        <!--小按钮-->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Cursor" Value="Arrow"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <!-- Border & Shadow -->
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                SnapsToDevicePixels="True"
+                                Effect="{StaticResource DropShadow}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+
+                        <!-- Mouse Over -->
+                        <!--ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="LightBlue"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers-->
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="EpisodeButton" TargetType="Button" BasedOn="{StaticResource RoundedButtonStyle}">
+            <Setter Property="Margin" Value="8,0,0,8"/>
+        </Style>
+
+        <!--选集按钮：已看-->
+        <Style x:Key="EpisodeButton_Watched" TargetType="Button" BasedOn="{StaticResource EpisodeButton}">
+            <Setter Property="Background" Value="#FFFFF2CC"/>
+        </Style>
+
+        <!--选集按钮：在看/未看-->
+        <Style x:Key="EpisodeButton_NotWatched" TargetType="Button" BasedOn="{StaticResource EpisodeButton}"/>
+
+        <!--选集按钮：未更新-->
+        <Style x:Key="EpisodeButton_NotAvailable" TargetType="Button" BasedOn="{StaticResource EpisodeButton}">
+            <Setter Property="Background" Value="#FFBFBFBF"/>
+        </Style>
+
+        <!--图标按钮-->
+        <Style x:Key="RoundedButton_SegoeFluentIcon" TargetType="Button" BasedOn="{StaticResource RoundedButtonStyle}">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
+        </Style>
+
+        <!--Subtitle白字-->
+        <Style x:Key="SubtitleTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+            <Setter Property="LineHeight" Value="32"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                  BlurRadius="5"
+                                  Direction="315"
+                                  ShadowDepth="2"
+                                  Opacity="0.8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--普通白字-->
+        <Style x:Key="WhiteTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+            <Setter Property="LineHeight" Value="24"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                  BlurRadius="5"
+                                  Direction="315"
+                                  ShadowDepth="2"
+                                  Opacity="0.8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--加粗白字-->
+        <Style x:Key="BoldWhiteTextStyle" TargetType="TextBlock" BasedOn="{StaticResource WhiteTextStyle}">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!--小灰字-->
+        <Style x:Key="GrayTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
+            <Setter Property="Foreground" Value="#FFD9D9D9"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+            <Setter Property="LineHeight" Value="24"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                  BlurRadius="5"
+                                  Direction="315"
+                                  ShadowDepth="2"
+                                  Opacity="0.8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--加粗灰字-->
+        <Style x:Key="BoldGrayTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GrayTextStyle}">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!--TagTextStyle-->
+        <Style x:Key="TagTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GrayTextStyle}">
+            <Setter Property="Margin" Value="8,0,0,0"/>
+        </Style>
+
+        <!--星星（用后两个）-->
+        <Style x:Key="StarIconStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="Text" Value="&#xE735;"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                  BlurRadius="4"
+                                  ShadowDepth="2"
+                                  Direction="315"
+                                  Opacity="0.6"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="YellowStar" TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+            <Setter Property="Foreground" Value="#FFE699"/>
+        </Style>
+        <Style x:Key="WhiteStar" TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!--Metadata用-->
+        <Style x:Key="MetadataScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="Margin" Value="8,0,0,8"/>
+        </Style>
+
+    </Page.Resources>
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Visible">
+        <Grid x:Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="MainInfoGridRow" Height="*"/>
+                <RowDefinition x:Name="BottonRow" Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="MainInfoGrid"
+                  Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="SubTitleRow" Height="Auto"/>
+                    <RowDefinition x:Name="EpisodeAndStarRow" Height="Auto"/>
+                    <RowDefinition x:Name="TimeRow" Height="Auto"/>
+                    <RowDefinition x:Name="BoarderLineRow" Height="Auto"/>
+                    <RowDefinition x:Name="MetadataRow" Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="SubTitleRowGrid"
+                        Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="SubTitle"
+                           Style="{StaticResource SubtitleTextStyle}"
+                           Text="迷途之子!!!!!"/>
+
+                    <ScrollViewer
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="KindAndTags"
+                                Orientation="Horizontal">
+                            <TextBlock x:Name="Kind"
+                                   Style="{StaticResource BoldGrayTextStyle}"
+                                   Text="原创动画"/>
+
+                            <!--后台通过逻辑加入Tags，此处仅为示例-->
+                            <TextBlock Style="{StaticResource TagTextStyle}"
+                                   Text="乐队"/>
+                            <TextBlock Style="{StaticResource TagTextStyle}"
+                                   Text="青春"/>
+                            <TextBlock Style="{StaticResource TagTextStyle}"
+                                   Text="音乐"/>
+                            <TextBlock Style="{StaticResource TagTextStyle}"
+                                   Text="轻百"/>
+                            <TextBlock Style="{StaticResource TagTextStyle}"
+                                   Text="扭曲"/>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <TextBlock x:Name="State"
+                           Grid.Column="2"
+                           Style="{StaticResource GrayTextStyle}"
+                               Margin="20,0,0,0"
+                           Text="在看"/>
+                </Grid>
+
+                <Grid x:Name="EpisodeAndStarRowGrid"
+                  Grid.Row="1"
+                  Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="EpisodesColumn" Width="*"/>
+                        <ColumnDefinition x:Name="StarColumn" Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <WrapPanel x:Name="Episodes"
+                           Grid.Column="0"
+                           Margin="-8,0,0,0">
+                        <!--抵消按钮的Margin-->
+
+                        <!--后台根据集数及状态生成按钮，以下仅为示例-->
+                        <!--每个都要绑定对应的Click事件（转到对应的单集页面）-->
+                        <Button Style="{StaticResource EpisodeButton_Watched}"
+                            Content="1"/>
+                        <Button Style="{StaticResource EpisodeButton_Watched}"
+                            Content="2"/>
+                        <Button Style="{StaticResource EpisodeButton_Watched}"
+                            Content="3"/>
+                        <Button Style="{StaticResource EpisodeButton_Watched}"
+                            Content="4"/>
+                        <Button Style="{StaticResource EpisodeButton_Watched}"                            
+                            Content="5"/>
+                        <Button Style="{StaticResource EpisodeButton_Watched}"                            
+                            Content="6"/>
+                        <Button Style="{StaticResource EpisodeButton_Watched}"                            
+                            Content="7"/>
+                        <Button Style="{StaticResource EpisodeButton_NotWatched}"                            
+                            Content="8"/>
+                        <Button Style="{StaticResource EpisodeButton_NotWatched}"                            
+                            Content="9"/>
+                        <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
+                            Content="10"/>
+                        <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
+                            Content="11"/>
+                        <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
+                            Content="12"/>
+                        <Button Style="{StaticResource EpisodeButton_NotAvailable}"                            
+                            Content="13"/>
+
+                    </WrapPanel>
+
+                    <StackPanel x:Name="Stars"
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top"
+                            Margin="12,4,0,0">
+                        <!--后台读取分数-->
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource YellowStar}"/>
+                        <TextBlock Style="{StaticResource WhiteStar}"/>
+                        <TextBlock Style="{StaticResource WhiteStar}"/>
+                        <TextBlock x:Name="Score"
+                                   Style="{StaticResource BoldWhiteTextStyle}"
+                                   Margin="8,0,0,0"
+                                   Text="8"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock x:Name="Time"
+                           Grid.Row="2"
+                           Margin="0,4,0,0"
+                           Style="{StaticResource GrayTextStyle}"
+                           Text="2023.6.29起 每周四 22:00"/>
+
+                <Border x:Name="BoarderLine"
+                        Grid.Row="3"
+                    Height="1" 
+                    Background="Gray" 
+                    Margin="0,16,0,0" 
+                    HorizontalAlignment="Stretch">
+                    <Border.Effect>
+                        <DropShadowEffect 
+                            Color="Black" 
+                            Direction="270" 
+                            ShadowDepth="1" 
+                            Opacity="0.3" 
+                            BlurRadius="2" />
+                    </Border.Effect>
+                </Border>
+
+                <Grid x:Name="MetaDataRowGrid"
+                      Grid.Row="4"
+                      Margin="-8,16,0,0">
+
+                    <!--均分三列-->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--分行数量需要由后台根据元数据数量自行增加，初始为0，以下仅供演示-->
+                    <!--分行数量 = 元数据数量 / 3.0 向上取整-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--每一个单元格中放入一个这个ScrollViewer-->
+                    <ScrollViewer Grid.Row="0" Grid.Column="0" Style="{StaticResource MetadataScrollViewerStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--键-->
+                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                   Text="原作"/>
+                            <!--值-->
+                            <TextBlock Margin="4,0,0,0"
+                                       Style="{StaticResource WhiteTextStyle}"
+                                       Text="ブシロード"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Row="0" Grid.Column="1" Style="{StaticResource MetadataScrollViewerStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--键-->
+                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                   Text="导演"/>
+                            <!--值-->
+                            <TextBlock Margin="4,0,0,0"
+                                       Style="{StaticResource WhiteTextStyle}"
+                                       Text="柿本广大"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Row="0" Grid.Column="2" Style="{StaticResource MetadataScrollViewerStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--键-->
+                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                   Text="系列构成"/>
+                            <!--值-->
+                            <TextBlock Margin="4,0,0,0"
+                                       Style="{StaticResource WhiteTextStyle}"
+                                       Text="绫奈由仁子"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Row="1" Grid.Column="0" Style="{StaticResource MetadataScrollViewerStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--键-->
+                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                   Text="音乐"/>
+                            <!--值-->
+                            <TextBlock Margin="4,0,0,0"
+                                       Style="{StaticResource WhiteTextStyle}"
+                                       Text="藤田淳平、藤间仁"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Row="1" Grid.Column="1" Style="{StaticResource MetadataScrollViewerStyle}"
+                                  HorizontalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Horizontal">
+                            <!--键-->
+                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                   Text="MyGO!!!!! &amp; Ave Mujica原案"/>
+                            <!--值-->
+                            <TextBlock Margin="4,0,0,0"
+                                       Style="{StaticResource WhiteTextStyle}"
+                                       Text="绫奈由仁子"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <ScrollViewer Grid.Row="1" Grid.Column="2" Style="{StaticResource MetadataScrollViewerStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <!--键-->
+                            <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                                   Text="制作"/>
+                            <!--值-->
+                            <TextBlock Margin="4,0,0,0"
+                                       Style="{StaticResource WhiteTextStyle}"
+                                       Text="三次元"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="ButtonGrid"
+              Grid.Row="1"
+              HorizontalAlignment="Right"
+              Margin="0,0,0,0">
+                <WrapPanel x:Name="BottonPanel"
+                   FlowDirection="LeftToRight">
+                    <Button 
+                        Margin="8,0,0,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE714;"/>
+                    <Button 
+                        Margin="8,0,0,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE90A;"/>
+                    <Button 
+                        Margin="8,0,0,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE81c;"/>
+                    <Button 
+                        Margin="8,0,0,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE8B9;"/>
+                </WrapPanel>
+            </Grid>
+
+        </Grid>
+    </ScrollViewer>
+</Page>
