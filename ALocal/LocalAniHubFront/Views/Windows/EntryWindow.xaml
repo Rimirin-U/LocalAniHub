@@ -116,7 +116,7 @@
                                FontFamily="Segoe UI"
                                FontWeight="Bold"
                                Foreground="White"
-                               FontSize="28"
+                               FontSize="40"
                                Margin="24,0,0,24"
                                LineStackingStrategy="BlockLineHeight"
                                LineHeight="24"
@@ -138,7 +138,7 @@
                         FontFamily="Segoe UI"
                         FontWeight="Bold"
                         Foreground="White"
-                        FontSize="12"
+                        FontSize="14"
                         Margin="16,0,0,24"
                         LineStackingStrategy="BlockLineHeight"
                         LineHeight="24">
@@ -173,14 +173,10 @@
                     VerticalAlignment="Stretch" 
                     Margin="24,24,24,24">
 
-                    <components:EntryWindow_MainInfo
-                        EntryId ="{Binding EntryId}"/>
-<!--EntryId需要绑定-->
-                    <!-- PlaceTaker
-                    <ui:Card
-                        VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"/>
-                    -->
+                    <Frame x:Name="EntryWindowFrame"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           NavigationUIVisibility="Hidden"/>
 
                 </Grid>
             </Grid>
