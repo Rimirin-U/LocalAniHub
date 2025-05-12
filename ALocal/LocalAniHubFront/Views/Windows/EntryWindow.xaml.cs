@@ -110,7 +110,7 @@ namespace LocalAniHubFront.Views.Windows
         // MaskRectangleHeightRatio控制
         private readonly SmoothValueController _maskHeightController;
         private readonly double _initialMaskHeightRatio;
-        private readonly double _stepIncrement = 0.07;
+        private readonly double _stepIncrement = 0.10;
         private bool _hasReachedMax = false;
 
         // TopGridHeightRatio控制
