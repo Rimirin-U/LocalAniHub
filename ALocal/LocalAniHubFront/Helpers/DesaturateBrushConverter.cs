@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace UiDesktopApp1.Helpers
+namespace LocalAniHubFront.Helpers
 {
     public class DesaturateBrushConverter : IValueConverter
     {

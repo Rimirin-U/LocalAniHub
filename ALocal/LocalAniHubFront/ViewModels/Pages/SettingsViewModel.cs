@@ -26,7 +26,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         private void InitializeViewModel()
         {
             CurrentTheme = ApplicationThemeManager.GetAppTheme();
-            AppVersion = $"UiDesktopApp1 - {GetAssemblyVersion()}";
+            AppVersion = $"LocalAniHubFront - {GetAssemblyVersion()}";
 
             _isInitialized = true;
         }

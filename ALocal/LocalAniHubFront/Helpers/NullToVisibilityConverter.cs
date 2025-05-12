@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace UiDesktopApp1.Helpers
+namespace LocalAniHubFront.Helpers
 {
     public class NullToVisibilityConverter : IValueConverter
     {

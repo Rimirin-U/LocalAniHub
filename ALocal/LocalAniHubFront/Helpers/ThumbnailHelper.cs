@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace UiDesktopApp1.Helpers
+namespace LocalAniHubFront.Helpers
 {
     public static class ThumbnailHelper
     {

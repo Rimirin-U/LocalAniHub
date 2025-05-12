@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace UiDesktopApp1.Helpers
+namespace LocalAniHubFront.Helpers
 {
     public class FileItem
     {
