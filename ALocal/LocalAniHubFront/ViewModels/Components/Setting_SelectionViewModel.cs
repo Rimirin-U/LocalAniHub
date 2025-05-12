@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using BasicClassLibrary;
+using CommunityToolkit.Mvvm.Input;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
@@ -30,15 +31,15 @@ namespace LocalAniHubFront.ViewModels.Components
 
         public ICommand SelectionChangedCommand { get; }//表示选择变化时的命令，用于处理用户选择的变化。
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public Setting_SelectionViewModel(SelectionSettingEntry entry)
         {
             EntryName = entry.EntryName;
             Selections = entry.Selections;
-            Selected = entry.GetDefaultValue();
-           
-            SelectionChangedCommand = new RelayCommand(_ => SaveSelectedValue());
+            Selected = entry.Selected;
+
+            SelectionChangedCommand = new RelayCommand(SaveSelectedValue);
             //初始化 SelectionChangedCommand 属性，使用 RelayCommand 类创建一个命令，当命令执行时调用 SaveSelectedValue 方法。
         }
 
@@ -46,6 +47,7 @@ namespace LocalAniHubFront.ViewModels.Components
         {
             if (!string.IsNullOrEmpty(Selected))
             {
+                //保存选中的值到全局设置服务中。
                 GlobalSettingsService.Instance.SetValue(EntryName, Selected);
             }
         }
@@ -55,9 +57,10 @@ namespace LocalAniHubFront.ViewModels.Components
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+}
 
     // 简单的 RelayCommand 实现
-    public class RelayCommand : ICommand
+    /*public class RelayCommand : ICommand
     {
         private readonly Action<object> _execute;//字段存储了命令执行时要调用的方法。
         private readonly Predicate<object> _canExecute;//字段存储了一个用于判断命令是否可以执行的谓词。
@@ -78,4 +81,4 @@ namespace LocalAniHubFront.ViewModels.Components
             remove { CommandManager.RequerySuggested -= value; }
         }
     }
-}
+}*/

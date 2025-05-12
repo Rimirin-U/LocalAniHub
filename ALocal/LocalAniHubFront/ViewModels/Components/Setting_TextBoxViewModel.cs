@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using LocalAniHubFront.Models;
+using CommunityToolkit.Mvvm.Input;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
@@ -17,6 +18,8 @@ namespace LocalAniHubFront.ViewModels.Components
 
         // 设置项的名称，用于绑定到 TextBlock 的 Text 属性
         public string EntryName { get; }
+        // 设置项的键，用于在 GlobalSettingsService 中存储和获取值
+        private readonly string _key;
 
         // 设置项的值，用于绑定到 TextBox 的 Text 属性
         public string SettingText
@@ -41,18 +44,19 @@ namespace LocalAniHubFront.ViewModels.Components
         public Setting_TextBoxViewModel(string entryName, string key)
         {
             EntryName = entryName;
+            _key=key;
             SettingText = GlobalSettingsService.Instance.GetValue(key);
 
             // 初始化 LostFocusCommand，调用 SaveSetting 方法
-            LostFocusCommand = new RelayCommand(_ => SaveSetting(key));
+            LostFocusCommand = new RelayCommand(SaveSetting);
         }
 
         // 保存设置到 GlobalSettingsService
-        private void SaveSetting(string key)
+        private void SaveSetting()
         {
             if (!string.IsNullOrEmpty(SettingText))
             {
-                GlobalSettingsService.Instance.SetValue(key, SettingText);
+                GlobalSettingsService.Instance.SetValue(_key, SettingText);
             }
         }
 

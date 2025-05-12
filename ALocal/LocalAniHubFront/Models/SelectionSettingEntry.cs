@@ -11,10 +11,10 @@ namespace LocalAniHubFront.Models
         //public List<Dictionary<string, string>> Selections { get; init; }
         public List<string> Selections { get; init; }
         //获取默认选项值
-        public string GetDefaultValue()
+        public string Selected
         {
-            return GlobalSettingsService.Instance.GetValue(Key);
+            get => GlobalSettingsService.Instance.GetValue(Key);
+            set => GlobalSettingsService.Instance.SetValue(Key, value);
         }
-
     }
 }
