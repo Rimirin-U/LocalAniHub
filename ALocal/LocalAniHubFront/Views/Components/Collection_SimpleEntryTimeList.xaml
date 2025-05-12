@@ -6,13 +6,13 @@
              xmlns:local="clr-namespace:LocalAniHubFront.Views.Components"
              xmlns:models="clr-namespace:LocalAniHubFront.Models"
              
-             d:DataContext="{d:DesignInstance local:Collection_SimpleEntryTimeList,
-                                     IsDesignTimeCreatable=False}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             Name="Collection_SimpleEntryTimeList"
              ScrollViewer.CanContentScroll="False">
 
+    <!--
+             d:DataContext="{d:DesignInstance Type=local:Collection_SimpleEntryTimeList,
+                                     IsDesignTimeCreatable=False}"-->
     <!--简单列表（收藏时间排序）-->
     <!--其ViewModel在/ViewModels/Components中-->
 
@@ -71,11 +71,13 @@
                                         </StackPanel>
                                     </DataTemplate>
                                     <!--排列：垂直排列-->
+                                    <!--
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Vertical" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
+                                    -->
 
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
