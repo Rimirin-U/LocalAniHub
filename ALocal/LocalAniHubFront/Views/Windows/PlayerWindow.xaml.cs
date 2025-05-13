@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using LocalAniHubFront.ViewModels.Windows;
 
 namespace LocalAniHubFront.Views.Windows
@@ -8,8 +9,8 @@ namespace LocalAniHubFront.Views.Windows
         public PlayerWindow()
         {
             // 全屏
-            ViewModel.ToggleFullScreenCommand.Executed += (_, _) => ToggleWindowFullScreen();
-            ViewModel.ExitFullScreenCommand.Executed += (_, _) => ExitFullScreen();
+            // ViewModel.ToggleFullScreenCommand.Executed += (_, _) => ToggleWindowFullScreen();
+            // ViewModel.ExitFullScreenCommand.Executed += (_, _) => ExitFullScreen();
 
             InitializeComponent();
         }
@@ -30,6 +31,11 @@ namespace LocalAniHubFront.Views.Windows
             ViewModel.Dispose();
         }
 
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F)
+                ToggleWindowFullScreen();
+        }
         private void ToggleWindowFullScreen()
         {
             if (WindowStyle != WindowStyle.None)
@@ -43,7 +49,7 @@ namespace LocalAniHubFront.Views.Windows
                 WindowState = WindowState.Normal;
             }
         }
-        private void ExitFullScreen() => ToggleWindowFullScreen();
+        // private void ExitFullScreen() => ToggleWindowFullScreen();
 
         private bool _isDragging;
 

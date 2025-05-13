@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using System;
+using System.IO;
 
 namespace LocalAniHubFront.ViewModels.Windows
 {
@@ -60,6 +61,70 @@ namespace LocalAniHubFront.ViewModels.Windows
             NotifyAllCommands();
         }
 
+        // 6.1 全屏切换
+
+        // 6.2 拖动进度条 Seek
+        [ObservableProperty]
+        private long position;
+
+        [RelayCommand]
+        private void Seek(string position1)
+        {
+            long position = long.Parse(position1);
+            MediaPlayer.Time = position;
+            NotifyAllCommands();
+        }
+
+        // 6.3 左/右 键快进/快退
+        [RelayCommand]
+        private void Skip(string offsetMs1)
+        {
+            long offsetMs = long.Parse(offsetMs1);
+            var newTime = Math.Clamp(MediaPlayer.Time + offsetMs, 0, MediaPlayer.Length);
+            MediaPlayer.Time = newTime;
+            NotifyAllCommands();
+        }
+
+        // 6.4 播放速度控制
+        [ObservableProperty]
+        private float currentRate = 1f;
+
+        [RelayCommand]
+        private void IncreaseSpeed()
+        {
+            CurrentRate = MathF.Min(CurrentRate + 0.1f, 4f);
+            MediaPlayer.SetRate(CurrentRate);
+        }
+
+        [RelayCommand]
+        private void DecreaseSpeed()
+        {
+            CurrentRate = MathF.Max(CurrentRate - 0.1f, 0.1f);
+            MediaPlayer.SetRate(CurrentRate);
+        }
+
+        [RelayCommand]
+        private void ResetSpeed()
+        {
+            CurrentRate = 1f;
+            MediaPlayer.SetRate(CurrentRate);
+        }
+
+        // 6.5 截屏并保存
+        public event EventHandler<string>? SnapshotCompleted;
+
+        [RelayCommand]
+        private void Snapshot()
+        {
+            var dir = Path.Combine(
+                @"C:\Users\95842\AppData\Roaming\PotPlayerMini64\Capture",
+                "Snapshots");
+            Directory.CreateDirectory(dir);
+            var file = Path.Combine(dir, $"snap_{DateTime.Now:yyyyMMdd_HHmmss}.png");
+            MediaPlayer.TakeSnapshot(0, file, 0, 0);
+            SnapshotCompleted?.Invoke(this, file);
+        }
+
         private void NotifyAllCommands()
         {
             if (Application.Current.Dispatcher.CheckAccess())
@@ -80,7 +145,6 @@ namespace LocalAniHubFront.ViewModels.Windows
                 });
             }
         }
-
 
         public void Dispose()
         {

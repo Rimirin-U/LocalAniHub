@@ -10,9 +10,23 @@
         WindowCornerPreference="Round"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
-        ExtendsContentIntoTitleBar="True">
+        ExtendsContentIntoTitleBar="True"
+        KeyDown="Window_KeyDown">
 
     <ui:FluentWindow.Resources>
+        <Style x:Key="SliderRepeatButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Rectangle Fill="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+
+
         <ControlTemplate x:Key="FluentSliderTemplate" TargetType="Slider">
             <Grid>
                 <Track x:Name="PART_Track">
@@ -35,10 +49,10 @@
     </ui:FluentWindow.DataContext>
 
     <ui:FluentWindow.InputBindings>
-        <!-- F11 切换全屏 -->
-        <KeyBinding Key="F11" Command="{Binding ToggleFullScreenCommand}"/>
-        <!-- Esc 退出全屏 -->
-        <KeyBinding Key="Escape" Command="{Binding ExitFullScreenCommand}"/>
+        <!-- F11 切换全屏 
+        <KeyBinding Key="F11" Command="{Binding ToggleFullScreenCommand}"/>-->
+        <!-- Esc 退出全屏 
+        <KeyBinding Key="Escape" Command="{Binding ExitFullScreenCommand}"/>-->
 
         <!-- 左右箭头 快进快退 -->
         <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
@@ -52,7 +66,7 @@
         <!-- S:截图-->
         <!--截图保存至该视频对应的条目的素材文件夹中-->
         <!--命名如："某某片_ep2_000526_202505132130.png"-->
-        <KeyBinding Key="Z" Command="{Binding SnapshotCommand}"/>
+        <KeyBinding Key="S" Command="{Binding SnapshotCommand}"/>
     </ui:FluentWindow.InputBindings>
 
 
