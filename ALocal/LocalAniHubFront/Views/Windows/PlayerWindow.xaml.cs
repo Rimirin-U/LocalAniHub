@@ -51,18 +51,31 @@ namespace LocalAniHubFront.Views.Windows
         }
         // private void ExitFullScreen() => ToggleWindowFullScreen();
 
-        private bool _isDragging;
+        private bool _isDragging = false;
 
-        private void PositionSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        private void PositionSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _isDragging = true;
+            ViewModel.IsSeeking = true;
         }
 
-        private void PositionSlider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void PositionSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _isDragging = false;
-            // 拖动结束后同步播放器位置
-            ViewModel.SeekCommand.Execute((long)PositionSlider.Value);
+            if (_isDragging)
+            {
+                _isDragging = false;
+                ViewModel.IsSeeking = false;
+                ViewModel.SeekCommand.Execute((long)PositionSlider.Value);
+            }
+        }
+
+        private void PositionSlider_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging && e.LeftButton == MouseButtonState.Released)
+            {
+                _isDragging = false;
+                ViewModel.SeekCommand.Execute((long)PositionSlider.Value);
+            }
         }
 
         private void VideoView_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

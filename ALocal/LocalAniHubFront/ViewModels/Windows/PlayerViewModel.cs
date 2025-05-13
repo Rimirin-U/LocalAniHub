@@ -23,10 +23,24 @@ namespace LocalAniHubFront.ViewModels.Windows
             _libVLC = new LibVLC();
             _mediaPlayer = new MediaPlayer(_libVLC);
 
+            _mediaPlayer.LengthChanged += (_, e) =>
+            Application.Current.Dispatcher.Invoke(() => MediaLength = e.Length);
+
+            _mediaPlayer.TimeChanged += (_, e) =>
+                Application.Current.Dispatcher.Invoke(() => {
+                    if (!IsSeeking)
+                    {
+                        // Position  拖动时不更新
+                        Position = e.Time;
+                    }
+                });
+
             _mediaPlayer.Playing += (_, _) => NotifyAllCommands();
             _mediaPlayer.Paused += (_, _) => NotifyAllCommands();
             _mediaPlayer.Stopped += (_, _) => NotifyAllCommands();
         }
+
+
 
         [RelayCommand(CanExecute = nameof(CanLoad))]
         private void Load()
@@ -65,12 +79,18 @@ namespace LocalAniHubFront.ViewModels.Windows
 
         // 6.2 拖动进度条 Seek
         [ObservableProperty]
+        private bool isSeeking;
+
+        [ObservableProperty]
+        private long mediaLength;
+
+        [ObservableProperty]
         private long position;
 
         [RelayCommand]
-        private void Seek(string position1)
+        private void Seek(long position)
         {
-            long position = long.Parse(position1);
+            //long position = long.Parse(position1);
             MediaPlayer.Time = position;
             NotifyAllCommands();
         }

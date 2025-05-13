@@ -14,34 +14,6 @@
         KeyDown="Window_KeyDown">
 
     <ui:FluentWindow.Resources>
-        <Style x:Key="SliderRepeatButtonStyle" TargetType="RepeatButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RepeatButton">
-                        <Rectangle Fill="Transparent"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Focusable" Value="False"/>
-        </Style>
-
-
-        <ControlTemplate x:Key="FluentSliderTemplate" TargetType="Slider">
-            <Grid>
-                <Track x:Name="PART_Track">
-                    <Track.DecreaseRepeatButton>
-                        <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderRepeatButtonStyle}"/>
-                    </Track.DecreaseRepeatButton>
-                    <Track.Thumb>
-                        <Thumb x:Name="Thumb" DragStarted="PositionSlider_DragStarted" DragCompleted="PositionSlider_DragCompleted"/>
-                    </Track.Thumb>
-                    <Track.IncreaseRepeatButton>
-                        <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource SliderRepeatButtonStyle}"/>
-                    </Track.IncreaseRepeatButton>
-                </Track>
-            </Grid>
-        </ControlTemplate>
     </ui:FluentWindow.Resources>
 
     <ui:FluentWindow.DataContext>
@@ -54,9 +26,9 @@
         <!-- Esc 退出全屏 
         <KeyBinding Key="Escape" Command="{Binding ExitFullScreenCommand}"/>-->
 
-        <!-- 左右箭头 快进快退 -->
-        <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
-        <KeyBinding Key="Left"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
+        <!-- 左右箭头 快进快退-->
+        <KeyBinding Key="OemPeriod" Command="{Binding SkipCommand}" CommandParameter="5000"/>
+        <KeyBinding Key="OemComma"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
 
         <!-- X:减速0.1 C:加速0.1 Z:恢复原速 -->
         <KeyBinding Key="X" Command="{Binding DecreaseSpeedCommand}"/>
@@ -67,6 +39,8 @@
         <!--截图保存至该视频对应的条目的素材文件夹中-->
         <!--命名如："某某片_ep2_000526_202505132130.png"-->
         <KeyBinding Key="S" Command="{Binding SnapshotCommand}"/>
+
+        <KeyBinding Key="Space" Command="{Binding PauseCommand}"/>
     </ui:FluentWindow.InputBindings>
 
 
@@ -89,6 +63,12 @@
                        Grid.Row="1"
                        Panel.ZIndex="1"
                        MouseLeftButtonDown="VideoView_MouseLeftButtonDown">
+            <vlc:VideoView.InputBindings>
+
+                <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
+                <KeyBinding Key="Left"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
+
+            </vlc:VideoView.InputBindings>
         </vlc:VideoView>
         <!-- 控制面板 -->
         <Grid Grid.Row="2">
@@ -97,11 +77,23 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <!---->
             <Slider x:Name="PositionSlider"
+                    Grid.Row="0"
+                    Margin="24,0,24,0"
                       Minimum="0"
-                      Maximum="{Binding MediaPlayer.Length}"
+                      Maximum="{Binding MediaLength}"
                       Value="{Binding Position, Mode=TwoWay}"
-                      Template="{StaticResource FluentSliderTemplate}" />
+        PreviewMouseLeftButtonDown="PositionSlider_PreviewMouseLeftButtonDown"
+        PreviewMouseLeftButtonUp="PositionSlider_PreviewMouseLeftButtonUp"
+        PreviewMouseMove="PositionSlider_PreviewMouseMove" 
+                    >
+                <Slider.InputBindings>
+                    <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
+                    <KeyBinding Key="Left"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
+                </Slider.InputBindings>
+
+            </Slider>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"
                     Grid.Row="1"
