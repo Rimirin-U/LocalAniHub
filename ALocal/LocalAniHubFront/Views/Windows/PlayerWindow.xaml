@@ -11,9 +11,52 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         ExtendsContentIntoTitleBar="True">
+
+    <ui:FluentWindow.Resources>
+        <ControlTemplate x:Key="FluentSliderTemplate" TargetType="Slider">
+            <Grid>
+                <Track x:Name="PART_Track">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderRepeatButtonStyle}"/>
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb x:Name="Thumb" DragStarted="PositionSlider_DragStarted" DragCompleted="PositionSlider_DragCompleted"/>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource SliderRepeatButtonStyle}"/>
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+    </ui:FluentWindow.Resources>
+
     <ui:FluentWindow.DataContext>
         <vm:PlayerViewModel x:Name="ViewModel" />
     </ui:FluentWindow.DataContext>
+
+    <ui:FluentWindow.InputBindings>
+        <!-- F11 切换全屏 -->
+        <KeyBinding Key="F11" Command="{Binding ToggleFullScreenCommand}"/>
+        <!-- Esc 退出全屏 -->
+        <KeyBinding Key="Escape" Command="{Binding ExitFullScreenCommand}"/>
+
+        <!-- 左右箭头 快进快退 -->
+        <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
+        <KeyBinding Key="Left"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
+
+        <!-- X:减速0.1 C:加速0.1 Z:恢复原速 -->
+        <KeyBinding Key="X" Command="{Binding DecreaseSpeedCommand}"/>
+        <KeyBinding Key="C" Command="{Binding IncreaseSpeedCommand}"/>
+        <KeyBinding Key="Z" Command="{Binding ResetSpeedCommand}"/>
+
+        <!-- S:截图-->
+        <!--截图保存至该视频对应的条目的素材文件夹中-->
+        <!--命名如："某某片_ep2_000526_202505132130.png"-->
+        <KeyBinding Key="Z" Command="{Binding SnapshotCommand}"/>
+    </ui:FluentWindow.InputBindings>
+
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -21,7 +64,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-            
         <ui:TitleBar x:Name="TitleBar"
                      Grid.Row="0"
                      Panel.ZIndex="10"/>
@@ -29,17 +71,33 @@
 
         <!-- 视频显示 -->
         <vlc:VideoView MediaPlayer="{Binding MediaPlayer}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                        Grid.Row="1"
-                       Panel.ZIndex="1"/>
+                       Panel.ZIndex="1"
+                       MouseLeftButtonDown="VideoView_MouseLeftButtonDown">
+        </vlc:VideoView>
         <!-- 控制面板 -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"
-                    Grid.Row="2"
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Slider x:Name="PositionSlider"
+                      Minimum="0"
+                      Maximum="{Binding MediaPlayer.Length}"
+                      Value="{Binding Position, Mode=TwoWay}"
+                      Template="{StaticResource FluentSliderTemplate}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"
+                    Grid.Row="1"
                     Panel.ZIndex="5">
-            <TextBox Width="200" Margin="5" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="加载" Command="{Binding LoadCommand}" Margin="5" />
-            <Button Content="播放" Command="{Binding PlayCommand}" Margin="5" />
-            <Button Content="暂停" Command="{Binding PauseCommand}" Margin="5" />
-            <Button Content="停止" Command="{Binding StopCommand}" Margin="5" />
-        </StackPanel>
+                <TextBox Width="200" Margin="5" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Content="加载" Command="{Binding LoadCommand}" Margin="5" />
+                <Button Content="播放" Command="{Binding PlayCommand}" Margin="5" />
+                <Button Content="暂停" Command="{Binding PauseCommand}" Margin="5" />
+                <Button Content="停止" Command="{Binding StopCommand}" Margin="5" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </ui:FluentWindow>
