@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace UiDesktopApp1.Helpers
+namespace LocalAniFront.Helpers
 {
     public class BoolToVisibilityConverter : IValueConverter
     {
