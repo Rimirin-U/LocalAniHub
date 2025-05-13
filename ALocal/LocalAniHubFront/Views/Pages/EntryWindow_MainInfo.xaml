@@ -8,18 +8,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Page.Resources>
-    </Page.Resources>
-
-    <ScrollViewer
-        HorizontalScrollBarVisibility="Disabled"
-        VerticalScrollBarVisibility="Visible">
 
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="MainInfoGridRow" Height="*"/>
                 <RowDefinition x:Name="BottonRow" Height="Auto"/>
             </Grid.RowDefinitions>
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Visible">
 
             <Grid x:Name="MainInfoGrid"
                   Grid.Row="0">
@@ -284,6 +282,7 @@
                     </ItemsControl>
                 </Grid>
             </Grid>
+    </ScrollViewer>
 
             <Grid x:Name="ButtonGrid"
               Grid.Row="1"
@@ -317,5 +316,4 @@
 
 
 
-    </ScrollViewer>
 </Page>
