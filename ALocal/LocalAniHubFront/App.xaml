@@ -16,24 +16,22 @@
             </ResourceDictionary.MergedDictionaries>
 
 
+            <helpers:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
             <helpers:DesaturateBrushConverter x:Key="DesaturateConverter" DesaturationAmount="0.2"/>
+            <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <!--阴影效果-->
             <DropShadowEffect x:Key="DropShadow"
-                          Color="Black"
-                          BlurRadius="5"
-                          ShadowDepth="2"
-                          Opacity="0.5"/>
+              Color="Black"
+              BlurRadius="5"
+              ShadowDepth="2"
+              Opacity="0.5"/>
 
-            <!--小按钮-->
-            <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <!--基础按钮-->
+            <Style x:Key="BasicButton" TargetType="Button">
                 <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
-                <Setter Property="Width" Value="32"/>
-                <Setter Property="Height" Value="32"/>
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="Background" Value="White"/>
                 <Setter Property="Cursor" Value="Arrow"/>
-                <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -41,29 +39,41 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <!-- Border & Shadow -->
                             <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="6"
-                                SnapsToDevicePixels="True"
-                                Effect="{StaticResource DropShadow}">
+            Background="{TemplateBinding Background}"
+            CornerRadius="6"
+            SnapsToDevicePixels="True"
+            Effect="{StaticResource DropShadow}">
                                 <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              RecognizesAccessKey="True"/>
+                          VerticalAlignment="Center"
+                          RecognizesAccessKey="True"/>
                             </Border>
-
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border"
-                                        Property="Background"
-                                        Value="{Binding Background,
-                                        RelativeSource={RelativeSource TemplatedParent},
-                                        Converter={StaticResource DesaturateConverter}}"/>
+                    Property="Background"
+                    Value="{Binding Background,
+                            RelativeSource={RelativeSource TemplatedParent},
+                            Converter={StaticResource DesaturateConverter}}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+
+            <!--基本白底黑字大小不定按钮-->
+            <Style x:Key="BaseRoundedButtonStyle" TargetType="Button" BasedOn="{StaticResource BasicButton}">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="Black"/>
+            </Style>
+
+            <!--小按钮-->
+            <Style x:Key="RoundedButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseRoundedButtonStyle}">
+                <Setter Property="Width" Value="32"/>
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="FontSize" Value="16"/>
             </Style>
             <Style x:Key="EpisodeButton" TargetType="Button" BasedOn="{StaticResource RoundedButtonStyle}">
                 <Setter Property="Margin" Value="8,0,0,8"/>
@@ -87,78 +97,70 @@
                 <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
             </Style>
 
-            <!--Subtitle白字-->
-            <Style x:Key="SubtitleTextStyle" TargetType="TextBlock">
+
+
+            <!--GeneralText-->
+            <Style x:Key="GeneralTextStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
-                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+                <Setter Property="LineHeight" Value="Auto"/>
+                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+            </Style>
+
+            <!--Subtitle白字-->
+            <Style x:Key="SubtitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GeneralTextStyle}">
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="FontSize" Value="30"/>
-                <Setter Property="VerticalAlignment" Value="Bottom"/>
-                <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-                <Setter Property="LineHeight" Value="32"/>
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect Color="Black"
-                                  BlurRadius="5"
-                                  Direction="315"
-                                  ShadowDepth="2"
-                                  Opacity="0.8"/>
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="FontWeight" Value="Bold"/>
             </Style>
 
-            <!--普通白字-->
-            <Style x:Key="WhiteTextStyle" TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
-                <Setter Property="Foreground" Value="White"/>
+            <!--小字-->
+            <Style x:Key="SmallTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GeneralTextStyle}">
                 <Setter Property="FontSize" Value="18"/>
-                <Setter Property="VerticalAlignment" Value="Bottom"/>
-                <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-                <Setter Property="LineHeight" Value="24"/>
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect Color="Black"
-                                  BlurRadius="5"
-                                  Direction="315"
-                                  ShadowDepth="2"
-                                  Opacity="0.8"/>
-                    </Setter.Value>
-                </Setter>
             </Style>
 
-            <!--加粗白字-->
+            <!--小小字-->
+            <Style x:Key="SmallerTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GeneralTextStyle}">
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+
+            <!--小白字-->
+            <Style x:Key="WhiteTextStyle" TargetType="TextBlock" BasedOn="{StaticResource SmallTextStyle}">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <!--小黄字-->
+            <Style x:Key="SmallYellowTextStyle" TargetType="TextBlock" BasedOn="{StaticResource SmallTextStyle}">
+                <Setter Property="Foreground" Value="#FFF2CC"/>
+            </Style>
+
+            <!--加粗小白字-->
             <Style x:Key="BoldWhiteTextStyle" TargetType="TextBlock" BasedOn="{StaticResource WhiteTextStyle}">
                 <Setter Property="FontWeight" Value="Bold"/>
             </Style>
 
-            <!--小灰字-->
-            <Style x:Key="GrayTextStyle" TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
+            <!--小小灰字-->
+            <Style x:Key="GrayTextStyle" TargetType="TextBlock" BasedOn="{StaticResource SmallerTextStyle}">
                 <Setter Property="Foreground" Value="#FFD9D9D9"/>
-                <Setter Property="FontSize" Value="16"/>
-                <Setter Property="VerticalAlignment" Value="Bottom"/>
-                <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-                <Setter Property="LineHeight" Value="24"/>
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect Color="Black"
-                                  BlurRadius="5"
-                                  Direction="315"
-                                  ShadowDepth="2"
-                                  Opacity="0.8"/>
-                    </Setter.Value>
-                </Setter>
             </Style>
 
-            <!--加粗灰字-->
+            <!--加粗小小灰字-->
             <Style x:Key="BoldGrayTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GrayTextStyle}">
                 <Setter Property="FontWeight" Value="Bold"/>
+            </Style>
+
+            <!--小小黄字-->
+            <Style x:Key="SmallerYellowTextStyle" TargetType="TextBlock" BasedOn="{StaticResource SmallerTextStyle}">
+                <Setter Property="Foreground" Value="#FFF2CC"/>
             </Style>
 
             <!--TagTextStyle-->
             <Style x:Key="TagTextStyle" TargetType="TextBlock" BasedOn="{StaticResource GrayTextStyle}">
                 <Setter Property="Margin" Value="8,0,0,0"/>
             </Style>
+
+
 
             <!--星星（用后两个）-->
             <Style x:Key="StarIconStyle" TargetType="TextBlock">

@@ -57,7 +57,8 @@
                Foreground="Gray"
                VerticalAlignment="Center"
                HorizontalAlignment="Center"
-               Visibility="{Binding SelectedFile, ElementName=MaterialPage, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"/>
+               Visibility="{Binding SelectedFile, ElementName=MaterialPage, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
+               Effect="{StaticResource DropShadow}"/>
 
             <!--已选中-->
             <ContentControl Visibility="{Binding SelectedFile, ElementName=MaterialPage, Converter={StaticResource NullToVisibilityConverter}}">
