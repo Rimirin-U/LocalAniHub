@@ -62,5 +62,14 @@ namespace BasicClassLibrary
                 .OrderByDescending(le => le.Timestamp)
                 .FirstOrDefault();
         }
+        // 查询指定剧集的最早观影日志
+        public WatchLogEntry? FindEarliestWatchLogForEpisode(int episodeId)
+        {
+            return context.Logs
+                .OfType<WatchLogEntry>()
+                .Where(w => w.EpisodeId == episodeId)
+                .OrderBy(w => w.Timestamp)
+                .FirstOrDefault();
+        }
     }
 }
