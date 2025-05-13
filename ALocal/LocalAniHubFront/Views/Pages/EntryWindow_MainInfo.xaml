@@ -287,7 +287,7 @@
             <Grid x:Name="ButtonGrid"
               Grid.Row="1"
               HorizontalAlignment="Right"
-              Margin="0,0,0,0">
+              Margin="0,8,0,0">
                 <WrapPanel x:Name="BottonPanel"
                    FlowDirection="LeftToRight">
                     <Button x:Name="ResourceButton"
