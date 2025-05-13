@@ -16,7 +16,11 @@
             </ResourceDictionary.MergedDictionaries>
 
 
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <helpers:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
             <helpers:DesaturateBrushConverter x:Key="DesaturateConverter" DesaturationAmount="0.2"/>
+            <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <!--阴影效果-->
             <DropShadowEffect x:Key="DropShadow"
