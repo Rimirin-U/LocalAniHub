@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace LocalAniFront.Views.Components
+namespace LocalAniHubFront.Views.Components
 {
     public partial class EditableTextBlock : UserControl
     {

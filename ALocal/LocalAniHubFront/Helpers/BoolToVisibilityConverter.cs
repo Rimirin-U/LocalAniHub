@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace LocalAniFront.Helpers
+namespace LocalAniHubFront.Helpers
 {
     public class BoolToVisibilityConverter : IValueConverter
     {
