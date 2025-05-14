@@ -27,6 +27,7 @@ namespace BasicClassLibrary
         // Properties
         public int EpisodeNumber { get; set; }
         public State State { get; set; }            // GivenUp视作NotWatched
+        public string ShortComment { get; set; } 
     }
 
     public partial class AppDbContext : DbContext
