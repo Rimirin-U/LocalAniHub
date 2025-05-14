@@ -4,16 +4,20 @@
         xmlns:vm="clr-namespace:LocalAniHubFront.ViewModels.Windows"
         xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:conv="clr-namespace:LocalAniHubFront.Helpers"
         Title="LibVLCSharp 播放器" Height="650" Width="1100"
         AllowsTransparency="False"
-        WindowBackdropType="Mica"   
+        WindowBackdropType="None"   
+        Background="Black"
         WindowCornerPreference="Round"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         ExtendsContentIntoTitleBar="True"
-        KeyDown="Window_KeyDown">
+        KeyDown="Window_KeyDown"
+                 ThemeMode="Dark">
 
     <ui:FluentWindow.Resources>
+        <conv:MillisecondsToTimeConverter x:Key="MsToTime"/>
     </ui:FluentWindow.Resources>
 
     <ui:FluentWindow.DataContext>
@@ -26,7 +30,7 @@
         <!-- Esc 退出全屏 
         <KeyBinding Key="Escape" Command="{Binding ExitFullScreenCommand}"/>-->
 
-        <!-- 左右箭头 快进快退-->
+        <!-- 左右箭头(< >) 快进快退-->
         <KeyBinding Key="OemPeriod" Command="{Binding SkipCommand}" CommandParameter="5000"/>
         <KeyBinding Key="OemComma"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
 
@@ -52,9 +56,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+
+        <!--todo：全屏时隐藏-->
+        <!--todo：窗口默认Dark主题-->
         <ui:TitleBar x:Name="TitleBar"
                      Grid.Row="0"
-                     Panel.ZIndex="10"/>
+                     Panel.ZIndex="10"
+                     ApplicationTheme="Dark"/>
 
 
         <!-- 视频显示 -->
@@ -63,47 +71,83 @@
                        Grid.Row="1"
                        Panel.ZIndex="1"
                        MouseLeftButtonDown="VideoView_MouseLeftButtonDown">
-            <vlc:VideoView.InputBindings>
-
-                <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
-                <KeyBinding Key="Left"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
-
-            </vlc:VideoView.InputBindings>
+            <!--信息文字-->
+            <TextBlock Text="{Binding MessageText}" FontSize="18" Margin="24,24,0,0"
+                       VerticalAlignment="Top" HorizontalAlignment="Left"
+                       Foreground="Red"/>
         </vlc:VideoView>
+
+
+
+
         <!-- 控制面板 -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2"
+              x:Name="ControlBar">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!---->
+            <!-- 进度条 -->
             <Slider x:Name="PositionSlider"
                     Grid.Row="0"
                     Margin="24,0,24,0"
                       Minimum="0"
                       Maximum="{Binding MediaLength}"
                       Value="{Binding Position, Mode=TwoWay}"
-        PreviewMouseLeftButtonDown="PositionSlider_PreviewMouseLeftButtonDown"
-        PreviewMouseLeftButtonUp="PositionSlider_PreviewMouseLeftButtonUp"
-        PreviewMouseMove="PositionSlider_PreviewMouseMove" 
+                      PreviewMouseLeftButtonDown="PositionSlider_PreviewMouseLeftButtonDown"
+                      PreviewMouseLeftButtonUp="PositionSlider_PreviewMouseLeftButtonUp"
+                      PreviewMouseMove="PositionSlider_PreviewMouseMove" 
                     >
-                <Slider.InputBindings>
-                    <KeyBinding Key="Right" Command="{Binding SkipCommand}" CommandParameter="5000"/>
-                    <KeyBinding Key="Left"  Command="{Binding SkipCommand}" CommandParameter="-5000"/>
-                </Slider.InputBindings>
 
             </Slider>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"
-                    Grid.Row="1"
-                    Panel.ZIndex="5">
+            <Grid x:Name="ControlsGrid" VerticalAlignment="Bottom" Margin="24,0,24,10"
+                  Grid.Row="1"
+                  Panel.ZIndex="5">
+                <StackPanel x:Name="LeftArea" HorizontalAlignment="Left">
+                    <TextBlock Text="{Binding Position, Mode=OneWay, Converter={StaticResource MsToTime}}" 
+                               Style="{StaticResource WhiteTextStyle}"/>
+                </StackPanel>
+
+                <StackPanel x:Name="CentreArea" HorizontalAlignment="Center">
+                    <Button x:Name="PauseButton"
+                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                            Command="{Binding PauseCommand}"
+                            Background="Transparent"
+                            Foreground="White"
+                            Cursor="Hand">
+                        <Button.Content>
+                            <TextBlock FontSize="20">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="&#xE769;"/>
+                                        <Setter Property="FontSize" Value="16"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+                                                <Setter Property="Text" Value="&#xE768;"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel x:Name="RightArea" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding MediaLength, Mode=OneWay, Converter={StaticResource MsToTime}}" 
+                               Style="{StaticResource WhiteTextStyle}"/>
+                </StackPanel>
+
+                <!--
                 <TextBox Width="200" Margin="5" Text="{Binding MediaPath, UpdateSourceTrigger=PropertyChanged}" />
                 <Button Content="加载" Command="{Binding LoadCommand}" Margin="5" />
                 <Button Content="播放" Command="{Binding PlayCommand}" Margin="5" />
                 <Button Content="暂停" Command="{Binding PauseCommand}" Margin="5" />
                 <Button Content="停止" Command="{Binding StopCommand}" Margin="5" />
-            </StackPanel>
+                -->
+            </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

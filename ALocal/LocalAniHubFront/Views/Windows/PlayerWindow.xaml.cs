@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using LocalAniHubFront.ViewModels.Windows;
 
 namespace LocalAniHubFront.Views.Windows
@@ -24,7 +25,9 @@ namespace LocalAniHubFront.Views.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
             ViewModel.LoadCommand.Execute(null);
+            ViewModel.MediaPlayer.Play();
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -38,15 +41,19 @@ namespace LocalAniHubFront.Views.Windows
         }
         private void ToggleWindowFullScreen()
         {
-            if (WindowStyle != WindowStyle.None)
+            if (WindowStyle != WindowStyle.None) // 全屏
             {
                 WindowStyle = WindowStyle.None;
                 WindowState = WindowState.Maximized;
+                TitleBar.Visibility = Visibility.Collapsed;
+                ControlBar.Visibility = Visibility.Collapsed;
             }
             else
             {
                 WindowStyle = WindowStyle.SingleBorderWindow;
                 WindowState = WindowState.Normal;
+                TitleBar.Visibility = Visibility.Visible;
+                ControlBar.Visibility = Visibility.Visible;
             }
         }
         // private void ExitFullScreen() => ToggleWindowFullScreen();

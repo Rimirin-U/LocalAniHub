@@ -13,6 +13,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         private Media? _currentMedia;
 
         public MediaPlayer MediaPlayer => _mediaPlayer;
+        public bool IsPlaying => _mediaPlayer.IsPlaying;
 
         [ObservableProperty]
         private string mediaPath = @"D:\Download\[ANi] mono女孩 - 05 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4";
@@ -24,7 +25,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             _mediaPlayer = new MediaPlayer(_libVLC);
 
             _mediaPlayer.LengthChanged += (_, e) =>
-            Application.Current.Dispatcher.Invoke(() => MediaLength = e.Length);
+                Application.Current.Dispatcher.Invoke(() => MediaLength = e.Length);
 
             _mediaPlayer.TimeChanged += (_, e) =>
                 Application.Current.Dispatcher.Invoke(() => {
@@ -34,6 +35,15 @@ namespace LocalAniHubFront.ViewModels.Windows
                         Position = e.Time;
                     }
                 });
+
+            _mediaPlayer.EndReached += (_, e) =>
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    // Pause();
+                    Stop();
+                    Play();
+                    ShowMessage("已重播");
+                }));
 
             _mediaPlayer.Playing += (_, _) => NotifyAllCommands();
             _mediaPlayer.Paused += (_, _) => NotifyAllCommands();
@@ -64,6 +74,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         private void Pause()
         {
             _mediaPlayer.Pause();
+            ShowMessage(FormatMilliseconds(_mediaPlayer.Time));
             NotifyAllCommands();
         }
         private bool CanPause() => _mediaPlayer.CanPause;
@@ -102,6 +113,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             long offsetMs = long.Parse(offsetMs1);
             var newTime = Math.Clamp(MediaPlayer.Time + offsetMs, 0, MediaPlayer.Length);
             MediaPlayer.Time = newTime;
+            ShowMessage(FormatMilliseconds(_mediaPlayer.Time));
             NotifyAllCommands();
         }
 
@@ -114,6 +126,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             CurrentRate = MathF.Min(CurrentRate + 0.1f, 4f);
             MediaPlayer.SetRate(CurrentRate);
+            ShowMessage($"播放速度 {CurrentRate:F1}x");
         }
 
         [RelayCommand]
@@ -121,6 +134,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             CurrentRate = MathF.Max(CurrentRate - 0.1f, 0.1f);
             MediaPlayer.SetRate(CurrentRate);
+            ShowMessage($"播放速度 {CurrentRate}x");
         }
 
         [RelayCommand]
@@ -128,6 +142,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             CurrentRate = 1f;
             MediaPlayer.SetRate(CurrentRate);
+            ShowMessage($"播放速度 {CurrentRate}x");
         }
 
         // 6.5 截屏并保存
@@ -153,6 +168,7 @@ namespace LocalAniHubFront.ViewModels.Windows
                 PlayCommand.NotifyCanExecuteChanged();
                 PauseCommand.NotifyCanExecuteChanged();
                 StopCommand.NotifyCanExecuteChanged();
+                OnPropertyChanged(nameof(IsPlaying)); // 新增
             }
             else
             {
@@ -162,7 +178,23 @@ namespace LocalAniHubFront.ViewModels.Windows
                     PlayCommand.NotifyCanExecuteChanged();
                     PauseCommand.NotifyCanExecuteChanged();
                     StopCommand.NotifyCanExecuteChanged();
+                    OnPropertyChanged(nameof(IsPlaying)); // 新增
                 });
+            }
+        }
+
+        // 信息文字
+        [ObservableProperty]
+        private string messageText = "";
+        private int _messageToken = 0;
+        private async void ShowMessage(string message)
+        {
+            int token = ++_messageToken;
+            MessageText = message;
+            await Task.Delay(1500);
+            if (token == _messageToken)
+            {
+                MessageText = "";
             }
         }
 
@@ -172,5 +204,12 @@ namespace LocalAniHubFront.ViewModels.Windows
             _mediaPlayer.Dispose();
             _libVLC.Dispose();
         }
+
+        private string FormatMilliseconds(long milliseconds)
+        {
+            var ts = TimeSpan.FromMilliseconds(milliseconds);
+            return $"{(int)ts.TotalMinutes}:{ts.Seconds:D2}";
+        }
+
     }
 }
