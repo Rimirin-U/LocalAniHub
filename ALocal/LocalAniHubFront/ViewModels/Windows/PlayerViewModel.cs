@@ -22,6 +22,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         [ObservableProperty]
         private string mediaPath = "";
 
+        private bool _hasReachedCompletion; // 新增：是否已达到看完状态的标志位
         public PlayerViewModel(int resourceId, AppDbContext dbContext)
         {
             // 已有代码基本不需要改变 
@@ -33,7 +34,8 @@ namespace LocalAniHubFront.ViewModels.Windows
             _dbContext = dbContext;
 
             // 从数据库加载Resource
-            _resource = _dbContext.Resources.FirstOrDefault(r => r.Id == resourceId);
+            _resource = _dbContext.Resources.FirstOrDefault(r => r.Id == resourceId)
+                 ?? throw new ArgumentException($"未找到ID为{resourceId}的资源");
             if (_resource == null)
             {
                 throw new ArgumentException($"未找到ID为{resourceId}的资源");
@@ -61,6 +63,20 @@ namespace LocalAniHubFront.ViewModels.Windows
                     {
                         // Position  拖动时不更新
                         Position = e.Time;
+
+                        // 实时检测是否达到看完条件
+                        if (!_hasReachedCompletion &&
+                            _mediaPlayer.Length > 0 &&
+                            (_mediaPlayer.Length - e.Time) <= 90000) // 剩余≤90秒
+                        {
+                            _hasReachedCompletion = true;
+                            if (_resource.Episode != null)
+                            {
+                                _resource.Episode.State = State.Watched;
+                                _resource.Episode.Progress = _mediaPlayer.Length;
+                                _dbContext.SaveChanges();
+                            }
+                        }
                     }
                 });
 
@@ -88,11 +104,9 @@ namespace LocalAniHubFront.ViewModels.Windows
                 return; // 如果没有关联的Episode，不做任何操作
             }
 
-            // 如果已观看90%以上，标记为"已看"
-            bool isFinished = _mediaPlayer.Length > 0 &&
-                             (_mediaPlayer.Length - _mediaPlayer.Time) <= 90000;
+        
 
-            if (isFinished)
+            if (_hasReachedCompletion)
             {
                 _resource.Episode.State = State.Watched;
                 _resource.Episode.Progress = _mediaPlayer.Length;
