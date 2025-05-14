@@ -1,9 +1,11 @@
 ﻿using HtmlAgilityPack; // 需要安装HtmlAgilityPack NuGet包
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BasicClassLibrary
 {
@@ -11,16 +13,33 @@ namespace BasicClassLibrary
 
     public class EntryFetchInYucWiki : IEntryFetch
     {
-        private const string BaseUrl = "https://yuc.wiki/202504/";//存储目标网站的地址
+
         private readonly HttpClient _httpClient;//HttpClient 是 .NET 中用于发送 HTTP 请求和接收 HTTP 响应的核心类
 
-        public EntryFetchInYucWiki()
+       
+        public EntryFetchInYucWiki(int year,int month)
         {
+            if (!IsValidMonth(month))
+            {
+                throw new ArgumentException("仅支持1月、4月、7月和10月作为有效月份。");
+            }
+            string baseUrl = GenerateBaseUrl(year, month);
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(BaseUrl);
+            _httpClient.BaseAddress = new Uri(baseUrl);
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
         }
 
+
+        private static bool IsValidMonth(int month)
+        {
+            // 仅支持1月、4月、7月和10月
+            return month == 1 || month == 4 || month == 7 || month == 10;
+        }
+        private static string GenerateBaseUrl(int year, int month)
+        {
+            // 动态生成 BaseUrl
+            return $"https://yuc.wiki/{year}{month.ToString("D2", CultureInfo.InvariantCulture)}/";
+        }
         public async Task<List<EntryInfoSet>> FetchAsync()
         {
             try

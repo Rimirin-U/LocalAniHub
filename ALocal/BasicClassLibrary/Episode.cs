@@ -10,11 +10,12 @@ namespace BasicClassLibrary
     public class Episode : IEntityWithId,IEntryNavigation
     {
         // Constructor
-        public Episode(int? entryId, Entry? entry, int episodeNumber)
+        public Episode(int? entryId, Entry? entry, int episodeNumber, State state)
         {
             EntryId = entryId;
             Entry = entry;
             EpisodeNumber = episodeNumber;
+            State = state;
         }
 
         public int Id { get; set; }
@@ -25,6 +26,8 @@ namespace BasicClassLibrary
 
         // Properties
         public int EpisodeNumber { get; set; }
+        public State State { get; set; }            // GivenUp视作NotWatched
+        public string ShortComment { get; set; } 
     }
 
     public partial class AppDbContext : DbContext
