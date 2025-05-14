@@ -7,21 +7,13 @@ namespace LocalAniHubFront.Views.Windows
 {
     public partial class PlayerWindow
     {
-        public PlayerWindow()
+        public PlayerWindow(int resourceId)
         {
-            // 全屏
-            // ViewModel.ToggleFullScreenCommand.Executed += (_, _) => ToggleWindowFullScreen();
-            // ViewModel.ExitFullScreenCommand.Executed += (_, _) => ExitFullScreen();
-
+            DataContext = new PlayerViewModel(resourceId);
             InitializeComponent();
         }
 
-        public PlayerWindow(string mediaUrl) : this()
-        {
-            ViewModel.MediaPath = mediaUrl;
-        }
-
-        // private PlayerViewModel ViewModel => DataContext as PlayerViewModel;
+        private PlayerViewModel ViewModel => DataContext as PlayerViewModel;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -31,6 +23,7 @@ namespace LocalAniHubFront.Views.Windows
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            ViewModel.OnWindowClosing();
             ViewModel.Dispose();
         }
 

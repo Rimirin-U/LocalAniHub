@@ -16,10 +16,17 @@ namespace LocalAniHubFront.ViewModels.Windows
         public bool IsPlaying => _mediaPlayer.IsPlaying;
 
         [ObservableProperty]
-        private string mediaPath = @"D:\Download\[ANi] mono女孩 - 05 [1080P][Baha][WEB-DL][AAC AVC][CHT].mp4";
+        private string mediaPath = "";
 
-        public PlayerViewModel()
+        public PlayerViewModel(int resourceId)
         {
+            // 已有代码基本不需要改变 
+            // 需要设定mediaPath
+            // 需要读取Episode中的观看进度
+            // 需要实现一个公有函数OnWindowClosing()，在窗口关闭时被调用：
+            //     如果已经看完了就修改观看进度为已看，否则改为在看，并记录观看进度（记录到Episode中）（以毫秒形式计入）
+
+
             Core.Initialize();
             _libVLC = new LibVLC();
             _mediaPlayer = new MediaPlayer(_libVLC);

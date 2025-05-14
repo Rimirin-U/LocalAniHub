@@ -20,9 +20,11 @@
         <conv:MillisecondsToTimeConverter x:Key="MsToTime"/>
     </ui:FluentWindow.Resources>
 
+    <!--
     <ui:FluentWindow.DataContext>
         <vm:PlayerViewModel x:Name="ViewModel" />
     </ui:FluentWindow.DataContext>
+    -->
 
     <ui:FluentWindow.InputBindings>
         <!-- F11 切换全屏 
@@ -74,7 +76,8 @@
             <!--信息文字-->
             <TextBlock Text="{Binding MessageText}" FontSize="18" Margin="24,24,0,0"
                        VerticalAlignment="Top" HorizontalAlignment="Left"
-                       Foreground="Red"/>
+                       Foreground="Red"
+                       Effect="{StaticResource DropShadow}"/>
         </vlc:VideoView>
 
 
