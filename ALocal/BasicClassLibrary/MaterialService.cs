@@ -57,7 +57,7 @@ namespace BasicClassLibrary
         {
             ValidateEntryFolder(entry);
 
-            string sourceFolder = GlobalSettingsService.BatchSourceFolder; // 从设置中获得指定文件夹
+            string sourceFolder = GlobalSettingsService.Instance.GetValue("BatchSourceFolder"); // 从设置中获得指定文件夹
             var files = Directory.EnumerateFiles(sourceFolder)
                 .Select(f => new FileInfo(f))
                 .Where(f => f.CreationTime >= startTime && f.CreationTime <= endTime);
