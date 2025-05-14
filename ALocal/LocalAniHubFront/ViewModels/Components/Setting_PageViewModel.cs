@@ -10,8 +10,9 @@ using System.Runtime.CompilerServices;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
-    public partial class Setting_PageViewModel : INotifyPropertyChanged
-    {
+
+   public partial class Setting_PageViewModel : INotifyPropertyChanged
+   {
         private readonly PageSettingEntry _entry;
 
         // 设置项的名称，用于绑定到 TextBlock 的 Text 属性
@@ -46,12 +47,5 @@ namespace LocalAniHubFront.ViewModels.Components
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        // 使用 [RelayCommand] 特性定义命令
-        /*[RelayCommand]
-        private void ShowSettingPageCommand()
-        {
-            // 调用 PageSettingEntry的 OpenSettingPage 方法
-            _entry.OpenSettingPage();
-        }*/
-    }
+   }
 }

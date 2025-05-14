@@ -12,7 +12,47 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
-    public class Setting_TextBoxViewModel : INotifyPropertyChanged
+    public partial class Setting_TextBoxViewModel : ObservableObject
+    {
+        //设置项名称
+        public string EntryName { get; }
+        //对应设置项在 GlobalSettingsService 中的键名
+        private readonly string _settingKey;
+        // 文本框绑定内容（双向绑定）
+        [ObservableProperty]
+        private string _settingText = string.Empty;
+        // 默认构造函数（用于设计器支持）
+        public Setting_TextBoxViewModel()
+        {
+            EntryName = string.Empty;
+            _settingKey = string.Empty;
+        }
+        // 构造函数
+        public Setting_TextBoxViewModel(string entryName, string settingKey)
+        {
+            EntryName = entryName;
+            _settingKey = settingKey;
+
+            // 初始化文本框内容
+            SettingText = GlobalSettingsService.Instance.GetValue(_settingKey);
+        }
+        [RelayCommand]
+        private void LostFocus()
+        {
+            if (SettingText is not null)
+            {
+                GlobalSettingsService.Instance.SetValue(_settingKey, SettingText);
+            }
+        }
+
+    }
+
+
+
+
+
+
+    /*public class Setting_TextBoxViewModel : INotifyPropertyChanged
     {
         private string _settingText;
 
@@ -65,7 +105,7 @@ namespace LocalAniHubFront.ViewModels.Components
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
+    }*/
     /*
     // 简单的 RelayCommand 实现
     public class RelayCommand : ICommand

@@ -11,21 +11,35 @@ namespace LocalAniHubFront.ViewModels.Pages
 {
     public partial class EntryWindow_MaterialManageViewModel
     {
-        public int EntryId { get; }
+        private readonly int _entryId;
+        private readonly MaterialService _materialService;
+        private readonly EntryManager _entryManager;
 
+        public string MaterialFolderPath { get; }
         public EntryWindow_MaterialManageViewModel(int entryId)
         {
-            EntryId = entryId;
+            _entryId = entryId;
+            _materialService = new MaterialService();//这个报错不用管
+            _entryManager = new EntryManager();
+            var entry = _entryManager.FindById(entryId);
+            // 获取素材路径
+            MaterialFolderPath = _materialService.GetEntryMaterialPath(entry, "");
         }
+        /* public int EntryId { get; }
 
-        public string MaterialFolderPath
-        {
-            get
-            {
-                // 假设全局设置服务已实现
-                string parentFolder = GlobalSettingsService.Instance.GetValue("defaultMaterialParentFolderPath");
-                return Path.Combine(parentFolder, EntryId.ToString());
-            }
-        }
+         public EntryWindow_MaterialManageViewModel(int entryId)
+         {
+             EntryId = entryId;
+         }
+
+         public string MaterialFolderPath
+         {
+             get
+             {
+                 // 假设全局设置服务已实现-这里还需要再修改一下
+                 string parentFolder = GlobalSettingsService.Instance.GetValue("defaultMaterialParentFolderPath");
+                 return Path.Combine(parentFolder, EntryId.ToString());
+             }
+         }*/
     }
 }

@@ -16,5 +16,11 @@ namespace LocalAniHubFront.Models
             get => GlobalSettingsService.Instance.GetValue(Key);
             set => GlobalSettingsService.Instance.SetValue(Key, value);
         }
+        public SelectionSettingEntry(string entryName, string key, List<string> selections)
+        {
+            EntryName = entryName;
+            Key = key;
+            Selections = selections;
+        }
     }
 }
