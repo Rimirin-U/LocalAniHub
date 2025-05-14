@@ -12,7 +12,7 @@ namespace LocalAniHubFront.ViewModels.Pages
 {
     public partial class EntryWindow_MainInfoViewModel : ObservableObject, INavigationAware
     {
-        // 条目基本信息
+        // 条目基本信息 
         [ObservableProperty]
         private string _subTitle = string.Empty;
 
