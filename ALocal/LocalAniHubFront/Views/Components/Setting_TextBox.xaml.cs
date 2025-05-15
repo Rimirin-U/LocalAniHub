@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using LocalAniHubFront.ViewModels.Components;
+using System.Windows.Controls;
 
 namespace LocalAniHubFront.Views.Components
 {
