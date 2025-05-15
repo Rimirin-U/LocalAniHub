@@ -12,17 +12,24 @@ namespace LocalAniHubFront.ViewModels.Pages
 {
     // record struct 定义
     public readonly record struct ResourceData(int ResourceId, string ResourceName);
-    public readonly record struct NoteData(int NoteId, string NoteName);
+    public readonly record struct NoteData(int NoteId, string NoteTitle );
     public partial class EntryWindow_EpisodeViewModel : ObservableObject
     {
+        //服务实例
+        private readonly ResourceManager _resourceManager = new ResourceManager();
+        private readonly NoteManager _noteManager = new NoteManager();
+        private readonly VideoPlayService _videoPlayService = new VideoPlayService();
+        private readonly LogManager _logManager = new LogManager();//此处报错后端会修改
+        private readonly EntryManager _entryManager = new EntryManager();
+        private readonly EpisodeManager _episodeManager = new EpisodeManager();
         // 原始数据源
-        private readonly Entry _entry;
-        private readonly Episode _episode;
-        // 资源和笔记相关服务
+        private  Entry? _entry;
+        private  Episode? _episode;
+       /* // 资源和笔记相关服务
         private readonly ResourceManager _resourceManager;
         private readonly NoteManager _noteManager;
         private readonly VideoPlayService _videoPlayService;
-        private readonly LogManager _logManager;
+        private readonly LogManager _logManager;*/
         //private readonly INavigationService _navigationService;
 
         // 资源和笔记的数据源
@@ -47,28 +54,34 @@ namespace LocalAniHubFront.ViewModels.Pages
         [NotifyPropertyChangedFor(nameof(SubTitle))]
         private string selectedTitleMode;
 
-        public EntryWindow_EpisodeViewModel(
-            Entry entry,
-            Episode episode,
-            ResourceManager resourceManager,
-            NoteManager noteManager,
-            VideoPlayService videoPlayService,
-            LogManager logManager)
+        public EntryWindow_EpisodeViewModel(int episodeId)
         {
-            _entry = entry;
-            _episode = episode;
-            _resourceManager = resourceManager;
-            _noteManager = noteManager;
-            _videoPlayService = videoPlayService;
-            _logManager = logManager;
-            //_navigationService = navigationService;
-            //保留属性
-            //ShortComment = _episode.ShortComment;
-
+            LoadEpisodeAndEntry(episodeId);
             LoadInitialState();
 
             LoadResources();
             LoadNotes();
+            _=LoadFirstWatchedTimeAsync(_episode?.Id??-1);//异步加载观看时间
+        }
+        private void LoadEpisodeAndEntry(int episodeId)
+        {
+            _episode = _episodeManager.FindById(episodeId);
+
+            if (_episode != null)
+            {
+                if (_episode.EntryId.HasValue)
+                {
+                    _entry = _entryManager.FindById(_episode.EntryId.Value);
+                }
+                else
+                {
+                    _entry = null;
+                }
+            }
+            else
+            {
+                _entry = null;
+            }
         }
         private void LoadInitialState()
         {
@@ -88,6 +101,8 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         private void LoadResources()
         {
+            if (_episode == null) return;
+
             var resource = _resourceManager.FindById(_episode.Id);
             if (resource != null)
             {
@@ -96,10 +111,12 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         private void LoadNotes()
         {
+            if (_episode == null) return;
+
             var note = _noteManager.FindById(_episode.Id);
-            if(note != null)
+            if (note != null)
             {
-                NotesData.Add(new NoteData(note.Id, note.NoteTitle));//这个报错不用管，是因为没有合并后端更新后的代码
+                NotesData.Add(new NoteData(note.Id, note.NoteTitle));
             }
         }
         [RelayCommand]
@@ -153,7 +170,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             if (newValue == "已看" || newValue == "在看")
             {
                 // 使用 await 等待异步操作完成
-                await LoadFirstWatchedTimeAsync(_episode.Id);
+                await LoadFirstWatchedTimeAsync(_episode?.Id ?? -1);
             }
             else
             {
@@ -164,22 +181,23 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         public string SubTitle => SelectedTitleMode switch
         {
-            "Original" => _entry.OriginalName,
-            "Translated" => _entry.TranslatedName,
-            _ => _entry.OriginalName
+            "Original" => _entry?.OriginalName ?? "",
+            "Translated" => _entry?.TranslatedName ?? "",
+            _ => _entry?.OriginalName ?? ""
         };
 
         public string EpisodeNumberString =>
-            $"第{_episode.EpisodeNumber}/{_entry.EpisodeCount}集";
+             _entry != null ? $"第{_episode.EpisodeNumber}/{_entry.EpisodeCount}集" : "第?/?集";
+
 
         public string BroadcastState =>
-            _entry.ReleaseDate <= DateTimeOffset.Now ? "已播出" : "未播出";
+            _entry?.ReleaseDate <= DateTimeOffset.Now ? "已播出" : "未播出";
 
-        public string Date => _entry.ReleaseDate.ToString("yyyy-MM-dd") ?? "";
+        public string Date => _entry?.ReleaseDate.ToString("yyyy-MM-dd") ?? "";
 
-        public string Weekday => _entry.ReleaseDate.DayOfWeek.ToString() ?? "";
+        public string Weekday => _entry?.ReleaseDate.DayOfWeek.ToString() ?? "";
 
-        public string Time => _entry.ReleaseDate.ToString("HH:mm") ?? "";
+        public string Time => _entry?.ReleaseDate.ToString("HH:mm") ?? "";
 
 
         /*  // 原始数据源
