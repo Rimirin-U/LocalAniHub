@@ -34,9 +34,11 @@ namespace LocalAniHubFront.ViewModels.Windows
         [ObservableProperty]
         private Color _transparentAverageColor;
 
-        public EntryWindowViewModel(Entry entry)
+        EntryManager entryManager=new EntryManager();
+        public EntryWindowViewModel(int entryId)
         {
-            _entry = entry;
+            _entry = entryManager.FindById(entryId)
+        ?? throw new ArgumentException($"未找到ID为{entryId}的条目");
         }
 
         // 初始化 ViewModel
