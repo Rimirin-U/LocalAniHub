@@ -27,7 +27,13 @@ namespace LocalAniHubFront.ViewModels.Components
             EntryName = string.Empty;
             _settingKey = string.Empty;
         }
+
+
         // 构造函数
+        public Setting_TextBoxViewModel(TextboxSettingEntry entry)
+           : this(entry.EntryName, entry.SettingKey)
+        {
+        }
         public Setting_TextBoxViewModel(string entryName, string settingKey)
         {
             EntryName = entryName;
