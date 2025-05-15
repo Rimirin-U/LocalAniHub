@@ -1,4 +1,5 @@
 ﻿using BasicClassLibrary;
+using LocalAniHubFront.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace UiDesktopApp1.Views.Pages
+namespace LocalAniHubFront.Views.Pages
 {
     public partial class EntryWindow_Episode : Page,INotifyPropertyChanged
     {
@@ -59,10 +60,12 @@ namespace UiDesktopApp1.Views.Pages
 
         private void HistoryButton_Click(object sender, RoutedEventArgs e)
         {
+            /*
             var page = new EntryWindow_EpisodeHistory();
             page.EpisodeId = EpisodeId;
             page.InitializeViewModel();
             NavigationService.Navigate(page);
+            */
         }
     }
 }

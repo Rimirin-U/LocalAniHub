@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace UiDesktopApp1.Views.Components
+namespace LocalAniHubFront.Views.Components
 {
     public partial class SelectableTextBlock : UserControl
     {

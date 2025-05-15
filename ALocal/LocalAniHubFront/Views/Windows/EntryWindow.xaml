@@ -9,7 +9,7 @@
         xmlns:components="clr-namespace:LocalAniHubFront.ViewModels.Components"
         mc:Ignorable="d"
         Title="fTestWindow" Height="650" Width="1100"
-        x:Name="EntryWindow"
+        x:Name="EntryWindowInstance"
                   
         ExtendsContentIntoTitleBar="True"
         ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -34,7 +34,7 @@
               Panel.ZIndex="0"
               VerticalAlignment="Top"
               helper:DragHelper.IsDragEnabled="True"
-              Height="{Binding ImageGridHeight,Mode=OneWay,ElementName=EntryWindow}">
+              Height="{Binding ImageGridHeight,Mode=OneWay,ElementName=EntryWindowInstance}">
 
             <!-- Height需要处理: Full(Window)->Full(Window)->200 -->
 
@@ -64,7 +64,7 @@
             <Grid x:Name="TopGrid"
                   Grid.Row="0"
                   helper:DragHelper.IsDragEnabled="True"
-                  Height="{Binding TopGridHeight,Mode=OneWay,ElementName=EntryWindow}">
+                  Height="{Binding TopGridHeight,Mode=OneWay,ElementName=EntryWindowInstance}">
                 <!-- Height需要处理: Full(Window)->Full(Window)->100 -->
 
                 <Grid.RowDefinitions>
@@ -84,7 +84,7 @@
                     <Rectangle x:Name="MaskRectangle"
                                VerticalAlignment="Bottom"
                             Panel.ZIndex="1"
-                            Height="{Binding MaskRectangleHeight,Mode=OneWay,ElementName=EntryWindow}">
+                            Height="{Binding MaskRectangleHeight,Mode=OneWay,ElementName=EntryWindowInstance}">
                         <!-- Height需要处理: 100->Full(Gird:Top)->Full(Gird:Top) -->
 
                         <Rectangle.Fill>

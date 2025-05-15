@@ -165,46 +165,388 @@
                             Margin="12,4,0,0">
                         <!--Score：评分-->
                         <!--需要ViewModel实现SetScore(int newScore)，来设置评分（记得也写回并保存到原来的对象里）-->
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=1}"
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="1"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=2}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="2"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=3}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="3"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=4}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="4"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=5}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="5"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=6}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="6"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=7}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="7"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=8}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="8"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=9}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="9"/>
-                        <TextBlock Style="{Binding Score,
-                                   Converter={StaticResource ScoreToStyleConverter},
-                                   ConverterParameter=10}" 
-                                   MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="10"/>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="1">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="2">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="3">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="4">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="5">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="6">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="7">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="8">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="9">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" Tag="10">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Score}" Value="1">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="2">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="3">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="4">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="5">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="6">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="7">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="8">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="9">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Score}" Value="10">
+                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+
                         <TextBlock x:Name="Score"
                                    Style="{StaticResource BoldWhiteTextStyle}"
                                    Margin="8,0,0,0"
