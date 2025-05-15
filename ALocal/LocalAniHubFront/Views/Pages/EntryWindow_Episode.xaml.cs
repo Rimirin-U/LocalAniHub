@@ -1,4 +1,5 @@
 ﻿using BasicClassLibrary;
+using LocalAniHubFront.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -59,10 +60,12 @@ namespace LocalAniHubFront.Views.Pages
 
         private void HistoryButton_Click(object sender, RoutedEventArgs e)
         {
+            /*
             var page = new EntryWindow_EpisodeHistory();
             page.EpisodeId = EpisodeId;
             page.InitializeViewModel();
             NavigationService.Navigate(page);
+            */
         }
     }
 }
