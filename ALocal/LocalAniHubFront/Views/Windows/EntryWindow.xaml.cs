@@ -1,4 +1,5 @@
 ﻿using LocalAniHubFront.Helpers;
+using LocalAniHubFront.ViewModels.Windows;
 using LocalAniHubFront.Views.Pages;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -192,10 +193,10 @@ namespace LocalAniHubFront.Views.Windows
             if (MainGrid != null)
                 MaskRectangleHeight = MainGrid.RowDefinitions[0].ActualHeight * MaskRectangleHeightRatio;
 
-            if (EntryWindow != null)
+            if (EntryWindowInstance != null)
             {
-                TopGridHeight = EntryWindow.ActualHeight * TopGridHeightRatio;
-                ImageGridHeight = EntryWindow.ActualHeight * ImageGridHeightRatio;
+                TopGridHeight = EntryWindowInstance.ActualHeight * TopGridHeightRatio;
+                ImageGridHeight = EntryWindowInstance.ActualHeight * ImageGridHeightRatio;
             }
         }
 
@@ -236,7 +237,7 @@ namespace LocalAniHubFront.Views.Windows
                         $"MaskRectangleHeight {MaskRectangleHeight}\n" +
                         $"MaskRectangle.ActualHeight {MaskRectangle.ActualHeight}\n" +
                         $"MaskRectangleHeight = TopGrid.ActualHeight * MaskRectangleHeightRatio\n" +
-                        $"EntryWindow.ActualHeight {EntryWindow.ActualHeight}\n" +
+                        $"EntryWindow.ActualHeight {EntryWindowInstance.ActualHeight}\n" +
                         $"TopGridHeight {TopGridHeight}\n" +
                         $"TopGridHeightRatio {TopGridHeightRatio}\n" +
                         $"TopGrid.ActualHeight {TopGrid.ActualHeight}\n" +
