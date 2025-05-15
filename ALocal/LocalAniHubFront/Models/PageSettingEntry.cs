@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LocalAniHubFront.Models
 {
-    public class PageSettingEntry
+    public partial class PageSettingEntry: ObservableObject
     {
         // 设置项的显示名称
         public string EntryName { get; init; }
@@ -16,17 +16,16 @@ namespace LocalAniHubFront.Models
         public string Key { get; init; }
 
         // 当前设置的描述（例如预览内容）
-        public string Description
-        {
-            get=>GlobalSettingsService.Instance.GetValue(Key);
-            set=>GlobalSettingsService.Instance.SetValue(Key, value);
-        }
+        [ObservableProperty]
+        private string _description;
 
         // 构造函数，初始化 PageSettingEntry
         public PageSettingEntry(string entryName, string key)
         {
             EntryName = entryName;
             Key = key;
+            // 初始化 Description 值
+            _description = BasicClassLibrary.GlobalSettingsService.Instance.GetValue(Key);
         }
 
         // 获取当前值（从 GlobalSettingsService 中加载）
