@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Wpf.Ui.Abstractions.Controls;
 using BasicClassLibrary;
+using LocalAniHubFront.Models;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
@@ -61,6 +62,11 @@ namespace LocalAniHubFront.ViewModels.Components
             _isInitialized = true;
         }
 
+        //[RelayCommand]
+        //private void OpenEntryWindow(int id)
+        //{
+        //    System.Diagnostics.Debug.WriteLine($"打开条目 ID: {id}");
+        //}
         private async Task<ObservableCollection<Entry>> LoadEntriesAsync()
         {
             try
@@ -148,15 +154,5 @@ namespace LocalAniHubFront.ViewModels.Components
     //        }
     //    }
 
-    public class YearBlock
-    {
-        public string Year { get; set; }
-        public ObservableCollection<EntryLine> EntryLines { get; set; }
-    }
-
-    public class EntryLine
-    {
-        public string LineText { get; set; } // 示例: "原名 (译名) - 上映时间"
-        public int Id { get; set; } // 条目 ID
-    }
+  
 }
