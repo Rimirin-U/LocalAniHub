@@ -47,7 +47,7 @@ namespace BasicClassLibrary
             {"defaultCollectionDisplayView", "0"}, // 0: 简单列表（收藏时间排序，默认值）
             
             // 在 SeasonTable 中显示的数据项
-            {"visiblePropertiesKey", "[]"} // 默认值为空的JSON 数组
+            {"visiblePropertiesKey", "[]"}, // 默认值为空的JSON 数组
 
             //// 获取 visiblePropertiesKey 的值
             //string visiblePropertiesJson = GlobalSettingsService.Instance.GetValue("visiblePropertiesKey");
@@ -56,7 +56,8 @@ namespace BasicClassLibrary
             //string newVisiblePropertiesJson = "[{\"Name\":\"TranslatedName\",\"DisplayName\":\"译名\"}]";
             //GlobalSettingsService.Instance.SetValue("visiblePropertiesKey", newVisiblePropertiesJson);
 
-
+            //批量添加素材指定文件夹
+            {"BatchSourceFolder","" }  //路径（默认值：空）
         };
 
         // 私有构造函数：禁止外部 new 创建实例

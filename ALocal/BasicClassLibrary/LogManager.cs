@@ -45,5 +45,31 @@ namespace BasicClassLibrary
 
             return Query(predicate);
         }
+        // 查询指定类型的最早日志
+        public LogEntry? FindEarliestByType(string logType)
+        {
+            return context.Logs
+                .Where(le => le.LogType == logType)
+                .OrderBy(le => le.Timestamp)
+                .FirstOrDefault();
+        }
+
+        // 查询指定类型的最晚日志
+        public LogEntry? FindLatestByType(string logType)
+        {
+            return context.Logs
+                .Where(le => le.LogType == logType)
+                .OrderByDescending(le => le.Timestamp)
+                .FirstOrDefault();
+        }
+        // 查询指定剧集的最早观影日志
+        public WatchLogEntry? FindEarliestWatchLogForEpisode(int episodeId)
+        {
+            return context.Logs
+                .OfType<WatchLogEntry>()
+                .Where(w => w.EpisodeId == episodeId)
+                .OrderBy(w => w.Timestamp)
+                .FirstOrDefault();
+        }
     }
 }
