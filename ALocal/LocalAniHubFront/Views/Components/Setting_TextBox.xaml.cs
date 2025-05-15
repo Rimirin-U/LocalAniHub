@@ -1,4 +1,5 @@
-﻿using LocalAniHubFront.ViewModels.Components;
+﻿using LocalAniHubFront.Models;
+using LocalAniHubFront.ViewModels.Components;
 using System.Windows.Controls;
 
 namespace LocalAniHubFront.Views.Components
