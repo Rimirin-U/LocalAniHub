@@ -1,0 +1,225 @@
+﻿<Page x:Class="LocalAniHubFront.Views.Pages.EntryWindow_ResourceManage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LocalAniHubFront.Views.Pages"
+      xmlns:components="clr-namespace:LocalAniHubFront.Views.Components"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="EntryWindow_ResourceManage"
+      x:Name="ResourceManagePage">
+
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="MainInfoGridRow" Height="*"/>
+            <RowDefinition x:Name="BottonRow" Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Visible"
+            Grid.Row="0">
+            <Grid x:Name="MainInfoGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="SubTitleRow" Height="Auto"/>
+                    <RowDefinition x:Name="SettingsRow" Height="Auto"/>
+                    <RowDefinition x:Name="BoarderLineRow" Height="Auto"/>
+                    <RowDefinition x:Name="OtherRow" Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="SubTitleRowGrid"
+                        Grid.Row="0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="SubTitle"
+                           Grid.Column="0"
+                           Style="{StaticResource SubtitleTextStyle}"
+                           Text="{Binding Subtitle}"/>
+
+                        <TextBlock x:Name="PageTitle"
+                               Margin="20,0,0,0"
+                            Grid.Column="1"
+                            Style="{StaticResource BoldGrayTextStyle}"
+                            Text="资源管理"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel x:Name="SettingsPanel"
+                            Grid.Row="1"
+                            Orientation="Vertical"
+                            Margin="0,16,0,0">
+                    <Grid x:Name="SettingRow_AutoFetch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="有更新时自动获取资源"
+                                   Grid.Column="0"
+                                   Style="{StaticResource WhiteTextStyle}"/>
+                        <ui:ToggleSwitch x:Name="Setter_AutoFetch"
+                                         Grid.Column="1"
+                                         Panel.ZIndex="1"
+                                         IsChecked="{Binding IsAutoFetch,Mode=TwoWay}"/>
+                        <Rectangle Grid.Column="1"
+                                   Height="20"
+                                   Width="{Binding Width,ElementName=Setter_AutoFetch}"
+                                   RadiusX="10" RadiusY="10"
+                                   Fill="White" Panel.ZIndex="0"/>
+                    </Grid>
+                    <Grid x:Name="SettingRow_AutoDelete"
+                          Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="自动清除资源"
+                                   Grid.Column="0"
+                                   Style="{StaticResource WhiteTextStyle}"/>
+                        <ui:ToggleSwitch x:Name="Setter_AutoDelete"
+                                         Grid.Column="1"
+                                         Panel.ZIndex="1"
+                                         IsChecked="{Binding IsAutoDelete,Mode=TwoWay}"/>
+                        <Rectangle Grid.Column="1"
+                                   Height="20"
+                                   Width="{Binding Width,ElementName=Setter_AutoFetch}"
+                                   RadiusX="10" RadiusY="10"
+                                   Fill="White" Panel.ZIndex="0"/>
+                    </Grid>
+                </StackPanel>
+
+                <Border x:Name="BoarderLine"
+                        Grid.Row="2"
+                    Height="1" 
+                    Background="Gray" 
+                    Margin="0,16,0,0" 
+                    HorizontalAlignment="Stretch">
+                    <Border.Effect>
+                        <DropShadowEffect 
+                            Color="Black" 
+                            Direction="270" 
+                            ShadowDepth="1" 
+                            Opacity="0.3" 
+                            BlurRadius="2" />
+                    </Border.Effect>
+                </Border>
+
+                <StackPanel x:Name="OtherAreaPanel"
+                            Grid.IsSharedSizeScope="True"
+                            Grid.Row="3"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Margin="0,16,0,0">
+                    <Grid x:Name="TableTitleGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="EpisodeNumberClmn" Width="64"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="集数" Grid.Column="0" HorizontalAlignment="Left"
+                                   Style="{StaticResource BoldWhiteTextStyle}"/>
+                        <TextBlock Text="文件名" Grid.Column="1" HorizontalAlignment="Left"
+                                   Style="{StaticResource BoldWhiteTextStyle}"/>
+                    </Grid>
+
+                    <Grid x:Name="TableBodyGrid">
+                        <!--可以参考EntryWindow_EpisodePage-->
+                        <ItemsControl ItemsSource="{Binding ResourcesData}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid x:Name="ResourceEntry"
+                                          Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition x:Name="EpisodeNumberClmn" SharedSizeGroup="EpisodeNumberClmn"/>
+                                            <ColumnDefinition x:Name="ResourceNameClmn" Width="*"/>
+                                            <ColumnDefinition x:Name="PlayButtonClmn" Width="Auto"/>
+                                            <ColumnDefinition x:Name="DeleteButtonClmn" Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" x:Name="EpisodeNumberBlock"
+                                                   Text="{Binding EpisodeNumber}"
+                                                   Style="{StaticResource WhiteTextStyle}"/>
+
+                                        <ScrollViewer
+                                            Grid.Column="1"
+                                            HorizontalScrollBarVisibility="Auto"
+                                            VerticalScrollBarVisibility="Disabled">
+                                            <components:EditableTextBlock  x:Name="ResourceName"
+                                                       Style="{StaticResource WhiteEditableTextBlockStyle}"
+                                                       Text="{Binding ResourceName,Mode=TwoWay}"
+                                                       VerticalAlignment="Center"/>
+                                        </ScrollViewer>
+
+                                        <Button x:Name="PlayButton"
+                                                Grid.Column="2"
+                                                Margin="8,0,0,0"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                                Background="#FFF2CC"        
+                                                Content="&#xE768;"
+                                                Command="{Binding DataContext.ResourcePlayCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding ResourceId}"/>
+                                        <!--打开PlayerWindow窗口（可以merge一下frontPlayerViewModelBranch-->
+
+                                        <Button x:Name="DeleteButton"
+                                                Grid.Column="3"
+                                                Margin="8,0,0,0"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                                Content="&#xE74D;"
+                                                Command="{Binding DataContext.ResourceDeleteCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding ResourceId}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="0,0,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                    </Grid>
+
+
+                </StackPanel>
+
+            </Grid>
+
+        </ScrollViewer>
+
+        <Grid x:Name="ButtonGrid"
+              Grid.Row="1"
+              HorizontalAlignment="Stretch"
+              Margin="0,8,0,0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftButtonsClmn" Width="*"/>
+                <ColumnDefinition x:Name="RightButtonsClmn" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <WrapPanel x:Name="LeftButtons"
+                       Grid.Column="0"
+                       HorizontalAlignment="Left"
+                       FlowDirection="LeftToRight">
+                <Button x:Name="BackButton"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE72b;"
+                        Click="BackButton_Click"/>
+            </WrapPanel>
+
+            <WrapPanel x:Name="RightButtons"
+                       Grid.Column="1"
+                       HorizontalAlignment="Right"
+                       FlowDirection="LeftToRight">
+                <Button x:Name="AddButton"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE710;"
+                        Click="AddButton_Click"/>
+                <!--这里有逻辑需要在ViewModel中实现-->
+            </WrapPanel>
+        </Grid>
+
+    </Grid>
+
+</Page>
