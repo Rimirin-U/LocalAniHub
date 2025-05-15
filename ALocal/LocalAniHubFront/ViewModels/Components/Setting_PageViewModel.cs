@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
 
-   public partial class Setting_PageViewModel : INotifyPropertyChanged
+   public partial class Setting_PageViewModel : ObservableObject
    {
         private readonly PageSettingEntry _entry;
 
@@ -27,25 +28,38 @@ namespace LocalAniHubFront.ViewModels.Components
                 if (_entry.Description != value)
                 {
                     _entry.Description = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Description));
                 }
             }
         }
         // 打开设置页面的命令
-        public IRelayCommand ShowSettingPageCommand { get; }
+        [RelayCommand]
+        private void ShowSettingPage()
+        {
+            _entry.OpenSettingPage();
+        }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        // 构造函数，初始化 ViewModel
+        // 构造函数，接收一个 PageSettingEntry 实例
         public Setting_PageViewModel(PageSettingEntry entry)
         {
             _entry = entry;
-            // 初始化命令，调用 PageSettingEntry 的 OpenSettingPage 方法
-            ShowSettingPageCommand = new RelayCommand(_entry.OpenSettingPage);
         }
-        // 通知属性更改
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-   }
+
+        /* // 打开设置页面的命令
+         public IRelayCommand ShowSettingPageCommand { get; }
+
+         public event PropertyChangedEventHandler? PropertyChanged;
+         // 构造函数，初始化 ViewModel
+         public Setting_PageViewModel(PageSettingEntry entry)
+         {
+             _entry = entry;
+             // 初始化命令，调用 PageSettingEntry 的 OpenSettingPage 方法
+             ShowSettingPageCommand = new RelayCommand(_entry.OpenSettingPage);
+         }
+         // 通知属性更改
+         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+         {
+             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+         }*/
+    }
 }
