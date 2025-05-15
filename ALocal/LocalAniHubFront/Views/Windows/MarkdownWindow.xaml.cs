@@ -6,10 +6,10 @@ namespace LocalAniHubFront.Views.Windows
 {
     public partial class MarkdownWindow
     {
-        public MarkdownWindow(int noteId)
+        public MarkdownWindow(int noteId, MarkdownWindow_OpenOp openOp)
         {
             InitializeComponent();
-            var vm = new MarkdownViewModel(noteId);
+            var vm = new MarkdownViewModel(noteId,openOp);
             DataContext = vm;
 
             // 初始化时设置编辑器内容
