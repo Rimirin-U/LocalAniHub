@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using BasicClassLibrary;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LibVLCSharp.Shared;
 using System;
@@ -12,13 +13,17 @@ namespace LocalAniHubFront.ViewModels.Windows
         private readonly MediaPlayer _mediaPlayer;
         private Media? _currentMedia;
 
+        private readonly Resource _resource; //保存Resource对象
+        private readonly AppDbContext _dbContext; // 用于数据库操作
+
         public MediaPlayer MediaPlayer => _mediaPlayer;
         public bool IsPlaying => _mediaPlayer.IsPlaying;
 
         [ObservableProperty]
         private string mediaPath = "";
 
-        public PlayerViewModel(int resourceId)
+        private bool _hasReachedCompletion; // 新增：是否已达到看完状态的标志位
+        public PlayerViewModel(int resourceId, AppDbContext dbContext)
         {
             // 已有代码基本不需要改变 
             // 需要设定mediaPath
@@ -26,10 +31,28 @@ namespace LocalAniHubFront.ViewModels.Windows
             // 需要实现一个公有函数OnWindowClosing()，在窗口关闭时被调用：
             //     如果已经看完了就修改观看进度为已看，否则改为在看，并记录观看进度（记录到Episode中）（以毫秒形式计入）
 
+            _dbContext = dbContext;
+
+            // 从数据库加载Resource
+            _resource = _dbContext.Resources.FirstOrDefault(r => r.Id == resourceId)
+                 ?? throw new ArgumentException($"未找到ID为{resourceId}的资源");
+            if (_resource == null)
+            {
+                throw new ArgumentException($"未找到ID为{resourceId}的资源");
+            }
+
+            // 设置媒体路径
+            mediaPath = _resource.ResourcePath ?? "";
 
             Core.Initialize();
             _libVLC = new LibVLC();
             _mediaPlayer = new MediaPlayer(_libVLC);
+
+            // 如果Episode不为null且有关联的观看进度，则加载
+            if (_resource.Episode != null && _resource.Episode.Progress > 0)
+            {
+                _mediaPlayer.Time = _resource.Episode.Progress;
+            }
 
             _mediaPlayer.LengthChanged += (_, e) =>
                 Application.Current.Dispatcher.Invoke(() => MediaLength = e.Length);
@@ -40,6 +63,20 @@ namespace LocalAniHubFront.ViewModels.Windows
                     {
                         // Position  拖动时不更新
                         Position = e.Time;
+
+                        // 实时检测是否达到看完条件
+                        if (!_hasReachedCompletion &&
+                            _mediaPlayer.Length > 0 &&
+                            (_mediaPlayer.Length - e.Time) <= 90000) // 剩余≤90秒
+                        {
+                            _hasReachedCompletion = true;
+                            if (_resource.Episode != null)
+                            {
+                                _resource.Episode.State = State.Watched;
+                                _resource.Episode.Progress = _mediaPlayer.Length;
+                                _dbContext.SaveChanges();
+                            }
+                        }
                     }
                 });
 
@@ -57,6 +94,32 @@ namespace LocalAniHubFront.ViewModels.Windows
             _mediaPlayer.Stopped += (_, _) => NotifyAllCommands();
         }
 
+        /// <summary>
+        /// 窗口关闭时调用，保存观看状态和进度
+        /// </summary>
+        public void OnWindowClosing()
+        {
+            if (_resource.Episode == null)
+            {
+                return; // 如果没有关联的Episode，不做任何操作
+            }
+
+        
+
+            if (_hasReachedCompletion)
+            {
+                _resource.Episode.State = State.Watched;
+                _resource.Episode.Progress = _mediaPlayer.Length;
+            }
+            else
+            {
+                _resource.Episode.State = State.Watching;
+                _resource.Episode.Progress = _mediaPlayer.Time;
+            }
+
+            // 保存到数据库
+            _dbContext.SaveChanges();
+        }
 
 
         [RelayCommand(CanExecute = nameof(CanLoad))]
