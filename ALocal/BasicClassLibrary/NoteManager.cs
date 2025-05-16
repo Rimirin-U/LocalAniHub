@@ -12,7 +12,7 @@ namespace BasicClassLibrary
         //构造函数
         public NoteManager() : base(new AppDbContext())
         {
-            _logManager = new LogManager(new AppDbContext());
+            _logManager = new LogManager();
         }
         // 根据作品ID查找关联笔记
         public readonly static Func<ICollection<int>, Func<Note, bool>> ByEntriesId =
