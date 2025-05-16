@@ -138,8 +138,8 @@ namespace LocalAniHubFront.ViewModels.Pages
         private void NoteViewCommand(int noteId)
         {
             // 创建新窗口并传入 NoteId
-            var window = new NoteViewWindow(noteId);//NoteViewWindow还未定义，此处报错正常
-            window.Show();
+           // var window = new NoteViewWindow(noteId);//NoteViewWindow还未定义，此处报错正常
+           // window.Show();
         }
         [RelayCommand]
         private void OnNoteDelete(int noteId)
@@ -147,30 +147,22 @@ namespace LocalAniHubFront.ViewModels.Pages
             _noteManager.RemoveById(noteId);
             NotesData.Remove(NotesData.FirstOrDefault(n => n.NoteId == noteId));
         }
-        public async Task LoadFirstWatchedTimeAsync(int episodeId)
-        {
-            var firstWatchLog = await Task.Run(() =>
-                _logManager.FindEarliestWatchLogForEpisode(episodeId));//后端增强定义
-
-            if (firstWatchLog != null)
-            {
-                DateTimeOffset timestamp = firstWatchLog.Timestamp;
-
-                WatchedDate = timestamp.ToString("yyyy-MM-dd");
-                WatchedTime = timestamp.ToString("HH:mm");
-            }
-            else
-            {
-                WatchedDate = "";
-                WatchedTime = "";
-            }
-        }
-        public async void OnStateSelectedOptionChanged(string? oldValue, string newValue)
+        partial void OnStateSelectedOptionChanged(string? oldValue, string newValue)
         {
             if (newValue == "已看" || newValue == "在看")
             {
-                // 使用 await 等待异步操作完成
-                await LoadFirstWatchedTimeAsync(_episode?.Id ?? -1);
+                var firstWatchLog = _logManager.FindEarliestWatchLogForEpisode(_episode?.Id ?? -1);
+
+                if (firstWatchLog != null)
+                {
+                    WatchedDate = firstWatchLog.Timestamp.ToString("yyyy-MM-dd");
+                    WatchedTime = firstWatchLog.Timestamp.ToString("HH:mm");
+                }
+                else
+                {
+                    WatchedDate = "";
+                    WatchedTime = "";
+                }
             }
             else
             {
@@ -179,6 +171,37 @@ namespace LocalAniHubFront.ViewModels.Pages
                 WatchedTime = "";
             }
         }
+        public async Task LoadFirstWatchedTimeAsync(int episodeId)
+        {
+             var firstWatchLog = await Task.Run(() =>
+                 _logManager.FindEarliestWatchLogForEpisode(episodeId));//后端增强定义
+
+             if (firstWatchLog != null)
+             {
+                 DateTimeOffset timestamp = firstWatchLog.Timestamp;
+
+                 WatchedDate = timestamp.ToString("yyyy-MM-dd");
+                 WatchedTime = timestamp.ToString("HH:mm");
+             }
+             else
+             {
+                 WatchedDate = "";
+                 WatchedTime = "";
+             }
+         }
+          /*partial async Task OnStateSelectedOptionChanged(string? oldValue, string newValue)
+         {
+             if (newValue == "已看" || newValue == "在看")
+             {
+                  await LoadFirstWatchedTimeAsync(_episode?.Id ?? -1);
+             }
+             else
+             {
+                 // 如果是“未看”，清空显示
+                 WatchedDate = "";
+                 WatchedTime = "";
+             }
+         }*/
         public string SubTitle => SelectedTitleMode switch
         {
             "Original" => _entry?.OriginalName ?? "",

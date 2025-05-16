@@ -23,7 +23,8 @@ namespace LocalAniHubFront.ViewModels.Pages
             _entryManager = new EntryManager();
             var entry = _entryManager.FindById(entryId);
             // 获取素材路径
-            MaterialFolderPath = _materialService.GetEntryMaterialPath(entry, "");
+            //MaterialFolderPath = _materialService.GetEntryMaterialPath(entry, "");
+            MaterialFolderPath = entry.MaterialFolder;
         }
         /* public int EntryId { get; }
 
