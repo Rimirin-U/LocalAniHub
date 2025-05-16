@@ -87,11 +87,26 @@ namespace LocalAniHubFront.ViewModels
         // 播放资源
         private void PlayResource(int resourceId)
         {
-            var resource = _resourceManager.FindById(resourceId);
-            if (resource != null && !string.IsNullOrEmpty(resource.ResourcePath))
+            try
             {
-                // TODO: 调用播放器逻辑
-                MessageBox.Show($"播放资源: {resource.ResourcePath}");
+                // 创建播放器窗口
+                var playerWindow = new PlayerWindow(resourceId)
+                {
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+
+                // 窗口关闭时保存观看进度
+                playerWindow.Closing += (s, e) =>
+                {
+                    (playerWindow.DataContext as PlayerViewModel)?.OnWindowClosing();
+                };
+
+                playerWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"播放失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
