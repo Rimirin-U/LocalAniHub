@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using Wpf.Ui.Abstractions.Controls;
+using System.IO;
 
 namespace LocalAniHubFront.ViewModels
 {
@@ -116,39 +117,72 @@ namespace LocalAniHubFront.ViewModels
 
             if (openFileDialog.ShowDialog() == true)
             {
+                var entry=_entryManager.FindById(EntryId);
+                if (entry == null)
+                {
+                    MessageBox.Show("条目不存在，无法添加资源");
+                    return;
+                }
                 foreach (var filePath in openFileDialog.FileNames)
                 {
-                    // 获取或创建对应的集数（这里简化处理，实际应根据文件名匹配集数）
-                    int episodeNumber = ExtractEpisodeNumberFromFileName(filePath);
-                    var episode = _episodeManager.Query(e => e.EntryId == EntryId && e.EpisodeNumber == episodeNumber)
-                        .FirstOrDefault();
-
-                    if (episode == null)
+                    try
                     {
-                        episode = new Episode(EntryId, null, episodeNumber);
-                        _episodeManager.Add(episode);
+                        int episodeNumber = ExtractEpisodeNumberFromFileName(filePath);
+                
+                        // 验证集数是否在合法范围内
+                        if (episodeNumber < 1 || episodeNumber > entry.EpisodeCount)
+                        {
+                            MessageBox.Show($"文件 {Path.GetFileName(filePath)} 的集数 {episodeNumber} 超出范围 (1-{entry.EpisodeCount})", 
+                                          "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            continue;
+                        }
+
+                        // 获取或创建集数记录
+                        var episode = _episodeManager.Query(e => e.EntryId == EntryId && e.EpisodeNumber == episodeNumber)
+                            .FirstOrDefault();
+
+                        if (episode == null)
+                        {
+                            episode = new Episode(EntryId, null, episodeNumber);
+                            _episodeManager.Add(episode);
+                        }
+
+                        // 创建资源记录
+                        var resource = new Resource(
+                            episode.Id,
+                            episode,
+                            DateTime.Now,
+                            filePath
+                        );
+                        _resourceManager.Addresource(resource);
                     }
-
-                    // 创建资源记录
-                    var resource = new Resource(
-                        episode.Id,
-                        episode,
-                        DateTime.Now,
-                        filePath
-                    );
-                    _resourceManager.Addresource(resource);
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"处理文件 {Path.GetFileName(filePath)} 时出错: {ex.Message}", 
+                                      "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-
                 LoadResources(); // 刷新列表
             }
         }
 
-        // 从文件名提取集数（示例实现）
+        // 从文件名提取集数
         private int ExtractEpisodeNumberFromFileName(string fileName)
         {
-            // 简单实现：尝试从文件名中匹配数字作为集数
-            var match = System.Text.RegularExpressions.Regex.Match(fileName, @"\[(\d+)\]");
-            return match.Success ? int.Parse(match.Groups[1].Value) : 1;
+            // 优先匹配常见字幕组命名格式中的集数（如[01]、EP01等）
+            var match = System.Text.RegularExpressions.Regex.Match(fileName,
+                @"(?:\[|EP|ep)(\d{1,3})(?:\]|\.|_)");
+
+            if (match.Success)
+            {
+                return int.Parse(match.Groups[1].Value);
+            }
+
+            // 次优匹配：纯数字（确保不是其他数字如年份）
+            match = System.Text.RegularExpressions.Regex.Match(fileName,
+                @"\b(\d{1,3})\b(?!\d{4})"); // 排除4位数字（避免匹配年份）
+
+            return match.Success ? int.Parse(match.Groups[1].Value) : 1; // 默认返回1
         }
 
         // INavigationAware 实现
