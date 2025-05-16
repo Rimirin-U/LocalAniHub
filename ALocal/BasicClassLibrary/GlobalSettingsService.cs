@@ -57,7 +57,8 @@ namespace BasicClassLibrary
             //GlobalSettingsService.Instance.SetValue("visiblePropertiesKey", newVisiblePropertiesJson);
 
             //批量添加素材指定文件夹
-            {"BatchSourceFolder","" }  //路径（默认值：空）
+            {"BatchSourceFolder","" },  //路径（默认值：空）
+            {"entryWindowMainTitle", "0"}//0:原名，1：译名
         };
 
         // 私有构造函数：禁止外部 new 创建实例
