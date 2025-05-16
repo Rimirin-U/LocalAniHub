@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using Wpf.Ui.Abstractions.Controls;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace LocalAniHubFront.ViewModels
 {
@@ -13,6 +14,9 @@ namespace LocalAniHubFront.ViewModels
         // 当前条目ID（从导航参数获取）
         [ObservableProperty]
         private int _entryId;
+        // 标题
+        [ObservableProperty]
+        private string _subtitle = "默认标题";
 
         // 是否自动获取资源（绑定到ToggleSwitch）
         [ObservableProperty]
@@ -46,6 +50,7 @@ namespace LocalAniHubFront.ViewModels
             AddResourceCommand = new RelayCommand(AddResources);
 
             // 加载初始数据
+            LoadData();
             LoadEntryData();
             LoadResources();
         }
@@ -60,27 +65,52 @@ namespace LocalAniHubFront.ViewModels
                 IsAutoDelete = entry.AutoClearResources;
             }
         }
+        private void LoadData()
+        {
+            try
+            {
+                var entry = _entryManager.FindById(EntryId);
+                if (entry != null)
+                {
+                    Subtitle = entry.TranslatedName; // 设置副标题为条目译名
+                    IsAutoFetch = entry.HasUpdateTime;
+                    IsAutoDelete = entry.AutoClearResources;
+                    LoadResources();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"数据加载失败: {ex.Message}");
+            }
+        }
 
         // 加载资源数据
         private void LoadResources()
         {
-            ResourcesData.Clear();
-
-            // 获取当前条目所有集数
-            var episodes = _episodeManager.Query(EpisodeManager.ByEntryId(EntryId));
-
-            // 获取每集对应的资源
-            foreach (var episode in episodes)
+            try
             {
-                var resources = _resourceManager.Query(ResourceManager.ByEntryId(episode.Id));
-                foreach (var resource in resources)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ResourcesData.Add(new ResourceDisplayItem(
-                        resource.Id,
-                        episode.EpisodeNumber,
-                        System.IO.Path.GetFileName(resource.ResourcePath ?? string.Empty)
-                    ));
-                }
+                    ResourcesData.Clear();
+                    var episodes = _episodeManager.Query(EpisodeManager.ByEntryId(EntryId));
+
+                    foreach (var episode in episodes)
+                    {
+                        var resources = _resourceManager.Query(ResourceManager.ByEntryId(episode.Id));
+                        foreach (var resource in resources.Where(r => !string.IsNullOrEmpty(r.ResourcePath)))
+                        {
+                            ResourcesData.Add(new ResourceDisplayItem(
+                                resource.Id,
+                                episode.EpisodeNumber,
+                                Path.GetFileName(resource.ResourcePath!)
+                            ));
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"资源加载失败: {ex.Message}");
             }
         }
 
@@ -89,6 +119,11 @@ namespace LocalAniHubFront.ViewModels
         {
             try
             {
+                if (_resourceManager.FindById(resourceId)?.ResourcePath is not { } path || !File.Exists(path))
+                {
+                    MessageBox.Show("资源文件不存在", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 // 创建播放器窗口
                 var playerWindow = new PlayerWindow(resourceId)
                 {
@@ -123,81 +158,76 @@ namespace LocalAniHubFront.ViewModels
         // 添加资源
         private void AddResources()
         {
-            var openFileDialog = new OpenFileDialog
+            try
             {
-                Title = "导入资源",
-                Filter = "视频文件 (*.mp4;*.avi;*.mov;*.mkv;*.wmv;*.flv)|*.mp4;*.avi;*.mov;*.mkv;*.wmv;*.flv",
-                Multiselect = true
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var entry=_entryManager.FindById(EntryId);
-                if (entry == null)
+                var dialog = new OpenFileDialog
                 {
-                    MessageBox.Show("条目不存在，无法添加资源");
-                    return;
-                }
-                foreach (var filePath in openFileDialog.FileNames)
+                    Title = "导入资源",
+                    Filter = "视频文件 (*.mp4;*.avi;*.mov;*.mkv;*.wmv;*.flv)|*.mp4;*.avi;*.mov;*.mkv;*.wmv;*.flv",
+                    Multiselect = true
+                };
+
+                if (dialog.ShowDialog() == true)
                 {
-                    try
-                    {
-                        int episodeNumber = ExtractEpisodeNumberFromFileName(filePath);
-                
-                        // 验证集数是否在合法范围内
-                        if (episodeNumber < 1 || episodeNumber > entry.EpisodeCount)
-                        {
-                            MessageBox.Show($"文件 {Path.GetFileName(filePath)} 的集数 {episodeNumber} 超出范围 (1-{entry.EpisodeCount})", 
-                                          "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            continue;
-                        }
-
-                        // 获取或创建集数记录
-                        var episode = _episodeManager.Query(e => e.EntryId == EntryId && e.EpisodeNumber == episodeNumber)
-                            .FirstOrDefault();
-
-                        if (episode == null)
-                        {
-                            episode = new Episode(EntryId, null, episodeNumber);
-                            _episodeManager.Add(episode);
-                        }
-
-                        // 创建资源记录
-                        var resource = new Resource(
-                            episode.Id,
-                            episode,
-                            DateTime.Now,
-                            filePath
-                        );
-                        _resourceManager.Addresource(resource);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"处理文件 {Path.GetFileName(filePath)} 时出错: {ex.Message}", 
-                                      "错误", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    ProcessFiles(dialog.FileNames);
                 }
-                LoadResources(); // 刷新列表
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"导入失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void ProcessFiles(IEnumerable<string> filePaths)
+        {
+            var entry = _entryManager.FindById(EntryId);
+            if (entry == null) return;
+
+            foreach (var filePath in filePaths)
+            {
+                try
+                {
+                    if (!File.Exists(filePath)) continue;
+
+                    var episodeNumber = ExtractEpisodeNumber(filePath);
+                    if (episodeNumber < 1 || episodeNumber > entry.EpisodeCount)
+                    {
+                        MessageBox.Show($"集数 {episodeNumber} 超出范围", "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        continue;
+                    }
+
+                    var episode = GetOrCreateEpisode(episodeNumber);
+                    if (episode == null) continue;
+
+                    var resource = new Resource(episode.Id, episode, DateTime.Now, filePath);
+                    _resourceManager.Addresource(resource);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"文件处理失败: {filePath}\n{ex.Message}");
+                }
+            }
+
+            LoadResources();
+        }
+        private Episode? GetOrCreateEpisode(int episodeNumber)
+        {
+            var episode = _episodeManager.Query(e => e.EntryId == EntryId && e.EpisodeNumber == episodeNumber)
+                .FirstOrDefault();
+
+            if (episode == null)
+            {
+                episode = new Episode(EntryId, null, episodeNumber);
+                _episodeManager.Add(episode);
+            }
+
+            return episode;
         }
 
         // 从文件名提取集数
-        private int ExtractEpisodeNumberFromFileName(string fileName)
+        private static int ExtractEpisodeNumber(string fileName)
         {
-            // 优先匹配常见字幕组命名格式中的集数（如[01]、EP01等）
-            var match = System.Text.RegularExpressions.Regex.Match(fileName,
-                @"(?:\[|EP|ep)(\d{1,3})(?:\]|\.|_)");
-
-            if (match.Success)
-            {
-                return int.Parse(match.Groups[1].Value);
-            }
-
-            // 次优匹配：纯数字（确保不是其他数字如年份）
-            match = System.Text.RegularExpressions.Regex.Match(fileName,
-                @"\b(\d{1,3})\b(?!\d{4})"); // 排除4位数字（避免匹配年份）
-
-            return match.Success ? int.Parse(match.Groups[1].Value) : 1; // 默认返回1
+            var match = Regex.Match(fileName, @"(?:\[|EP|ep|第)?(\d{1,3})(?:\]|集|话)?");
+            return match.Success ? int.Parse(match.Groups[1].Value) : 1;
         }
 
         // INavigationAware 实现
@@ -209,6 +239,43 @@ namespace LocalAniHubFront.ViewModels
         }
 
         public Task OnNavigatedFromAsync() => Task.CompletedTask;
+        
+        [RelayCommand]
+        private void SaveResourceName(ResourceDisplayItem item)
+        {
+            if (item == null) return;
+
+            try
+            {
+                var resource = _resourceManager.FindById(item.ResourceId);
+                if (resource?.ResourcePath is not { } oldPath || !File.Exists(oldPath)) return;
+
+                var newName = item.ResourceName.Trim();
+                if (string.IsNullOrEmpty(newName)) throw new ArgumentException("文件名不能为空");
+                if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) throw new ArgumentException("非法文件名");
+
+                var newPath = Path.Combine(Path.GetDirectoryName(oldPath)!, newName);
+                if (File.Exists(newPath)) throw new IOException("文件已存在");
+
+                File.Move(oldPath, newPath);
+                resource.ResourcePath = newPath;
+                _resourceManager.Modify(resource);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var index = ResourcesData.IndexOf(item);
+                    if (index >= 0)
+                    {
+                        ResourcesData[index] = item with { ResourceName = newName };
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"重命名失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                LoadResources(); // 恢复显示
+            }
+        }
     }
 
     // 资源显示项（用于绑定到UI）
