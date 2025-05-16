@@ -6,11 +6,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
 using System.Windows.Threading;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace LocalAniHubFront.ViewModels.Windows
 {
     public record struct EntryItem(int EntryId, string EntryName);
-    public record struct EpisodeItem(int EntryId, string EntryName, int EpisodeId, string EpisodeNumber);
+    public record struct EpisodeItem(int EntryId, string EntryName, int EpisodeId, int EpisodeNumber);
     public partial class EntryRowViewModel : ObservableObject
     {
         private readonly Func<EntryItem, object, bool> _isItemSelected;
@@ -114,44 +115,46 @@ namespace LocalAniHubFront.ViewModels.Windows
 
             SelectedTabIndex = openOp == MarkdownWindow_OpenOp.View ? 0 : 1;
             _noteManager = new NoteManager();
-            _noteService = new NoteService(new NoteManager());
+            _noteService = new NoteService(_noteManager);
             var note = _noteManager.FindById(noteId);
-            if (note != null)
+            if ( note != null)
             {
-                NoteTitle = note.NoteTitle;//忽略
-                MarkdownText=note.Content;
+                NoteTitle = note.NoteTitle;
+                MarkdownText = note.Content;
             }
-            _entryItems = LoadAllEntries();
-            _episodeItems = LoadAllEpisodes();
+            else
+            {
+                MarkdownText = string.Empty;
+            }
+            _entryItems = LoadAllEntries(_noteId);
+            _episodeItems = LoadAllEpisodes(_noteId);
 
-            var notesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes");
-            if (!Directory.Exists(notesDirectory))
-                Directory.CreateDirectory(notesDirectory);
-
-            _filePath = Path.Combine(notesDirectory, $"note_{noteId}.md");
-
-            LoadNote();
+            /* var notesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes");
+             if (!Directory.Exists(notesDirectory))
+                 Directory.CreateDirectory(notesDirectory);*/
+    
+            _filePath = Path.Combine(_noteService.BaseDirectory, $"{note.NoteTitle}.md");//感觉这里存在问题
+            //LoadNote();
             InitializeAutoSave();
-
             InitializeEntryComboBoxes();
             InitializeEpisodeComboBoxes();
         }
-        private void LoadNote()
-        {
-            if (File.Exists(_filePath))
-            {
-                MarkdownText = File.ReadAllText(_filePath);
-                NoteTitle = $"笔记 {_noteId}";
-            }
-        }
+        /* private void LoadNote()
+         {
+             if (File.Exists(_filePath))
+             {
+                 MarkdownText = File.ReadAllText(_filePath);
+                 NoteTitle = $"笔记 {_noteId}";
+             }
+         }*/
         private async void InitializeAutoSave()
         {
-            await Task.Run(async () =>
+            await System.Threading.Tasks.Task.Run(async () =>
             {
                 while (true)
                 {
                     SaveNote();
-                    await Task.Delay(5000);
+                    await System.Threading.Tasks.Task.Delay(5000);
                 }
             });
         }
@@ -167,25 +170,54 @@ namespace LocalAniHubFront.ViewModels.Windows
             }
         }
 
-        private List<EntryItem> LoadAllEntries()
+        private List<EntryItem> LoadAllEntries(int noteId)
         {
-            return new List<EntryItem>
+            var noteManager = new NoteManager();
+            var entryManager = new EntryManager();
+
+            // Step 1: 查找当前 Note 对象
+            var note = noteManager.FindById(noteId);
+            if (note == null || note.EntriesId == null || !note.EntriesId.Any())
             {
-                new(1, "作品A"),
-                new(2, "作品B"),
-                new(3, "作品C")
-            };
+                return new List<EntryItem>(); // 如果没有关联任何 Entry，返回空列表
+            }
+
+            // Step 2: 获取该 Note 关联的所有 Entry ID
+            var entryIds = note.EntriesId;
+
+            // Step 3: 查询这些 Entry ID 对应的 Entry 数据
+            var entries = entryManager.Query(e => entryIds.Contains(e.Id));
+
+            // Step 4: 转换为 EntryItem 列表
+            return entries.Select(e => new EntryItem(e.Id, e.TranslatedName))
+                          .ToList();
         }
 
-        private List<EpisodeItem> LoadAllEpisodes()
+        private List<EpisodeItem> LoadAllEpisodes(int noteId)
         {
-            return new List<EpisodeItem>
+            var noteManager = new NoteManager();
+            var episodeManager = new EpisodeManager();
+
+            // Step 1: 获取对应的 Note
+            var note = noteManager.FindById(noteId);
+            if (note == null || note.EpisodesId == null || !note.EpisodesId.Any())
             {
-                new(1, "作品A", 101, "第1集"),
-                new(1, "作品A", 102, "第2集"),
-                new(2, "作品B", 201, "第1集"),
-                new(3, "作品C", 301, "第1集")
-            };
+                return new List<EpisodeItem>(); // 如果没有关联任何 Episode，返回空列表
+            }
+
+            var episodeIds = note.EpisodesId;
+
+            // Step 2: 查询这些 Episode ID 对应的剧集数据
+            var episodes = episodeManager.Query(e => episodeIds.Contains(e.Id))
+                                         .Where(e => e.Entry != null); // 确保有对应的作品信息
+
+            // Step 3: 转换为 EpisodeItem 列表
+            return episodes.Select(e => new EpisodeItem(
+                             e.Entry!.Id,
+                             e.Entry.TranslatedName,
+                             e.Id,
+                             e.EpisodeNumber))
+                           .ToList();
         }
 
         private void InitializeEntryComboBoxes()
