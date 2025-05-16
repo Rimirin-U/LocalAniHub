@@ -1,0 +1,338 @@
+﻿<Page x:Class="LocalAniHubFront.Views.Pages.EntryWindow_Episode"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LocalAniHubFront.Views.Pages"
+      xmlns:components="clr-namespace:LocalAniHubFront.Views.Components"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="EntryWindow_Episode"
+      x:Name="EpisodePage">
+
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="MainInfoGridRow" Height="*"/>
+            <RowDefinition x:Name="BottonRow" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Visible"
+            Grid.Row="0">
+            <Grid x:Name="MainInfoGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="SubTitleRow" Height="Auto"/>
+                    <RowDefinition x:Name="UpperButtonRow" Height="Auto"/>
+                    <RowDefinition x:Name="ShortCommentRow" Height="Auto"/>
+                    <RowDefinition x:Name="BoarderLineRow" Height="Auto"/>
+                    <RowDefinition x:Name="OtherRow" Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid x:Name="SubTitleRowGrid"
+                        Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="SubTitle"
+                           Grid.Column="0"
+                           Style="{StaticResource SubtitleTextStyle}"
+                           Text="{Binding SubTitle}"/>
+
+                    <ScrollViewer
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="SmallTags"
+                                Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource BoldGrayTextStyle}"
+                                   Text="{Binding EpisodeNumberString}"/>
+                            <!--格式示例：第2/13集-->
+                            <TextBlock Style="{StaticResource SmallerYellowTextStyle}"
+                                   FontWeight="Bold"
+                                   Margin="8,0,0,0"
+                                   Text="{Binding BroadcastState}"/>
+                            <!--已播出/未播出-->
+                            <TextBlock Style="{StaticResource GrayTextStyle}"
+                                   Margin="8,0,0,0"
+                                   Text="{Binding Date}"/>
+                            <!--单集的播出时间-->
+                            <TextBlock Style="{StaticResource GrayTextStyle}"
+                                   Margin="8,0,0,0"
+                                   Text="{Binding Weekday}"/>
+                            <!--例：周二-->
+                            <TextBlock Style="{StaticResource GrayTextStyle}"
+                                   Margin="8,0,0,0"
+                                   Text="{Binding Time}"/>
+                            <!--例：23:30-->
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <StackPanel Orientation="Horizontal"
+                            Grid.Column="2"
+                            Margin="20,0,0,0">
+                        <!--第一次观看的日期与时间（调用日志服务）-->
+                        <!--若未查询到或观看状态为未观看 则不显示（空字符串即可）-->
+                        <TextBlock Style="{StaticResource GrayTextStyle}"
+                               Text="{Binding WatchedDate}"/>
+                        <TextBlock Margin="8,0,0,0"
+                               Style="{StaticResource GrayTextStyle}"
+                               Text="{Binding WatchedTime}"/>
+
+                        <!--观看状态，可供自己选择-->
+                        <!--StateOptionList:字符串列表（ObservableCollection），"在看", "已看", "未看"-->
+                        <!--StateSelectedOption:绑定到当前状态-->
+                        <components:SelectableTextBlock  x:Name="State"
+                              ItemsSource="{Binding StateOptionList}"
+                              Margin="8,0,0,0"
+                              SelectedItem="{Binding StateSelectedOption, Mode=TwoWay}"
+                              TextStyle="{StaticResource GrayTextStyle}"
+                                                        VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid x:Name="UpperButtonRowGrid"
+                  Grid.Row="1"
+                  Margin="0,16,0,0">
+                    <WrapPanel x:Name="UpperButtons">
+                        <Button x:Name="WatchButton"
+                            Style="{StaticResource BasicButton}"
+                            Foreground="Black"
+                            Background="#FFF2CC"
+                            FontFamily="Segoe Fluent Icons"
+                            Height="32"
+                            Width="200"
+                            Content="&#xE768;"/>
+                        <Button x:Name="DownloadResourceButton"
+                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                            Margin="12,0,0,0"
+                            Content="&#xE896;"/>
+                        <Button x:Name="AddResourceButton"
+                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                            Margin="12,0,0,0"
+                            Content="&#xE710;"/>
+                        <Button x:Name="WriteNoteButton"
+                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                            Margin="12,0,0,0"
+                            Content="&#xE70F;"/>
+                    </WrapPanel>
+                </Grid>
+
+                <WrapPanel x:Name="ShortCommentPanel" 
+                       Orientation="Horizontal"
+                       Grid.Row="2"
+                       HorizontalAlignment="Stretch">
+                    <TextBlock TextWrapping="Wrap"
+                            VerticalAlignment="Top"
+                            Margin="0,4,0,0"
+                            Style="{StaticResource GrayTextStyle}"
+                            LineHeight="28">
+                    <Run Text="&quot;"/>
+                    <Run Text="{Binding ShortComment}"/>
+                        <!--ShortComment是Episode的一个属性（暂时待添加）-->
+                    <Run Text="&quot;"/>
+                    </TextBlock>
+                </WrapPanel>
+
+                <Border x:Name="BoarderLine"
+                        Grid.Row="3"
+                    Height="1" 
+                    Background="Gray" 
+                    Margin="0,16,0,0" 
+                    HorizontalAlignment="Stretch">
+                    <Border.Effect>
+                        <DropShadowEffect 
+                            Color="Black" 
+                            Direction="270" 
+                            ShadowDepth="1" 
+                            Opacity="0.3" 
+                            BlurRadius="2" />
+                    </Border.Effect>
+                </Border>
+
+                <StackPanel x:Name="OtherAreaPanel"
+                          Grid.Row="4"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Margin="0,16,0,0">
+                    <Grid x:Name="ResourceGrid"
+                          >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="本地资源"
+                                   Style="{StaticResource BoldWhiteTextStyle}"
+                                   VerticalAlignment="Top"
+                                   LineHeight="30"/>
+
+                        <!--ResourcesData:record struct的列表-->
+                        <ItemsControl ItemsSource="{Binding ResourcesData}"
+                                      Grid.Column="1">
+                            <!--这个块里面的binding定义为record struct的成员即可，直接从record struct中读取-->
+                            <!--ResourcePlayCommand、ResourceDeleteCommand需要定义在ViewModel中，接收ResourceId参数，对资源进行删除或播放-->
+                            <!--（播放先调用VideoPlayService的外部播放器）-->
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid x:Name="ResourceEntry"
+                                          Margin="24,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition x:Name="ResourceNameClmn" Width="*"/>
+                                            <ColumnDefinition x:Name="PlayButtonClmn" Width="Auto"/>
+                                            <ColumnDefinition x:Name="DeleteButtonClmn" Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ScrollViewer
+                                            Grid.Column="0"
+                                            HorizontalScrollBarVisibility="Auto"
+                                            VerticalScrollBarVisibility="Disabled">
+                                            <TextBlock x:Name="ResourceName"
+                                                       Style="{StaticResource WhiteTextStyle}"
+                                                       Text="{Binding ResourceName}"
+                                                       VerticalAlignment="Center"/>
+                                        </ScrollViewer>
+
+                                        <Button x:Name="PlayButton"
+                                                Grid.Column="1"
+                                                Margin="8,0,0,0"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                                Background="#FFF2CC"
+                                                Content="&#xE768;"
+                                                Command="{Binding DataContext.ResourcePlayCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding ResourceId}"/>
+
+                                        <Button x:Name="DeleteButton"
+                                                Grid.Column="2"
+                                                Margin="8,0,0,0"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                                Content="&#xE74D;"
+                                                Command="{Binding DataContext.ResourceDeleteCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding ResourceId}"/>
+
+                                    </Grid>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="0,-8,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                    </Grid>
+
+                    <Grid x:Name="NoteGrid"
+                          Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="关联评价"
+                                   Style="{StaticResource BoldWhiteTextStyle}"
+                                   VerticalAlignment="Top"
+                                   LineHeight="30"/>
+
+                        <!--与上一个同理-->
+                        <ItemsControl ItemsSource="{Binding NoteData}"
+                                      Grid.Column="1">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid x:Name="NoteEntry"
+                                          Margin="24,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition x:Name="NoteNameClmn" Width="*"/>
+                                            <ColumnDefinition x:Name="ViewButtonClmn" Width="Auto"/>
+                                            <ColumnDefinition x:Name="DeleteButtonClmn" Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ScrollViewer
+                                            Grid.Column="0"
+                                            HorizontalScrollBarVisibility="Auto"
+                                            VerticalScrollBarVisibility="Disabled">
+                                            <TextBlock x:Name="ResourceName"
+                                                       Style="{StaticResource WhiteTextStyle}"
+                                                       Text="{Binding NoteName}"
+                                                       VerticalAlignment="Center"/>
+                                        </ScrollViewer>
+
+                                        <Button x:Name="ViewButton"
+                                                Grid.Column="1"
+                                                Margin="8,0,0,0"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                                Content="&#xE8ad;"
+                                                Command="{Binding DataContext.NoteViewCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding NoteId}"/>
+                                        <!--NoteViewCommand：打开一个构造函数传入NoteId的窗口，窗口名为NoteViewWindow（待定义）-->
+
+                                        <Button x:Name="DeleteButton"
+                                                Grid.Column="2"
+                                                Margin="8,0,0,0"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                                Content="&#xE74D;"
+                                                Command="{Binding DataContext.NoteDeleteCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding NoteId}"/>
+                                    </Grid>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                Margin="0,-8,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                    </Grid>
+
+                </StackPanel>
+                <!---->
+            </Grid>
+
+        </ScrollViewer>
+
+        <Grid x:Name="ButtonGrid"
+              Grid.Row="1"
+              HorizontalAlignment="Stretch"
+              Margin="0,8,0,0">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftButtonsClmn" Width="*"/>
+                <ColumnDefinition x:Name="RightButtonsClmn" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <WrapPanel x:Name="LeftButtons"
+                       Grid.Column="0"
+                       HorizontalAlignment="Left"
+                       FlowDirection="LeftToRight">
+                <Button x:Name="BackButton"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE72b;"
+                        Click="BackButton_Click"/>
+            </WrapPanel>
+
+
+            <WrapPanel x:Name="RightButtons"
+                       Grid.Column="1"
+                       HorizontalAlignment="Right"
+                       FlowDirection="LeftToRight">
+                <Button x:Name="HistoryButton"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                        Content="&#xE81c;"
+                        Click="HistoryButton_Click"/>
+            </WrapPanel>
+        </Grid>
+
+    </Grid>
+</Page>
