@@ -30,7 +30,7 @@ namespace BasicClassLibrary
         public State State { get; set; }         // 观看状态
         public string MaterialFolder { get; set; } // 素材子文件夹名称
         //配合素材服务的属性
-        public string KeyVisualId { get; set; } // 主封面图ID
+        public string KeyVisualId { get; set; } // 主封面图ID（主封面图文件名）
 
         //设置项
         public bool HasUpdateTime {  get; set; }//是否有更新时自动获取资源
