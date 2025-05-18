@@ -19,12 +19,12 @@ namespace BasicClassLibrary
         public string? ResourcePath { get; set; } //路径
         //
         public Resource(int? episodeId,
-            DateTime importData,string path)
+            DateTime importData,string resourcePath)
         {
             EpisodeId = episodeId;
             // Episode = episode;
             ImportData = importData;
-            ResourcePath = path;
+            ResourcePath = resourcePath;
         }
     }
     public partial class AppDbContext : DbContext
