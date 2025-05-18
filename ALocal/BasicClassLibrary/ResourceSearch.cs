@@ -50,6 +50,13 @@ namespace BasicClassLibrary
 
             return await resourceSearch.SearchAsync(keyword);
         }
+        public async Task<List<ResourceItem>> SearchMultipleKeywordsAsync(IEnumerable<string> keywords)
+        {
+            if (keywords == null || !keywords.Any())
+                throw new ArgumentException("Keywords cannot be null or empty");
+
+            return await resourceSearch.SearchMultipleKeywordsAsync(keywords);
+        }
     }
 
 
