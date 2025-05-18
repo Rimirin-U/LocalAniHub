@@ -59,7 +59,7 @@ namespace LocalAniHubFront.ViewModels.Components
             {
                 var metadata = _entryService.EntryMetaDataManager.Query(EntryMetaDataManager.ByEntryId(entry.Id)).FirstOrDefault() ?? new EntryMetadata();
                 var rating = _entryService.EntryRatingManager.Query(EntryRatingManager.ByEntryId(entry.Id)).FirstOrDefault() ?? new EntryRating();
-                var timeInfo = _entryService.EntryTimeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entry.Id)).FirstOrDefault() ?? new EntryTimeInfo(entry.Id, entry, DayOfWeek.Monday, DateTime.Now);
+                var timeInfo = _entryService.EntryTimeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entry.Id)).FirstOrDefault() ?? new EntryTimeInfo(entry.Id, DayOfWeek.Monday, DateTime.Now);
                 var episodes = _entryService.EpisodeManager.Query(EpisodeManager.ByEntryId(entry.Id));
 
                 // 整合数据并添加到集合
