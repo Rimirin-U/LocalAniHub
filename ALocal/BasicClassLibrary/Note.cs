@@ -31,6 +31,6 @@ namespace BasicClassLibrary
 
     public partial class AppDbContext : DbContext
     {
-        DbSet<Note> notes { get; set; }
+        DbSet<Note> Notes { get; set; }
     }
 }
