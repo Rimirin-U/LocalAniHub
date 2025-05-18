@@ -1,4 +1,5 @@
-﻿using LocalAniHubFront.Services;
+﻿using BasicClassLibrary;
+using LocalAniHubFront.Services;
 using LocalAniHubFront.ViewModels.Pages;
 using LocalAniHubFront.ViewModels.Windows;
 using LocalAniHubFront.Views.Pages;
@@ -57,9 +58,9 @@ namespace LocalAniHubFront
                 services.AddSingleton<CollectionPage>();
                 services.AddSingleton<CollectionViewModel>();
                 services.AddSingleton<RecentPage>();
-                // services.AddSingleton<RecentPageViewModels>();
+                services.AddSingleton<RecentPageViewModel>();
 
-                
+
             }).Build();
 
         /// <summary>
@@ -76,6 +77,19 @@ namespace LocalAniHubFront
         private async void OnStartup(object sender, StartupEventArgs e)
         {
             await _host.StartAsync();
+
+            // 初始化程序段
+            // 数据库初始化
+            using (var context = new AppDbContext())
+            {
+                // 自动创建数据库和表结构（如果不存在）
+                context.Database.EnsureCreated();
+            }
+            // debug: 插入初始数据
+            var settingService = GlobalSettingsService.Instance;
+            settingService.SetValue("defaultPlayerPath", @"C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe");
+            //var entryManager = new EntryManager();
+            //entryManager.Add(new("迷途之子!!!!!","BanG Dream! It's MyGO!!!!!",new(2023,6,29),new(2023,10,29),"原创动画",13,State.Watching)
         }
 
         /// <summary>

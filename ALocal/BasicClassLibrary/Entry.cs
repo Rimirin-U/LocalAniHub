@@ -35,7 +35,9 @@ namespace BasicClassLibrary
         //设置项
         public bool HasUpdateTime {  get; set; }//是否有更新时自动获取资源
         public bool AutoClearResources {  get; set; }//是否自动清除资源
-        public Entry(string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,string category,int episodeCount, State state,string materialFolder, string keyVisualId, bool hasUpdateTime,bool autoClearResources)    
+        public Entry(string translatedName,string originalName,DateTime releaseDate,DateTime collectionDate,
+            string category,int episodeCount, State state,
+            string materialFolder, string keyVisualId, bool hasUpdateTime,bool autoClearResources)    
         {
             TranslatedName = translatedName;
             OriginalName = originalName;
@@ -47,7 +49,7 @@ namespace BasicClassLibrary
             MaterialFolder = materialFolder;
             KeyVisualId = keyVisualId;
             HasUpdateTime = hasUpdateTime;
-            AutoClearResources = autoClearResources;//感觉两个设置属性的初始化有点问题
+            AutoClearResources = autoClearResources;
         }
     }
     //关于数据库的上下文
