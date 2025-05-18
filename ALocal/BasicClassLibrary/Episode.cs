@@ -10,10 +10,9 @@ namespace BasicClassLibrary
     public class Episode : IEntityWithId,IEntryNavigation
     {
         // Constructor
-        public Episode(int? entryId, Entry? entry, int episodeNumber, State state)
+        public Episode(int? entryId, int episodeNumber, State state)
         {
             EntryId = entryId;
-            Entry = entry;
             EpisodeNumber = episodeNumber;
             State = state;
             ShortComment = "";

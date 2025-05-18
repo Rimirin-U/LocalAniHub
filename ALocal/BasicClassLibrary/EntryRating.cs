@@ -13,6 +13,12 @@ namespace BasicClassLibrary
         public int? EntryId { get; set; } // 外键
         public Entry? Entry { get; set; } // 导航属性
         public double? Score { get; set; } // 评分
+
+        public EntryRating(int? entryId, double? score)
+        {
+            EntryId = entryId;
+            Score = score;
+        }
     }
     public partial class AppDbContext : DbContext
     {

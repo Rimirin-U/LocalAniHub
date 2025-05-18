@@ -18,11 +18,11 @@ namespace BasicClassLibrary
         //public bool HasSubtitle { get; set; } // 是否有外挂字幕
         public string? ResourcePath { get; set; } //路径
         //
-        public Resource(int? episodeId,Episode? episode,
+        public Resource(int? episodeId,
             DateTime importData,string path)
         {
             EpisodeId = episodeId;
-            Episode = episode;
+            // Episode = episode;
             ImportData = importData;
             ResourcePath = path;
         }

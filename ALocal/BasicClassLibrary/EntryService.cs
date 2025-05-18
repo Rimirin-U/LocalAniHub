@@ -84,7 +84,7 @@ namespace BasicClassLibrary
             {
                 var episode = new Episode(
                 entry.Id, // 关联到当前条目的 EntryId
-                entry,    // 关联到当前条目的 Entry 对象
+                //entry,    // 关联到当前条目的 Entry 对象
                 i,        // 集数
                 State.NotWatched // 初始状态为未观看
                );
