@@ -19,6 +19,10 @@ namespace BasicClassLibrary
             EntryId = entryId;
             Score = score;
         }
+
+        public EntryRating()
+        {
+        }
     }
     public partial class AppDbContext : DbContext
     {

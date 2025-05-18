@@ -20,6 +20,10 @@ namespace BasicClassLibrary
             EntryId = entryId;
         }
 
+        public EntryMetadata()
+        {
+        }
+
         // 核心字典属性，存储元数据
         private Dictionary<string, string> _metadataValues { get; set; } = new();
         // 通过特殊前缀区分标签
