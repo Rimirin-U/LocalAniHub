@@ -51,7 +51,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         private readonly EntryMetaDataManager _metaDataManager = new();
         private readonly EntryRatingManager _ratingManager = new();
         private readonly MaterialManager _materialManager = new();
-        private readonly AppDbContext _dbContext = new();
+        private readonly EpisodeManager _episodeManager = new();
         private int _entryId;
         private bool _isInitialized = false;
         public EntryWindow_MainInfoViewModel(int entryId)
@@ -105,10 +105,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         private async Task LoadEpisodes(int entryId)
         {
-            var episodes = await _dbContext.Episodes 
-                .Where(e => e.EntryId == entryId)
-                .OrderBy(e => e.EpisodeNumber)
-                .ToListAsync();
+            var episodes = await Task.Run(() => _episodeManager.Query(EpisodeManager.ByEntryId(entryId)));
 
             Episodes = new ObservableCollection<EpisodeTempData>(
                 episodes.Select(e => new EpisodeTempData(
@@ -171,13 +168,13 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         private void UpdateWatchedStatusInDatabase(int episodeId, bool isWatched)
         {
-            var episode = _dbContext.Episodes.FirstOrDefault(e => e.Id == episodeId);
+            var episode = _episodeManager.FindById(episodeId);
             if (episode != null)
             {
                 // 根据 isWatched 参数更新 State 属性
                 episode.State = isWatched ? EpisodeState.Watched : EpisodeState.Unwatched;
                 // 保存更改到数据库
-                _dbContext.SaveChanges();
+                _episodeManager.Modify(episode);
             }
         }
 
