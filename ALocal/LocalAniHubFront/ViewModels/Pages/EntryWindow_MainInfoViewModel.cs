@@ -172,7 +172,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             if (episode != null)
             {
                 // 根据 isWatched 参数更新 State 属性
-                episode.State = isWatched ? EpisodeState.Watched : EpisodeState.Unwatched;
+                episode.State = isWatched ? BasicClassLibrary.State.Watched : BasicClassLibrary.State.NotWatched; // 显式使用 BasicClassLibrary.State
                 // 保存更改到数据库
                 _episodeManager.Modify(episode);
             }
