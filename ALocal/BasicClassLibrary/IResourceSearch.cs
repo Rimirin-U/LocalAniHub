@@ -10,5 +10,6 @@ namespace BasicClassLibrary
     public interface IResourceSearch
     {
         public Task<List<ResourceItem>> SearchAsync(string keyword, CancellationToken ct = default);
+        public Task<List<ResourceItem>> SearchMultipleKeywordsAsync(IEnumerable<string> keywords, CancellationToken ct = default);
     }
 }
