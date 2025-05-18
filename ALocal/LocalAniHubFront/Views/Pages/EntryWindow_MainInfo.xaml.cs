@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LocalAniHubFront.ViewModels.Pages;
 using LocalAniHubFront.Views.Pages;
 
 namespace LocalAniHubFront.Views.Pages
@@ -53,24 +54,24 @@ namespace LocalAniHubFront.Views.Pages
         // 页面导航按钮
         private void ResourceButton_Click(object sender, RoutedEventArgs e)
         {
-            var page = new EntryWindow_ResourceManage();
-            page.EntryId = EntryId;
-            page.InitializeViewModel();
-            NavigationService.Navigate(page);
+            //var page = new EntryWindow_ResourceManage();
+            //page.EntryId = EntryId;
+            //page.InitializeViewModel();
+            //NavigationService.Navigate(page);
         }
         private void NoteButton_Click(object sender, RoutedEventArgs e)
         {
-            var page = new EntryWindow_NoteManage();
-            page.EntryId = EntryId;
-            page.InitializeViewModel();
-            NavigationService.Navigate(page);
+            //var page = new EntryWindow_NoteManage();
+            //page.EntryId = EntryId;
+            //page.InitializeViewModel();
+            //NavigationService.Navigate(page);
         }
         private void HistoryButton_Click(object sender, RoutedEventArgs e)
         {
-            var page = new EntryWindow_History();
-            page.EntryId = EntryId;
-            page.InitializeViewModel();
-            NavigationService.Navigate(page);
+            //var page = new EntryWindow_History();
+            //page.EntryId = EntryId;
+            //page.InitializeViewModel();
+            //NavigationService.Navigate(page);
         }
         private void MaterialButton_Click(object sender, RoutedEventArgs e)
         {

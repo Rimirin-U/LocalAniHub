@@ -57,7 +57,7 @@ namespace LocalAniHubFront
                 services.AddSingleton<CollectionPage>();
                 services.AddSingleton<CollectionViewModel>();
                 services.AddSingleton<RecentPage>();
-                services.AddSingleton<RecentPageViewModels>();
+                // services.AddSingleton<RecentPageViewModels>();
 
                 
             }).Build();
