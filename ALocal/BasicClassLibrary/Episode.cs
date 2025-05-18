@@ -16,6 +16,8 @@ namespace BasicClassLibrary
             Entry = entry;
             EpisodeNumber = episodeNumber;
             State = state;
+            ShortComment = "";
+            Progress = 0;
         }
 
         public int Id { get; set; }
@@ -28,6 +30,7 @@ namespace BasicClassLibrary
         public int EpisodeNumber { get; set; }
         public State State { get; set; }            // GivenUp视作NotWatched
         public string ShortComment { get; set; } 
+        public long Progress { get; set; }          // 观看进度
     }
 
     public partial class AppDbContext : DbContext
