@@ -49,7 +49,7 @@ namespace LocalAniHubFront.Services
                     _serviceProvider.GetService(typeof(INavigationWindow)) as INavigationWindow
                 )!;
                 _navigationWindow!.ShowWindow();
-
+                // 默认导航定义处
                 _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));
             }
 
