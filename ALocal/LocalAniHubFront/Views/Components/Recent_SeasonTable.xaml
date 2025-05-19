@@ -13,12 +13,15 @@
 
     <!-- d:DataContext="{d:DesignInstance local:Collection_SimpleEntryTimeList,
                          IsDesignTimeCreatable=False}"-->
-    <StackPanel>
+    <Grid VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch"
+          Visibility="Visible">
         <DataGrid
+            Visibility="Visible"
             x:Name="UnifiedEntriesDataGrid"
             Margin="0,24,0,24"
             AutoGenerateColumns="False"
             ItemsSource="{Binding UnifiedEntries}">
         </DataGrid>
-    </StackPanel>
+    </Grid>
 </UserControl>
