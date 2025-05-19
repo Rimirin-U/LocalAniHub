@@ -38,7 +38,8 @@ namespace BasicClassLibrary
             }
 
             // 构建目标路径
-            const string baseDestination = "/base/Resource";
+            string globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+            string baseDestination = Path.Combine(globalBaseFolder, "Resource");
             string destinationPath = Path.Combine(baseDestination, resource.Id.ToString());
 
             // 确保目标父目录存在
