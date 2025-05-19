@@ -21,7 +21,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         private string _selectedMode = "SimpleEntryTimeList"; // 设置默认值为第一个模式
 
         [ObservableProperty]
-        private UserControl _currentView = new Collection_SimpleEntryTimeList(); // 默认视图
+        private UserControl _currentView;
 
         private bool _isInitialized = false;
 
@@ -40,21 +40,16 @@ namespace LocalAniHubFront.ViewModels.Pages
         {
             // 初始化视图模型
             _isInitialized = true;
-
-            // 根据默认选中的模式加载初始视图
-            OnSelectedModeChanged();
         }
-
-        [RelayCommand]
-        private void OnSelectedModeChanged()
+        partial void OnSelectedModeChanged(string value)
         {
             // 根据SelectedMode 切换用户控件
-            CurrentView = SelectedMode switch
+            CurrentView = value switch
             {
                 "SimpleEntryTimeList" => new Collection_SimpleEntryTimeList(),
                 "Mode2" => throw new NotSupportedException("Mode2 is not supported yet."),
                 "Mode3" => throw new NotSupportedException("Mode3 is not supported yet."),
-                _ => throw new NotSupportedException($"SelectedMode '{SelectedMode}' is not supported.")
+                _ => throw new NotSupportedException($"SelectedMode '{value}' is not supported.")
             };
         }
     }
