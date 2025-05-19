@@ -14,7 +14,7 @@ namespace BasicClassLibrary
         private ResourceDownloadService() { }
 
         private readonly ResourceDownload _resourceDownload = new();
-        public List<MagnetDownloadManager> downloadManagers = [];
+        private List<MagnetDownloadManager> downloadManagers = [];
 
         // 添加下载任务（并启动下载）
         public Task<MagnetDownloadManager> AddAndStartDownload(string magnetUrl, string? downloadPath = null)
