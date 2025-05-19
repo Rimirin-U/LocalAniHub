@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
 using System.Windows.Threading;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+//using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace LocalAniHubFront.ViewModels.Windows
 {
@@ -14,49 +14,6 @@ namespace LocalAniHubFront.ViewModels.Windows
     public record struct EpisodeItem(int EntryId, string EntryName, int EpisodeId, int EpisodeNumber);
     public partial class EntryRowViewModel : ObservableObject
     {
-        private readonly Func<EntryItem, object, bool> _isItemSelected;
-
-        public EntryRowViewModel(Func<EntryItem, object, bool> isItemSelected)
-        {
-            _isItemSelected = isItemSelected;
-        }
-
-        [RelayCommand]
-        private void RemoveSelf()
-        {
-            // 通知 MarkdownViewModel 删除当前项
-            RemoveRequested?.Invoke(this);
-        }
-
-        public event Action<object> RemoveRequested;
-
-        private EntryItem? _selectedEntryItem;
-        public EntryItem? SelectedEntryItem
-        {
-            get => _selectedEntryItem;
-            set
-            {
-                if (value.HasValue && _isItemSelected(value.Value, this))
-                {
-                    MessageBox.Show($"“{value.Value.EntryName}” 已被其他下拉框选中，请选择不同作品。", "重复选择", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    SetProperty(ref _selectedEntryItem, null);
-                }
-                else
-                {
-                    SetProperty(ref _selectedEntryItem, value);
-                }
-            }
-        }
-    }
-    public partial class EpisodeRowViewModel : ObservableObject
-    {
-        private readonly Func<EpisodeItem, object, bool> _isItemSelected;
-
-        public EpisodeRowViewModel(Func<EpisodeItem, object, bool> isItemSelected)
-        {
-            _isItemSelected = isItemSelected;
-        }
-
         [RelayCommand]
         private void RemoveSelf()
         {
@@ -71,6 +28,49 @@ namespace LocalAniHubFront.ViewModels.Windows
             get => _selectedEntryItem;
             set => SetProperty(ref _selectedEntryItem, value);
         }
+    }
+    public partial class EpisodeRowViewModel : ObservableObject
+    {
+        private readonly Func<EpisodeItem, object, bool> _isItemSelected;
+
+        public EpisodeRowViewModel(
+            IReadOnlyList<EntryItem> allEntries,
+            IReadOnlyList<EpisodeItem> allEpisodes,
+            Func<EpisodeItem, object, bool> isItemSelected)
+        {
+            AllEntries = allEntries;
+            AllEpisodes = allEpisodes;
+            _isItemSelected = isItemSelected;
+        }
+
+        [RelayCommand]
+        private void RemoveSelf()
+        {
+            RemoveRequested?.Invoke(this);
+        }
+
+        public event Action<object> RemoveRequested;
+
+        private EntryItem? _selectedEntryItem;
+        public EntryItem? SelectedEntryItem
+        {
+            get => _selectedEntryItem;
+            set
+            {
+                if (SetProperty(ref _selectedEntryItem, value) && value.HasValue)
+                {
+                    var entryId = value.Value.EntryId;
+                    EpisodeItems = AllEpisodes.Where(e => e.EntryId == entryId).ToList();
+                }
+            }
+        }
+
+        private IReadOnlyList<EpisodeItem> _episodeItems = new List<EpisodeItem>();
+        public IReadOnlyList<EpisodeItem> EpisodeItems
+        {
+            get => _episodeItems;
+            private set => SetProperty(ref _episodeItems, value);
+        }
 
         private EpisodeItem? _selectedEpisodeItem;
         public EpisodeItem? SelectedEpisodeItem
@@ -80,7 +80,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             {
                 if (value.HasValue && _isItemSelected(value.Value, this))
                 {
-                    MessageBox.Show($"“{value.Value.EpisodeNumber}” 已被其他下拉框选中，请选择不同集数。", "重复选择", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"第 {value.Value.EpisodeNumber} 集已被其他下拉框选中，请选择不同集数。", "重复选择", MessageBoxButton.OK, MessageBoxImage.Warning);
                     SetProperty(ref _selectedEpisodeItem, null);
                 }
                 else
@@ -89,64 +89,45 @@ namespace LocalAniHubFront.ViewModels.Windows
                 }
             }
         }
+
+        public IReadOnlyList<EntryItem> AllEntries { get; }
+        public IReadOnlyList<EpisodeItem> AllEpisodes { get; }
     }
     public partial class MarkdownViewModel : ObservableObject
     {
         private readonly int _noteId;
-        private readonly string _filePath;
-        private readonly NoteService _noteService;
         private readonly NoteManager _noteManager;
-        private readonly List<EntryItem> _entryItems;
-        private readonly List<EpisodeItem> _episodeItems;
-        [ObservableProperty]
-        private string _noteTitle = "新笔记";
-
-        [ObservableProperty]
-        private string _markdownText = "# 默认内容\n请开始编辑...";
-
-        [ObservableProperty]
-        private int _selectedTabIndex;
-
+        [ObservableProperty] private string _noteTitle = "新笔记";
+        [ObservableProperty] private string _markdownText = "# 默认内容\n请开始编辑...";
+        [ObservableProperty] private int _selectedTabIndex;
+        // 全局数据源
+        public IReadOnlyList<EntryItem> EntryItemList { get; private set; } = new List<EntryItem>();
+        public IReadOnlyList<EpisodeItem> EpisodeItemList { get; private set; } = new List<EpisodeItem>();
+        // UI 行集合
         public ObservableCollection<EntryRowViewModel> EntryComboBoxList { get; } = new();
         public ObservableCollection<EpisodeRowViewModel> EpisodeComboBoxList { get; } = new();
         public MarkdownViewModel(int noteId, MarkdownWindow_OpenOp openOp)
         {
             _noteId = noteId;
+            _noteManager = new NoteManager();
+            var note = _noteManager.FindById(noteId);
 
             SelectedTabIndex = openOp == MarkdownWindow_OpenOp.View ? 0 : 1;
-            _noteManager = new NoteManager();
-            _noteService = new NoteService(_noteManager);
-            var note = _noteManager.FindById(noteId);
-            if ( note != null)
+
+            if (note != null)
             {
-                NoteTitle = note.NoteTitle;
+                NoteTitle = note.NoteTitle;//这个报错不用管
                 MarkdownText = note.Content;
             }
-            else
-            {
-                MarkdownText = string.Empty;
-            }
-            _entryItems = LoadAllEntries(_noteId);
-            _episodeItems = LoadAllEpisodes(_noteId);
 
-            /* var notesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Notes");
-             if (!Directory.Exists(notesDirectory))
-                 Directory.CreateDirectory(notesDirectory);*/
-    
-            _filePath = Path.Combine(_noteService.BaseDirectory, $"{note.NoteTitle}.md");//感觉这里存在问题
-            //LoadNote();
+            LoadAllEntries();
+            LoadAllEpisodes();
+
+            InitializeEntryComboBoxes(note);
+            InitializeEpisodeComboBoxes(note);
             InitializeAutoSave();
-            InitializeEntryComboBoxes();
-            InitializeEpisodeComboBoxes();
         }
-        /* private void LoadNote()
-         {
-             if (File.Exists(_filePath))
-             {
-                 MarkdownText = File.ReadAllText(_filePath);
-                 NoteTitle = $"笔记 {_noteId}";
-             }
-         }*/
+
         private async void InitializeAutoSave()
         {
             await System.Threading.Tasks.Task.Run(async () =>
@@ -162,106 +143,103 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             try
             {
-                File.WriteAllText(_filePath, MarkdownText);
+                var note = _noteManager.FindById(_noteId);
+                if (note != null)
+                {
+                    note.NoteTitle = NoteTitle;//这个报错不用管
+                    note.Content = MarkdownText;
+                    note.EntriesId = EntryComboBoxList
+                        .Where(vm => vm.SelectedEntryItem.HasValue)
+                        .Select(vm => vm.SelectedEntryItem!.Value.EntryId).ToList();
+
+                    note.EpisodesId = EpisodeComboBoxList
+                        .Where(vm => vm.SelectedEpisodeItem.HasValue)
+                        .Select(vm => vm.SelectedEpisodeItem!.Value.EpisodeId).ToList();
+
+                    //_noteManager.Update(note);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"保存失败：{ex.Message}");
             }
         }
-
-        private List<EntryItem> LoadAllEntries(int noteId)
+        private void LoadAllEntries()
         {
-            var noteManager = new NoteManager();
             var entryManager = new EntryManager();
-
-            // Step 1: 查找当前 Note 对象
-            var note = noteManager.FindById(noteId);
-            if (note == null || note.EntriesId == null || !note.EntriesId.Any())
-            {
-                return new List<EntryItem>(); // 如果没有关联任何 Entry，返回空列表
-            }
-
-            // Step 2: 获取该 Note 关联的所有 Entry ID
-            var entryIds = note.EntriesId;
-
-            // Step 3: 查询这些 Entry ID 对应的 Entry 数据
-            var entries = entryManager.Query(e => entryIds.Contains(e.Id));
-
-            // Step 4: 转换为 EntryItem 列表
-            return entries.Select(e => new EntryItem(e.Id, e.TranslatedName))
-                          .ToList();
+            var entries = entryManager.Query(e => true); // 获取所有 Entry
+            EntryItemList = entries.Select(e => new EntryItem(e.Id, e.TranslatedName)).ToList();
         }
-
-        private List<EpisodeItem> LoadAllEpisodes(int noteId)
+        private void LoadAllEpisodes()
         {
-            var noteManager = new NoteManager();
             var episodeManager = new EpisodeManager();
-
-            // Step 1: 获取对应的 Note
-            var note = noteManager.FindById(noteId);
-            if (note == null || note.EpisodesId == null || !note.EpisodesId.Any())
+            var episodes = episodeManager.Query(e => true); // 获取所有 Episode
+            EpisodeItemList = episodes
+                .Where(e => e.Entry != null)
+                .Select(e => new EpisodeItem(
+                    e.Entry.Id,
+                    e.Entry.TranslatedName,
+                    e.Id,
+                    e.EpisodeNumber))
+                .ToList();
+        }
+        private void InitializeEntryComboBoxes(Note? note)
+        {
+            if (note?.EntriesId != null)
             {
-                return new List<EpisodeItem>(); // 如果没有关联任何 Episode，返回空列表
+                foreach (var id in note.EntriesId)
+                {
+                    EntryItem? item = EntryItemList.FirstOrDefault(e => e.EntryId == id);
+                    if (item.HasValue)
+                    {
+                        var row = new EntryRowViewModel();
+                        row.SelectedEntryItem = item;
+                        EntryComboBoxList.Add(row);
+                    }
+                }
             }
 
-            var episodeIds = note.EpisodesId;
-
-            // Step 2: 查询这些 Episode ID 对应的剧集数据
-            var episodes = episodeManager.Query(e => episodeIds.Contains(e.Id))
-                                         .Where(e => e.Entry != null); // 确保有对应的作品信息
-
-            // Step 3: 转换为 EpisodeItem 列表
-            return episodes.Select(e => new EpisodeItem(
-                             e.Entry!.Id,
-                             e.Entry.TranslatedName,
-                             e.Id,
-                             e.EpisodeNumber))
-                           .ToList();
+            if (EntryComboBoxList.Count == 0)
+            {
+                EntryComboBoxList.Add(new EntryRowViewModel());
+            }
         }
-
-        private void InitializeEntryComboBoxes()
+        private void InitializeEpisodeComboBoxes(Note? note)
         {
-            EntryComboBoxList.Add(CreateNewEntryRow());
-        }
+            if (note?.EpisodesId != null)
+            {
+                foreach (var id in note.EpisodesId)//这个报错不用管
+                {
+                    EpisodeItem? item = EpisodeItemList.FirstOrDefault(e => e.EpisodeId == id);
+                    if (item.HasValue)
+                    {
+                        var row = CreateNewEpisodeRow();
+                        row.SelectedEntryItem = EntryItemList.FirstOrDefault(e => e.EntryId == item.Value.EntryId);
+                        row.SelectedEpisodeItem = item;
+                        EpisodeComboBoxList.Add(row);
+                    }
+                }
+            }
 
-        private void InitializeEpisodeComboBoxes()
+            if (EpisodeComboBoxList.Count == 0)
+            {
+                EpisodeComboBoxList.Add(CreateNewEpisodeRow());
+            }
+        }
+        private EpisodeRowViewModel CreateNewEpisodeRow()
         {
-            EpisodeComboBoxList.Add(CreateNewEpisodeRow());
+            return new EpisodeRowViewModel(EntryItemList, EpisodeItemList, IsEpisodeItemSelected);
         }
-
         [RelayCommand]
         private void AddEntryComboBox()
         {
-            EntryComboBoxList.Add(CreateNewEntryRow());
+            EntryComboBoxList.Add(new EntryRowViewModel());
         }
 
         [RelayCommand]
         private void AddEpisodeComboBox()
         {
             EpisodeComboBoxList.Add(CreateNewEpisodeRow());
-        }
-
-        private EntryRowViewModel CreateNewEntryRow()
-        {
-            var row = new EntryRowViewModel(IsEntryItemSelected);
-            row.RemoveRequested += item => EntryComboBoxList.Remove((EntryRowViewModel)item);
-            return row;
-        }
-
-        private EpisodeRowViewModel CreateNewEpisodeRow()
-        {
-            var row = new EpisodeRowViewModel(IsEpisodeItemSelected);
-            row.RemoveRequested += item => EpisodeComboBoxList.Remove((EpisodeRowViewModel)item);
-            return row;
-        }
-
-        private bool IsEntryItemSelected(EntryItem item, object requester)
-        {
-            return EntryComboBoxList
-                .Where(vm => vm != requester)
-                .Any(vm => vm.SelectedEntryItem.HasValue &&
-                           vm.SelectedEntryItem.Value.EntryId == item.EntryId);
         }
 
         private bool IsEpisodeItemSelected(EpisodeItem item, object requester)
@@ -559,4 +537,4 @@ namespace LocalAniHubFront.ViewModels.Windows
                 GC.SuppressFinalize(this);
             }
         }*/
- 
+
