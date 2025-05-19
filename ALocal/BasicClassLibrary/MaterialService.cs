@@ -8,17 +8,21 @@ namespace BasicClassLibrary
 {
     public class MaterialService
     {
-        private readonly string _baseMaterialPath= @"/base/Material";
+        private readonly string _globalBaseFolder; 
+        private readonly string _baseMaterialPath;
 
         public MaterialService()
         {
-            // 确保素材基础目录存在
+            // 初始化 _globalBaseFolder  
+            _globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+            _baseMaterialPath = Path.Combine(_globalBaseFolder, "Material");
+            // 确保素材基础目录存在  
             Directory.CreateDirectory(_baseMaterialPath);
         }
 
         public void AddMaterial(Entry entry, string sourceFilePath)
         {
-            // 验证条目文件夹有效性（自动创建目录）
+            // 验证条目文件夹有效性（自动创建目录）  
             ValidateEntryFolder(entry);
 
             string fileName = Path.GetFileName(sourceFilePath);
@@ -39,25 +43,27 @@ namespace BasicClassLibrary
             else
                 throw new FileNotFoundException("素材不存在：" + fileName);
         }
-        // 添加主封面图
+
+        // 添加主封面图  
         public void AddKeyVisual(Entry entry, string imagePath)
         {
-            // 验证图片格式
+            // 验证图片格式  
             if (!IsImageFile(imagePath))
                 throw new ArgumentException("文件不是有效的图片格式");
 
-            // 添加素材
+            // 添加素材  
             AddMaterial(entry, imagePath);
 
-            // 设置封面图ID（使用文件名作为标识）
+            // 设置封面图ID（使用文件名作为标识）  
             entry.KeyVisualId = Path.GetFileName(imagePath);
         }
-        // 批量添加素材
+
+        // 批量添加素材  
         public void BatchAddMaterials(Entry entry, DateTime startTime, DateTime endTime)
         {
             ValidateEntryFolder(entry);
 
-            string sourceFolder = GlobalSettingsService.Instance.GetValue("BatchSourceFolder"); // 从设置中获得指定文件夹
+            string sourceFolder = GlobalSettingsService.Instance.GetValue("BatchSourceFolder"); // 从设置中获得指定文件夹  
             var files = Directory.EnumerateFiles(sourceFolder)
                 .Select(f => new FileInfo(f))
                 .Where(f => f.CreationTime >= startTime && f.CreationTime <= endTime);
@@ -70,7 +76,7 @@ namespace BasicClassLibrary
                 }
                 catch (Exception ex)
                 {
-                    // 记录错误并继续处理其他文件
+                    // 记录错误并继续处理其他文件  
                     Console.WriteLine($"添加文件{file.Name}失败：{ex.Message}");
                 }
             }
@@ -93,7 +99,8 @@ namespace BasicClassLibrary
             string entryFolder = Path.Combine(_baseMaterialPath, entry.MaterialFolder);
             Directory.CreateDirectory(entryFolder);
         }
-        // 验证文件是否为图片格式
+
+        // 验证文件是否为图片格式  
         private bool IsImageFile(string filePath)
         {
             string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
