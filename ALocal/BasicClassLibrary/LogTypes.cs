@@ -58,36 +58,6 @@ namespace BasicClassLibrary
             optionsBuilder.UseSqlite("Data Source=logs.db");
         }*/
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // 配置表继承 (TPH)
-            modelBuilder.Entity<LogEntry>()
-                .HasDiscriminator<string>("LogType")
-                .HasValue<WatchLogEntry>("Watch")
-                .HasValue<ReviewLogEntry>("Review")
-                .HasValue<RatingLogEntry>("Rating");
-
-            // 配置表结构
-            modelBuilder.Entity<LogEntry>(entity =>
-            {
-                entity.Property(e => e.Timestamp).HasColumnType("TEXT"); // 存储为 ISO 8601 格式的字符串
-            });
-
-            modelBuilder.Entity<WatchLogEntry>(entity =>
-            {
-                entity.Property(e => e.EpisodeId).IsRequired();
-            });
-
-            modelBuilder.Entity<ReviewLogEntry>(entity =>
-            {
-                entity.Property(e => e.NoteId).IsRequired();
-            });
-
-            modelBuilder.Entity<RatingLogEntry>(entity =>
-            {
-                entity.Property(e => e.EntryId).IsRequired();
-                entity.Property(e => e.Score).IsRequired();
-            });
-        }
+        
     }
 }
