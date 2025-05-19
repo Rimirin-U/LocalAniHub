@@ -56,6 +56,12 @@ namespace BasicClassLibrary
                 );
         }
 
+        public string GetTitle()
+        {
+            if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
+            return manager.Name;
+        }
+
         public async Task Start()
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
