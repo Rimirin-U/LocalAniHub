@@ -40,9 +40,16 @@ namespace BasicClassLibrary
             {"downloadPath", Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)} ,// 默认值：MyVideos文件夹
 
 
-            //资源拉取数据源
+            //资源搜索数据源
             {"defaultResourceSearchSource","0" },//0:自AnimesGarden（默认值）
+           
+            //批量添加素材指定文件夹
+            {"BatchSourceFolder","" },  //路径（默认值：空）
 
+            //全局父文件夹（资源、笔记、素材父文件夹的父文件夹）
+            {"globalBaseFolder","" }, //路径（默认值：空）
+
+            //前端
             //收藏页面默认显示方式
             {"defaultCollectionDisplayView", "0"}, // 0: 简单列表（收藏时间排序，默认值）
             
@@ -56,8 +63,7 @@ namespace BasicClassLibrary
             //string newVisiblePropertiesJson = "[{\"Name\":\"TranslatedName\",\"DisplayName\":\"译名\"}]";
             //GlobalSettingsService.Instance.SetValue("visiblePropertiesKey", newVisiblePropertiesJson);
 
-            //批量添加素材指定文件夹
-            {"BatchSourceFolder","" },  //路径（默认值：空）
+            
             {"entryWindowMainTitle", "0"}//0:原名，1：译名
         };
 
