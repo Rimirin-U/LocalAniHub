@@ -35,7 +35,8 @@
             <ui:Card HorizontalAlignment="Stretch"
                      VerticalAlignment="Stretch"
                      HorizontalContentAlignment="Left"
-                     VerticalContentAlignment="Top">
+                     VerticalContentAlignment="Top"
+                     Padding="24,12,24,12">
                 <ContentControl Content="{Binding ViewModel.CurrentView}"/>
             </ui:Card>
         </Grid>
