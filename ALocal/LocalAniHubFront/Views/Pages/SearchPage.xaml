@@ -46,7 +46,8 @@
                               ItemsSource="{Binding ViewModel.YearItems}"
                               DisplayMemberPath="DisplayName"
                               SelectedValuePath="Value"
-                              SelectedValue="{Binding SelectedYear, Mode=TwoWay}" />
+                              SelectedValue="{Binding SelectedYear, Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedYearItem, Mode=TwoWay}"  />
 
                     <ComboBox x:Name="MonthSelection"
                               Grid.Column="2"
@@ -57,7 +58,8 @@
                               ItemsSource="{Binding ViewModel.MonthItems}"
                               DisplayMemberPath="DisplayName"
                               SelectedValuePath="Value"
-                              SelectedValue="{Binding SelectedMonth, Mode=TwoWay}" />
+                              SelectedValue="{Binding SelectedMonth, Mode=TwoWay}"
+                              SelectedItem="{Binding SelectedMonthItem, Mode=TwoWay}" />
 
                     <Button x:Name="SearchButton"
                             Grid.Column="3"

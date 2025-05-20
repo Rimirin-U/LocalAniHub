@@ -16,6 +16,14 @@ namespace LocalAniHubFront.ViewModels.Pages
         public List<YearItem> YearItems { get; }
         public List<MonthItem> MonthItems { get; }
 
+        /*
+        [ObservableProperty]
+        private YearItem selectedYearItem;// 只用于UI显示
+
+        [ObservableProperty]
+        private MonthItem selectedMonthItem;// 只用于UI显示
+        */
+
         [ObservableProperty]
         private int selectedYear;
 
@@ -51,15 +59,17 @@ namespace LocalAniHubFront.ViewModels.Pages
             };
             // 初始化初始值
             var now = DateTime.Now;
-            SelectedYear = now.Year;
             int month = MonthItems
                 .Where(m => now.Month >= m.Value)
                 .Select(m => m.Value)
                 .DefaultIfEmpty(1)
                 .Max();// 找到当前月所在或之前的最接近的季度月
+            SelectedYear = now.Year;
             SelectedMonth = month;
-            OnPropertyChanged(nameof(SelectedYear));
-            OnPropertyChanged(nameof(SelectedMonth));
+            /*
+            SelectedYearItem = YearItems.FirstOrDefault(y => y.Value == now.Year);
+            SelectedMonthItem = MonthItems.FirstOrDefault(m => m.Value == month);
+            */
 
             // 使用EntryFetch类来进行搜索，初始时需要根据默认（当前）年月初始化一个EntryFetch
             // 在每次调用“搜索”时 都要根据当前选择的时间创建新的EntryFetch类
