@@ -26,6 +26,12 @@ namespace LocalAniHubFront.ViewModels.Windows
             },
             new NavigationViewItem()
             {
+                Content = "发现",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Search24 },
+                TargetPageType = typeof(Views.Pages.SearchPage)
+            },
+            new NavigationViewItem()
+            {
                 Content = "最近",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
                 TargetPageType = typeof(Views.Pages.RecentPage)
