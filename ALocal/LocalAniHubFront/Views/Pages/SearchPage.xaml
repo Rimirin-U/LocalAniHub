@@ -26,16 +26,52 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <ComboBox 
-                          Grid.Row="0"
-                          Margin="0,0,24,0"
-                          MinWidth="120"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Top"
-                          Panel.ZIndex="5"
-                          Background="White"/>
+                <Grid x:Name="TimeSelectionGrid"
+                      Grid.Row="0"
+                      HorizontalAlignment="Right">
 
-                <ItemsControl ItemsSource="{Binding ViewModel.EntryInfoSets}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox x:Name="YearSelection"
+                              Grid.Column="1"
+                              Margin="0,0,24,0"
+                              MinWidth="120"
+                              HorizontalAlignment="Right"
+                              Background="White"
+                              ItemsSource="{Binding ViewModel.YearItems}"
+                              DisplayMemberPath="DisplayName"
+                              SelectedValuePath="Value"
+                              SelectedValue="{Binding SelectedYear, Mode=TwoWay}" />
+
+                    <ComboBox x:Name="MonthSelection"
+                              Grid.Column="2"
+                              Margin="0,0,24,0"
+                              MinWidth="120"
+                              HorizontalAlignment="Right"
+                              Background="White"
+                              ItemsSource="{Binding ViewModel.MonthItems}"
+                              DisplayMemberPath="DisplayName"
+                              SelectedValuePath="Value"
+                              SelectedValue="{Binding SelectedMonth, Mode=TwoWay}" />
+
+                    <Button x:Name="SearchButton"
+                            Grid.Column="3"
+                            Margin="0,0,24,0"
+                            VerticalAlignment="Stretch"
+                            Height="36"
+                            Width="36"
+                            Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                            Command="{Binding ViewModel.SearchCommand}"
+                            Content="&#xE721;"/>
+                </Grid>
+
+                <ItemsControl Grid.Row="1"
+                    ItemsSource="{Binding ViewModel.EntryInfoSets}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <components:EntryInfoCard EntryInfoSet="{Binding}"/>
