@@ -1,12 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LocalAniHubFront.ViewModels.Windows
 {
-    public class AddEntryWindowViewModel
+    public partial class AddEntryWindowViewModel : ObservableObject
     {
+        public AddEntryWindowViewModel(/*EntryInfoSet entryInfoSet*/)
+        {
+            // debug
+            MetadataFromEntryInfoSet.Add(new("系列构成", "绫奈由仁子"));
+            MetadataFromEntryInfoSet.Add(new("企划", "BUSHIROAD"));
+            MetadataFromEntryInfoSet.Add(new("动画制作", "SANZIGEN"));
+            MetadataFromEntryInfoSet.Add(new("声优", "羊宫妃那 立石凛 青木阳菜 小日向美香 林鼓子"));
+            MetadataFromEntryInfoSet.Add(new("导演", "柿本广大"));
+            MetadataFromEntryInfoSet.Add(new("音乐", "藤田淳平 藤间仁"));
+        }
+        // debug
+        [ObservableProperty]
+        private KeyValuePair<string, string> testPair = new("动画制作", "SANZIGEN");
+
+        // 元数据（来自输入（EntryInfoSet））
+        [ObservableProperty]
+        private ObservableCollection<KeyValuePair<string, string>> metadataFromEntryInfoSet = new();
+
+        // 元数据（用于构建EntryMetadata对象）
+        [ObservableProperty]
+        private ObservableCollection<KeyValuePair<string, string>> metadataItems = new();        
+
+        [RelayCommand]
+        private void AddEmptyPair()
+        {
+            MetadataItems.Add(new KeyValuePair<string, string>("", ""));
+        }
+
+        public void AddPair(KeyValuePair<string, string> pair)
+        {
+            MetadataItems.Add(pair);
+        }
     }
 }

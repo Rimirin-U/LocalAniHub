@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalAniHubFront.ViewModels.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,13 +15,14 @@ using System.Windows.Shapes;
 
 namespace LocalAniHubFront.Views.Windows
 {
-    /// <summary>
-    /// AddEntryWindow.xaml 的交互逻辑
-    /// </summary>
-    public partial class AddEntryWindow : Window
+    public partial class AddEntryWindow
     {
-        public AddEntryWindow()
+        public AddEntryWindowViewModel ViewModel { get; set; }
+
+        public AddEntryWindow(/*EntryInfoSet entryInfoSet*/)
         {
+            ViewModel = new AddEntryWindowViewModel(/*entryInfoSet*/);
+            DataContext = this;
             InitializeComponent();
         }
     }

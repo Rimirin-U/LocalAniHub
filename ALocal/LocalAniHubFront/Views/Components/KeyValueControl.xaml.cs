@@ -19,8 +19,8 @@ namespace LocalAniHubFront.Views.Components
     {
         public KeyValueControl()
         {
+            // DataContext = this;
             InitializeComponent();
-            DataContext = this;
         }
 
         // 属性：Pair（键值对）

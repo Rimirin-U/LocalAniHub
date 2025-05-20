@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LocalAniHubFront.Views.Components"
              mc:Ignorable="d" 
-             
+             x:Name="root"
              MouseMove="UserControl_MouseMove">
 
     <Grid>
@@ -15,7 +15,7 @@
                 BorderBrush="#10000000"
                 BorderThickness="1"
                 Padding="0"
-                Height="36"
+                Height="32"
                 Cursor="Hand">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -29,19 +29,23 @@
                         Background="{DynamicResource AccentFillColorDefaultBrush}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Stretch">
-                    <TextBlock Text="系列构成"
-                               Margin="12,0,12,0"
+                    <TextBlock Text="{Binding Pair.Key,ElementName=root}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               Margin="10,0,10,0"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Foreground="White"
-                               FontSize="18"
+                               FontSize="16"
                                TextAlignment="Center"/>
                 </Border>
 
                 <TextBlock Grid.Column="1"
-                           Margin="12,0,12,0"
-                           FontSize="18"
-                           Text="绫奈由仁子"
+                           Margin="10,0,10,0"
+                           FontSize="16"
+                           Text="{Binding Pair.Value,ElementName=root}"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
                            Foreground="Black"/>
