@@ -9,6 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.IO;
 using System.Drawing;
 using Image = System.Drawing.Image;
+using System.Text.RegularExpressions;
 
 namespace BasicClassLibrary
 {
@@ -114,12 +115,60 @@ namespace BasicClassLibrary
                                 releaseDate = new DateTime(_year, month, day);
                             }
 
-                            // 7. 解析制作人员和声优信息
-                            var staffText = table.SelectSingleNode(".//td[@class='staff_r']")?.InnerText.Trim();
-                            var castText = table.SelectSingleNode(".//td[@class='cast_r']")?.InnerText.Trim();
+                           // 7. 解析制作人员和声优信息
+                           // 支持 staff_r 和 staff_r1 两种 class
+                           var staffNode = table.SelectSingleNode(".//td[@class='staff_r']") ?? table.SelectSingleNode(".//td[@class='staff_r1']");
+                           var staffText = staffNode?.InnerText.Trim();
+                           var castText = table.SelectSingleNode(".//td[@class='cast_r']")?.InnerText.Trim();
 
-                            // 8. 解析链接
-                            var links = table.SelectNodes(".//td[@class='link_a_r']/a")?
+                        // 7.1 解析制作人员为Key-Value对
+                        var staffDict = new Dictionary<string, string>();
+                        if (!string.IsNullOrEmpty(staffText))
+                        {
+                            // 先按 <br> 或换行分割
+                            var staffLines = staffText
+                                .Replace("<br>", "\n", StringComparison.OrdinalIgnoreCase)
+                                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            string? lastKey = null;
+                            foreach (var line in staffLines)
+                            {
+                                var trimmed = line.Trim();
+                                if (string.IsNullOrEmpty(trimmed)) continue;
+                                var parts = trimmed.Split(new[] { '：', ':' }, 2);
+                                if (parts.Length == 2)
+                                {
+                                    // 新的职位
+                                    lastKey = parts[0].Trim();
+                                    staffDict[lastKey] = string.Join(" ", parts[1].Trim().Split(new[] { ' ', '　' }, StringSplitOptions.RemoveEmptyEntries));
+                                }
+                                else if (lastKey != null)
+                                {
+                                    // 没有冒号，且有上一个职位，视为追加到上一个职位
+                                    staffDict[lastKey] += " " + trimmed;
+                                }
+                
+                            }
+                        }
+
+                        // 解析声优 cast，处理带空格和<br>分隔的名字
+                        string castValue = "";
+                        if (!string.IsNullOrWhiteSpace(castText))
+                        {
+                            // 1. 替换<br>为空格（而不是换行）
+                            // 2. 合并所有空白字符为单个空格
+                            castValue = Regex.Replace(
+                                castText
+                                    .Replace("<br>", " ", StringComparison.OrdinalIgnoreCase) // 先替换<br>为空格
+                                    .Replace("\n", " ")  // 替换换行为空格
+                                    .Replace("\r", " "), // 替换回车为空格
+                                @"\s+", " ")            // 合并所有空白字符
+                                .Trim();
+                        }
+
+
+                        // 8. 解析链接
+                        var links = table.SelectNodes(".//td[@class='link_a_r']/a")?
                                 .ToDictionary(
                                     a => a.InnerText.Trim(),
                                     a => a.GetAttributeValue("href", "")
@@ -130,22 +179,26 @@ namespace BasicClassLibrary
                             // 下载图片为Image对象
                             Image? keyVisualImage = await DownloadImageAsImageAsync(coverUrl);
 
-                            // 9. 创建条目
-                            var entry = new EntryInfoSet(
+                        // 9. 创建条目
+                        var metadata = new Dictionary<string, string>
+                        {
+                            ["类型标签"] = table.SelectSingleNode(".//td[@class='type_tag_r']")?.InnerText.Trim() ?? "",
+                            ["声优"] = castValue ?? "",
+                            ["集数信息"] = table.SelectSingleNode(".//p[@class='broadcast_ex_r']")?.InnerText.Trim() ?? "",
+                            ["相关链接"] = string.Join(" | ", links.Select(kv => $"{kv.Key}:{kv.Value}"))
+                        };
+                        // 插入所有制作人员项
+                        foreach (var kv in staffDict)
+                        {
+                            metadata[$"{kv.Key}"] = kv.Value;
+                        }
+                        var entry = new EntryInfoSet(
                                 translatedName: table.SelectSingleNode(".//p[@class='title_cn_r1']")?.InnerText.Trim() ?? "",
                                 originalName: table.SelectSingleNode(".//p[@class='title_jp_r']")?.InnerText.Trim() ?? "",
                                 releaseDate: releaseDate ?? DateTime.MinValue,
                                 category: table.SelectSingleNode(".//td[@class='type_a_r']")?.InnerText.Trim() ?? "",
                                 keyVisualImage: keyVisualImage,
-                                metadata: new Dictionary<string, string>
-                                {
-                                    ["CoverUrl"] = entryNode.SelectSingleNode(".//img")?.GetAttributeValue("data-src", ""),
-                                    ["TypeTag"] = table.SelectSingleNode(".//td[@class='type_tag_r']")?.InnerText.Trim() ?? "",
-                                    ["Staff"] = staffText ?? "",
-                                    ["Cast"] = castText ?? "",
-                                    ["EpisodeInfo"] = table.SelectSingleNode(".//p[@class='broadcast_ex_r']")?.InnerText.Trim() ?? "",
-                                    ["Links"] = string.Join(" | ", links.Select(kv => $"{kv.Key}:{kv.Value}"))
-                                }
+                                metadata:metadata
                             );
                             entries.Add(entry);
                         }
