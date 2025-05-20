@@ -3,6 +3,7 @@ using LocalAniHubFront.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,14 +17,6 @@ namespace LocalAniHubFront.ViewModels.Pages
         public List<YearItem> YearItems { get; }
         public List<MonthItem> MonthItems { get; }
 
-        /*
-        [ObservableProperty]
-        private YearItem selectedYearItem;// 只用于UI显示
-
-        [ObservableProperty]
-        private MonthItem selectedMonthItem;// 只用于UI显示
-        */
-
         [ObservableProperty]
         private int selectedYear;
 
@@ -34,11 +27,38 @@ namespace LocalAniHubFront.ViewModels.Pages
         private ObservableCollection<EntryInfoSet> entryInfoSets = new();
         // 所有EntryInfoSet的列表
         // 更改查询时间时应重置该列表
+        // 保持原有命令签名但优化实现
+        [RelayCommand(CanExecute = nameof(IsNotSearching))]
+        private async Task Search()
+        {
+            IsSearching = true;
+            try
+            {
+                var sourceType = int.TryParse(
+                    GlobalSettingsService.Instance.GetValue("defaultEntryFetchSource"),
+                    out var type) ? type : 0;
 
-        [RelayCommand]
-        private void Search() { 
-            // ...
+                var fetcher = new EntryFetch(sourceType, SelectedYear, SelectedMonth);
+                var results = await fetcher.FetchAsync();
+
+                EntryInfoSets = new ObservableCollection<EntryInfoSet>(results);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"搜索失败: {ex.Message}");
+                EntryInfoSets.Clear();
+            }
+            finally
+            {
+                IsSearching = false;
+            }
         }
+        // 新增加载状态指示
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNotSearching))]
+        private bool _isSearching;
+
+        public bool IsNotSearching => !IsSearching;
 
         public SearchViewModel()
         {
@@ -73,11 +93,6 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             // 使用EntryFetch类来进行搜索，初始时需要根据默认（当前）年月初始化一个EntryFetch
             // 在每次调用“搜索”时 都要根据当前选择的时间创建新的EntryFetch类
-
-            // debug
-            EntryInfoSets.Add(new("", "", new(), "", Image.FromFile(@"D:\reFSC\ConsoleApp1\UiDesktopApp1\Views\Windows\mygo.jpg"), new Dictionary<string, string>()));
-            EntryInfoSets.Add(new("", "", new(), "", Image.FromFile(@"D:\reFSC\ConsoleApp1\UiDesktopApp1\Views\Windows\mygo.jpg"), new Dictionary<string, string>()));
-            EntryInfoSets.Add(new("", "", new(), "", Image.FromFile(@"D:\reFSC\ConsoleApp1\UiDesktopApp1\Views\Windows\mygo.jpg"), new Dictionary<string, string>()));
         }
     }
 
