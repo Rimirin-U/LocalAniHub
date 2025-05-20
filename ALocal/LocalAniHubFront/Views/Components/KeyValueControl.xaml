@@ -12,8 +12,11 @@
         <Border x:Name="ValueLabel"
                 CornerRadius="8"
                 Background="White"
+                BorderBrush="#10000000"
+                BorderThickness="1"
                 Padding="0"
-                Height="36">
+                Height="36"
+                Cursor="Hand">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
