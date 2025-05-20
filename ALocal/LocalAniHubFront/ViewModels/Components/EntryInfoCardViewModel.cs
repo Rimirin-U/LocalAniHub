@@ -37,17 +37,24 @@ namespace LocalAniHubFront.ViewModels.Components
 
         public EntryInfoCardViewModel(EntryInfoSet entryInfoSet)
         {
-            // debug（请替换为实际实现，从EntryInfoSet中读取）
-            MetadataDict.Add(new("企划", "BUSHIROAD"));
-            MetadataDict.Add(new("导演", "柿本广大"));
-            MetadataDict.Add(new("编剧", "绫奈由仁子"));
-            MetadataDict.Add(new("音乐", "藤田淳平 藤间仁"));
-            MetadataDict.Add(new("CV", "羊宫妃那 立石凛 青木阳菜 小日向美香 林鼓子"));
-            KvImage = Image.FromFile(@"D:\reFSC\ConsoleApp1\UiDesktopApp1\Views\Windows\mygo.jpg");
-            Title = "BanG Dream! It's MyGO!!!!!";
-            Subtitle = "迷途之子!!!!!";
-            Date = "2023.6.29";
-            Category = "原创动画";
+            if (entryInfoSet == null)
+                throw new ArgumentNullException(nameof(entryInfoSet));
+
+            // 基础信息映射
+            Title = entryInfoSet.TranslatedName ?? "无译名";
+            Subtitle = entryInfoSet.OriginalName ?? string.Empty;
+            Date = entryInfoSet.ReleaseDate.ToString("yyyy.M.d"); // 格式示例：2023.6.29
+            Category = entryInfoSet.Category ?? "未分类";
+            KvImage = entryInfoSet.KeyVisualImage; // 主视觉图
+
+            // 处理元数据字典
+            if (entryInfoSet.Metadata != null)
+            {
+                foreach (var kvp in entryInfoSet.Metadata)
+                {
+                        MetadataDict.Add(kvp);
+                }
+            }
         }
     }
 }
