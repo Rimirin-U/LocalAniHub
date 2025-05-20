@@ -60,6 +60,8 @@ namespace LocalAniHubFront
                 services.AddSingleton<CollectionViewModel>();
                 services.AddSingleton<RecentPage>();
                 services.AddSingleton<RecentPageViewModel>();
+                services.AddSingleton<SearchPage>();
+                services.AddSingleton<SearchViewModel>();
 
 
             }).Build();
