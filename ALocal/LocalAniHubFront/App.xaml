@@ -40,21 +40,21 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="border"
-            Background="{TemplateBinding Background}"
-            CornerRadius="6"
-            SnapsToDevicePixels="True"
-            Effect="{StaticResource DropShadow}">
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="6"
+                                    SnapsToDevicePixels="True"
+                                    Effect="{StaticResource DropShadow}">
                                 <ContentPresenter HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          RecognizesAccessKey="True"/>
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border"
-                    Property="Background"
-                    Value="{Binding Background,
-                            RelativeSource={RelativeSource TemplatedParent},
-                            Converter={StaticResource DesaturateConverter}}"/>
+                                            Property="Background"
+                                            Value="{Binding Background,
+                                            RelativeSource={RelativeSource TemplatedParent},
+                                            Converter={StaticResource DesaturateConverter}}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
