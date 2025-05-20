@@ -14,6 +14,7 @@ namespace LocalAniHubFront.ViewModels.Windows
     public record struct EpisodeItem(int EntryId, string EntryName, int EpisodeId, int EpisodeNumber);
     public partial class EntryRowViewModel : ObservableObject
     {
+        private readonly Func<EntryItem, object, bool> _isItemSelected;
         [RelayCommand]
         private void RemoveSelf()
         {
@@ -26,7 +27,22 @@ namespace LocalAniHubFront.ViewModels.Windows
         public EntryItem? SelectedEntryItem
         {
             get => _selectedEntryItem;
-            set => SetProperty(ref _selectedEntryItem, value);
+            set
+            {
+                if (value.HasValue && _isItemSelected(value.Value, this))
+                {
+                    MessageBox.Show($"作品“{value.Value.EntryName}”已被其他下拉框选中，请选择不同作品。", "重复选择", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    SetProperty(ref _selectedEntryItem, null);
+                }
+                else
+                {
+                    SetProperty(ref _selectedEntryItem, value);
+                }
+            }
+        }
+        public EntryRowViewModel(Func<EntryItem, object, bool> isItemSelected)
+        {
+            _isItemSelected = isItemSelected;
         }
     }
     public partial class EpisodeRowViewModel : ObservableObject
@@ -192,7 +208,7 @@ namespace LocalAniHubFront.ViewModels.Windows
                     EntryItem? item = EntryItemList.FirstOrDefault(e => e.EntryId == id);
                     if (item.HasValue)
                     {
-                        var row = new EntryRowViewModel();
+                        var row = CreateNewEntryRow();
                         row.SelectedEntryItem = item;
                         EntryComboBoxList.Add(row);
                     }
@@ -201,7 +217,7 @@ namespace LocalAniHubFront.ViewModels.Windows
 
             if (EntryComboBoxList.Count == 0)
             {
-                EntryComboBoxList.Add(new EntryRowViewModel());
+                EntryComboBoxList.Add(CreateNewEntryRow());
             }
         }
         private void InitializeEpisodeComboBoxes(Note? note)
@@ -230,10 +246,14 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             return new EpisodeRowViewModel(EntryItemList, EpisodeItemList, IsEpisodeItemSelected);
         }
+        private EntryRowViewModel CreateNewEntryRow()
+        {
+            return new EntryRowViewModel(IsEntryItemSelected);
+        }
         [RelayCommand]
         private void AddEntryComboBox()
         {
-            EntryComboBoxList.Add(new EntryRowViewModel());
+            EntryComboBoxList.Add(CreateNewEntryRow());
         }
 
         [RelayCommand]
@@ -248,6 +268,13 @@ namespace LocalAniHubFront.ViewModels.Windows
                 .Where(vm => vm != requester)
                 .Any(vm => vm.SelectedEpisodeItem.HasValue &&
                            vm.SelectedEpisodeItem.Value.EpisodeId == item.EpisodeId);
+        }
+        private bool IsEntryItemSelected(EntryItem item, object requester)
+        {
+            return EntryComboBoxList
+                .Where(vm => vm != requester)
+                .Any(vm => vm.SelectedEntryItem.HasValue &&
+                           vm.SelectedEntryItem.Value.EntryId == item.EntryId);
         }
     }
 }
