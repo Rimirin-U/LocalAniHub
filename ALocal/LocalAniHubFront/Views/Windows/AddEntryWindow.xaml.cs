@@ -1,4 +1,5 @@
-﻿using LocalAniHubFront.ViewModels.Windows;
+﻿using BasicClassLibrary;
+using LocalAniHubFront.ViewModels.Windows;
 using LocalAniHubFront.Views.Components;
 using Microsoft.Win32;
 using System;
@@ -21,9 +22,18 @@ namespace LocalAniHubFront.Views.Windows
     {
         public AddEntryWindowViewModel ViewModel { get; set; }
 
-        public AddEntryWindow(/*EntryInfoSet entryInfoSet*/)
+        // debug
+        public AddEntryWindow()
         {
-            ViewModel = new AddEntryWindowViewModel(/*entryInfoSet*/);
+            ViewModel = new AddEntryWindowViewModel();
+            DataContext = this;
+            InitializeComponent();
+        }
+        // debug end
+
+        public AddEntryWindow(EntryInfoSet entryInfoSet)
+        {
+            ViewModel = new AddEntryWindowViewModel(entryInfoSet);
             DataContext = this;
             InitializeComponent();
         }

@@ -49,7 +49,7 @@ namespace LocalAniHubFront.Views.Components
 
         private void EntryInfoSetCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Window addEntryWindow = new Views.Windows.AddEntryWindow(/*EntryInfoSet*/);
+            Window addEntryWindow = new Views.Windows.AddEntryWindow(EntryInfoSet);
             addEntryWindow.Show();
         }
     }

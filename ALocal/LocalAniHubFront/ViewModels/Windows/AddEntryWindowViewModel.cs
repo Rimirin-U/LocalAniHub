@@ -1,4 +1,5 @@
-﻿using LocalAniHubFront.Helpers;
+﻿using BasicClassLibrary;
+using LocalAniHubFront.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,9 +13,14 @@ namespace LocalAniHubFront.ViewModels.Windows
 {
     public partial class AddEntryWindowViewModel : ObservableObject
     {
-        public AddEntryWindowViewModel(/*EntryInfoSet entryInfoSet*/)
+        public AddEntryWindowViewModel(EntryInfoSet entryInfoSet)
         {
-            // debug
+            // ...
+        }
+
+        // debug
+        public AddEntryWindowViewModel()
+        {
             MetadataFromEntryInfoSet.Add(new("系列构成", "绫奈由仁子"));
             MetadataFromEntryInfoSet.Add(new("企划", "BUSHIROAD"));
             MetadataFromEntryInfoSet.Add(new("动画制作", "SANZIGEN"));
@@ -23,6 +29,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             MetadataFromEntryInfoSet.Add(new("音乐", "藤田淳平 藤间仁"));
             KvImage = Image.FromFile(@"C:\Users\95842\Desktop\FSC\shumatsuTrain.jpg");
         }
+        // debug end
 
         // 元数据（来自输入（EntryInfoSet））
         [ObservableProperty]
@@ -30,7 +37,7 @@ namespace LocalAniHubFront.ViewModels.Windows
 
         // 元数据（用于构建EntryMetadata对象）
         [ObservableProperty]
-        private ObservableCollection<KeyValuePair<string, string>> metadataItems = new();        
+        private ObservableCollection<KeyValuePair<string, string>> metadataItems = new();
 
         [RelayCommand]
         private void AddEmptyPair()
