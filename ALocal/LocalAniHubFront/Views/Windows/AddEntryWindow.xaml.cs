@@ -55,10 +55,7 @@ namespace LocalAniHubFront.Views.Windows
             if (e.Data.GetDataPresent(typeof(KeyValuePair<string, string>)))
             {
                 var pair = (KeyValuePair<string, string>)e.Data.GetData(typeof(KeyValuePair<string, string>));
-                if (DataContext is AddEntryWindowViewModel vm)
-                {
-                    vm.AddPair(pair);
-                }
+                ViewModel.AddPair(pair);
             }
         }
 
