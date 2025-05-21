@@ -248,17 +248,12 @@
                                         <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <components:EditableTextBlock Text="类别" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                    <components:EditableTextBlock Text="有更新时自动获取资源" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
                                                               VerticalAlignment="Center"
                                                               AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
-                                    <TextBox Margin="0,0,0,0" Grid.Column="1"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Left"
-                                         MinWidth="160"
-                                         Text="{Binding ViewModel.Category}"
-                                         PreviewDragEnter="TextBox_PreviewDragEnter"
-                                         PreviewDragOver="TextBox_PreviewDragOver"
-                                         AllowDrop="True" Drop="TextBox_DropValue"/>
+                                    <ui:ToggleSwitch Grid.Column="1"
+                                                     HorizontalAlignment="Right"
+                                                     IsChecked="{Binding ViewModel.HasUpdateTime}"/>
                                 </Grid>
 
                                 <Grid Margin="0,8,0,0">
@@ -266,14 +261,12 @@
                                         <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <components:EditableTextBlock Text="首播日期" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                    <components:EditableTextBlock Text="自动清理本地资源" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
                                                               VerticalAlignment="Center"
                                                               AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
-                                    <DatePicker Grid.Column="1"
-                                            SelectedDate="{Binding ViewModel.ReleaseDate}"
-                                            SelectedDateFormat="Short"
-                                            MinWidth="160"
-                                            HorizontalAlignment="Left"/>
+                                    <ui:ToggleSwitch Grid.Column="1"
+                                                     HorizontalAlignment="Right"
+                                                     IsChecked="{Binding ViewModel.AutoClearResources}"/>
                                 </Grid>
 
                             </StackPanel>
