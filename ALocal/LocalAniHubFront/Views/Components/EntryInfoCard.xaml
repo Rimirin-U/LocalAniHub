@@ -32,11 +32,13 @@
                     <TextBlock x:Name="Title"
                                Style="{StaticResource TitleTextBlockStyle}"
                                Margin="0,0,0,0"
-                               Text="{Binding Title}"/>
+                               Text="{Binding Title}"
+                               TextWrapping="Wrap"/>
                     <TextBlock x:Name="SubTitle"
                                Style="{StaticResource SubtitleTextBlockStyle}"
                                Margin="0,4,0,8"
-                               Text="{Binding Subtitle}"/>
+                               Text="{Binding Subtitle}"
+                               TextWrapping="Wrap"/>
 
                     <Grid x:Name="CategoryGrid" Margin="0,4,0,0">
                         <Grid.ColumnDefinitions>
@@ -45,12 +47,9 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" HorizontalAlignment="Left"
                                    Text="类别" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Disabled"
-                                      Grid.Column="1" HorizontalAlignment="Left"
-                                      Margin="12,0,0,0">
-                            <TextBlock Text="{Binding Category}" Style="{StaticResource BodyTextBlockStyle}"/>
-                        </ScrollViewer>
+                        <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                   Text="{Binding Category}" Style="{StaticResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap"/>
                     </Grid>
 
                     <Grid x:Name="DateGrid" Margin="0,4,0,0">
@@ -60,12 +59,9 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" HorizontalAlignment="Left"
                                    Text="首播日期" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Disabled"
-                                      Grid.Column="1" HorizontalAlignment="Left"
-                                      Margin="12,0,0,0">
-                            <TextBlock Text="{Binding Date}" Style="{StaticResource BodyTextBlockStyle}"/>
-                        </ScrollViewer>
+                        <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                   Text="{Binding Date}" Style="{StaticResource BodyTextBlockStyle}"
+                                   TextWrapping="Wrap"/>
                     </Grid>
 
                     <ItemsControl ItemsSource="{Binding MetadataDict}">
