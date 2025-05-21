@@ -21,17 +21,29 @@ namespace LocalAniHubFront.Views.Components
     {
         public EntryInfoCard()
         {
-            DataContext = new EntryInfoCardViewModel(EntryInfoSet);
             InitializeComponent();
         }
 
-        
-        public EntryInfoSet EntryInfoSet { get; set; }
+
+        public EntryInfoSet EntryInfoSet
+        {
+            get => (EntryInfoSet)GetValue(EntryInfoSetProperty);
+            set => SetValue(EntryInfoSetProperty, value);
+        }
 
         public static readonly DependencyProperty EntryInfoSetProperty =
             DependencyProperty.Register(
                 nameof(EntryInfoSet),
                 typeof(EntryInfoSet),
-                typeof(EntryInfoCard));
+                typeof(EntryInfoCard),
+                new PropertyMetadata(null, OnEntryInfoSetChanged));
+
+        private static void OnEntryInfoSetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is EntryInfoCard control && e.NewValue is EntryInfoSet newSet)
+            {
+                control.DataContext = new EntryInfoCardViewModel(newSet);
+            }
+        }
     }
 }

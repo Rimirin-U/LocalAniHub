@@ -78,12 +78,9 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" HorizontalAlignment="Left"
                                                Text="{Binding Key}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                                  VerticalScrollBarVisibility="Disabled"
-                                                  Grid.Column="1" HorizontalAlignment="Left"
-                                                  Margin="12,0,0,0">
-                                        <TextBlock Text="{Binding Value}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    </ScrollViewer>
+                                    <TextBlock Grid.Column="1" Margin="12,0,0,0"
+                                               Text="{Binding Value}" Style="{StaticResource BodyTextBlockStyle}"
+                                               TextWrapping="Wrap"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

@@ -70,10 +70,15 @@ namespace LocalAniHubFront.Helpers
         // System.Drawing.Image 转换为 ImageSource
         public static BitmapSource ToImageSource(System.Drawing.Image image)
         {
-            if (image == null) return null;
+            if (image == null)
+                return null;
 
             using var ms = new MemoryStream();
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+            // 深拷贝：重新生成一份干净的 Bitmap
+            using var cleanBitmap = new System.Drawing.Bitmap(image); // 防止原 Bitmap 被锁定或不完整
+
+            cleanBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             ms.Position = 0;
 
             var bitmap = new BitmapImage();
@@ -81,7 +86,7 @@ namespace LocalAniHubFront.Helpers
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.StreamSource = ms;
             bitmap.EndInit();
-            bitmap.Freeze(); // 避免跨线程异常
+            bitmap.Freeze(); // WPF 跨线程安全
 
             return bitmap;
         }
