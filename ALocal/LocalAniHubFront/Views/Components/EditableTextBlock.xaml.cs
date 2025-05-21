@@ -47,7 +47,16 @@ namespace LocalAniHubFront.Views.Components
             Editor.SelectAll();
         }
 
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e) => CommitEdit();
+        private bool secondChance = true;
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (secondChance) secondChance = false;
+            else
+            {
+                CommitEdit();
+                secondChance = true;
+            }
+        }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
