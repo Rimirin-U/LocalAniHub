@@ -21,6 +21,7 @@ namespace BasicClassLibrary
             this.trackerManager = trackerManager;
             MagnetUrl = magnetUrl;
             manager = null;
+            DownloadStatus = new(0, "", TorrentState.Starting, 0);
         }
 
         public string MagnetUrl { get; init; }
@@ -45,10 +46,12 @@ namespace BasicClassLibrary
             }
         }
 
-        public DownloadStatus GetDownloadStatus()
+        public DownloadStatus DownloadStatus { get; set; }
+
+        public void UpdateDownloadStatus()
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
-            return new DownloadStatus(
+            DownloadStatus = new DownloadStatus(
                 manager.Progress,
                 Tools.FormatSpeed(manager.Monitor.DownloadRate),
                 manager.State,
