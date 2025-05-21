@@ -144,5 +144,26 @@ namespace LocalAniHubFront.Views.Windows
             }
 
         }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 检查数据合法性
+            if (!ViewModel.CheckDataValidity())
+            {
+                MessageBox.Show("部分数据不合法，请检查后再试。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // 数据合法，调用保存函数
+            ViewModel.Save();
+
+            // 关闭窗口
+            Close();
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }

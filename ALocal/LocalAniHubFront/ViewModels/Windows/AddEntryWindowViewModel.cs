@@ -47,20 +47,32 @@ namespace LocalAniHubFront.ViewModels.Windows
         }
 
         [RelayCommand]
-        private void RemovePair(MutableKeyValuePair<string,string> toRmv)
+        private void RemovePair(MutableKeyValuePair<string, string> toRmv)
         {
             MetadataItems.Remove(toRmv);
         }
 
         public void AddPair(KeyValuePair<string, string> pair)
         {
-            MutableKeyValuePair<string,string> newPair = new(pair.Key, pair.Value);
+            MutableKeyValuePair<string, string> newPair = new(pair.Key, pair.Value);
             MetadataItems.Add(newPair);
         }
 
         public void ChangeKeyVisual(string filePath)
         {
             KvImage = Image.FromFile(filePath);
+        }
+
+        public bool CheckDataValidity()
+        {
+            // ...
+            // debug
+            return true;
+        }
+
+        public void Save()
+        {
+            // ...
         }
 
         [ObservableProperty]
