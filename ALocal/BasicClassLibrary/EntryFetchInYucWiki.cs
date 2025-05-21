@@ -99,8 +99,22 @@ namespace BasicClassLibrary
                         var table = entryNode.SelectSingleNode("following-sibling::div[1]/table");
                         if (table == null) continue;
 
-                        // 6. 解析发布日期 (从broadcast_r)
-                        DateTime? releaseDate = null;
+                    // 译名：class="title_cn_r" + 其他
+                    var translatedName = table.SelectSingleNode(".//p[starts-with(@class, 'title_cn')]")?.InnerText.Trim() ?? "";
+                    // 原名：class="title_jp" + 其他
+                    var originalName = table.SelectSingleNode(".//p[starts-with(@class, 'title_jp')]")?.InnerText.Trim() ?? "";
+                    var category = table.SelectSingleNode(@"
+                    .//td[
+                    starts-with(@class, 'type_') 
+                    and string-length(@class) >= 7
+                    and contains(
+                    '_a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q_r_s_t_u_v_w_x_y_z_', 
+                    concat('_', substring(@class, 6, 1), '_')
+                     )
+                    ]")?.InnerText.Trim() ?? "";
+
+                    // 6. 解析发布日期 (从broadcast_r)
+                    DateTime? releaseDate = null;
                         //选取table元素内class为broadcast_r的p元素，并获取其去除首尾空格后的文本内容。Trim方法用于去除字符串首尾的空白字符（像空格、制表符、换行符等）
                         var broadcastText = table.SelectSingleNode(".//p[@class='broadcast_r']")?.InnerText.Trim();
                         if (!string.IsNullOrEmpty(broadcastText))
@@ -167,12 +181,12 @@ namespace BasicClassLibrary
                         }
 
 
-                        // 8. 解析链接
-                        var links = table.SelectNodes(".//td[@class='link_a_r']/a")?
-                                .ToDictionary(
-                                    a => a.InnerText.Trim(),
-                                    a => a.GetAttributeValue("href", "")
-                                ) ?? new Dictionary<string, string>();
+                        //// 8. 解析链接
+                        //var links = table.SelectNodes(".//td[@class='link_a_r']/a")?
+                        //        .ToDictionary(
+                        //            a => a.InnerText.Trim(),
+                        //            a => a.GetAttributeValue("href", "")
+                        //        ) ?? new Dictionary<string, string>();
 
                             // 获取图片URL
                             string? coverUrl = entryNode.SelectSingleNode(".//img")?.GetAttributeValue("data-src", "");
@@ -185,7 +199,7 @@ namespace BasicClassLibrary
                             ["类型标签"] = table.SelectSingleNode(".//td[@class='type_tag_r']")?.InnerText.Trim() ?? "",
                             ["声优"] = castValue ?? "",
                             ["集数信息"] = table.SelectSingleNode(".//p[@class='broadcast_ex_r']")?.InnerText.Trim() ?? "",
-                            ["相关链接"] = string.Join(" | ", links.Select(kv => $"{kv.Key}:{kv.Value}"))
+                            //["相关链接"] = string.Join(" | ", links.Select(kv => $"{kv.Key}:{kv.Value}"))
                         };
                         // 插入所有制作人员项
                         foreach (var kv in staffDict)
@@ -193,10 +207,10 @@ namespace BasicClassLibrary
                             metadata[$"{kv.Key}"] = kv.Value;
                         }
                         var entry = new EntryInfoSet(
-                                translatedName: table.SelectSingleNode(".//p[@class='title_cn_r1']")?.InnerText.Trim() ?? "",
-                                originalName: table.SelectSingleNode(".//p[@class='title_jp_r']")?.InnerText.Trim() ?? "",
+                                translatedName: translatedName,
+                                originalName: originalName,
                                 releaseDate: releaseDate ?? DateTime.MinValue,
-                                category: table.SelectSingleNode(".//td[@class='type_a_r']")?.InnerText.Trim() ?? "",
+                                category: category,
                                 keyVisualImage: keyVisualImage,
                                 metadata:metadata
                             );
