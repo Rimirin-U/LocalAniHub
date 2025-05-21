@@ -12,17 +12,11 @@
         <TextBlock Text="{Binding Text, ElementName=Root}"
                    Visibility="{Binding IsEditing, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=false}"
                    MouseLeftButtonDown="TextBlock_MouseLeftButtonDown"
-                   Padding="4">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="Black"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsReadOnly, ElementName=Root}" Value="True">
-                            <Setter Property="Foreground" Value="Gray"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
+                   
+                   Foreground="{Binding Foreground, ElementName=Root}"
+                   FontSize="{Binding FontSize, ElementName=Root}"
+                   FontFamily="{Binding FontFamily, ElementName=Root}"
+                   Effect="{Binding Effect, ElementName=Root}">
         </TextBlock>
 
         <!-- 编辑模式 -->
@@ -31,6 +25,22 @@
                  Visibility="{Binding IsEditing, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"
                  LostFocus="TextBox_LostFocus"
                  KeyDown="TextBox_KeyDown"
-                 Padding="4" />
+                 
+                 Foreground="{Binding Foreground, ElementName=Root}"
+                 FontSize="{Binding FontSize, ElementName=Root}"
+                 FontFamily="{Binding FontFamily, ElementName=Root}"
+                 Effect="{Binding Effect, ElementName=Root}"
+                 
+                 Background="Transparent"
+                 BorderThickness="0"
+                 BorderBrush="Transparent">
+            <TextBox.Template>
+                <ControlTemplate TargetType="TextBox">
+                    <ScrollViewer x:Name="PART_ContentHost"
+                      Background="Transparent"/>
+                </ControlTemplate>
+            </TextBox.Template>
+        </TextBox>
+
     </Grid>
 </UserControl>
