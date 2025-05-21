@@ -29,31 +29,70 @@
         <Grid x:Name="MainGrid"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="80"/>
+                <ColumnDefinition Width="2*" MinWidth="80"/>
                 <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>   
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <ItemsControl x:Name="MetadataFromEntryInfoSetItems"
-                          Margin="8,0,8,0"
-                          Grid.Column="0"
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Margin="8,0,8,0"
+                           Text="拖动以添加"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="Microsoft YaHei"/>
+
+                <ItemsControl x:Name="MetadataFromEntryInfoSetItems"
+                              Grid.Row="1"
+                          Margin="0,0,8,0"
                           ItemsSource="{Binding ViewModel.MetadataFromEntryInfoSet}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <components:KeyValueControl HorizontalAlignment="Left" Margin="8,8,0,0"
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <components:KeyValueControl HorizontalAlignment="Left" Margin="8,8,0,0"
                                                     Pair="{Binding}" IsDragEnabled="True"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"/>
 
-            <TextBlock Grid.Column="2" HorizontalAlignment="Left" Margin="8,8,0,0" Text="Right"/>
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto"
+                          Grid.Column="0">
+                <Grid x:Name="MainEditGrid">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" x:Name="TopRow"/>
+                        <RowDefinition Height="Auto" x:Name="MainInfoRow"/>
+                        <RowDefinition Height="Auto" x:Name="SettingRow"/>
+                        <RowDefinition Height="*" x:Name="MetadataRow"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid x:Name="TopGrid"
+                          Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" x:Name="ImageArea"/>
+                            <ColumnDefinition Width="2*" x:Name="TitleArea"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ui:Image Source="{Binding ViewModel.KvImageSource}"/>
+
+                    </Grid>
+
+
+
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </ui:FluentWindow>

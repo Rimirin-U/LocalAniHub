@@ -8,6 +8,8 @@
         [RelayCommand]
         private void OnCounterIncrement()
         {
+            Window window = new Views.Windows.AddEntryWindow();
+            window.Show();
             Counter++;
         }
     }

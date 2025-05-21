@@ -1,9 +1,12 @@
-﻿using System;
+﻿using LocalAniHubFront.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace LocalAniHubFront.ViewModels.Windows
 {
@@ -18,10 +21,8 @@ namespace LocalAniHubFront.ViewModels.Windows
             MetadataFromEntryInfoSet.Add(new("声优", "羊宫妃那 立石凛 青木阳菜 小日向美香 林鼓子"));
             MetadataFromEntryInfoSet.Add(new("导演", "柿本广大"));
             MetadataFromEntryInfoSet.Add(new("音乐", "藤田淳平 藤间仁"));
+            KvImage = 
         }
-        // debug
-        [ObservableProperty]
-        private KeyValuePair<string, string> testPair = new("动画制作", "SANZIGEN");
 
         // 元数据（来自输入（EntryInfoSet））
         [ObservableProperty]
@@ -41,5 +42,10 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             MetadataItems.Add(pair);
         }
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(KvImageSource))]
+        private Image kvImage;
+        public ImageSource KvImageSource => ImageHelper.ToImageSource(KvImage); // 真正用于绑定
     }
 }
