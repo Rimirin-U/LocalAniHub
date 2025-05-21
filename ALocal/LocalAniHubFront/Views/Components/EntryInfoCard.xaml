@@ -1,0 +1,96 @@
+﻿<UserControl x:Class="LocalAniHubFront.Views.Components.EntryInfoCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LocalAniHubFront.Views.Components"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <ui:Card x:Name="EntryInfoSetCard"
+             Height="Auto" Width="736"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Top"
+             VerticalContentAlignment="Top"
+             Margin="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="256"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ui:Image x:Name="KV"
+                      Grid.Column="0"
+                      Source="{Binding KvImageSource}"
+                      CornerRadius="4"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"/>
+
+            <Grid x:Name="InfoGrid" Grid.Column="1" Margin="16,0,0,0">
+                <StackPanel Grid.IsSharedSizeScope="True">
+                    <TextBlock x:Name="Title"
+                               Style="{StaticResource TitleTextBlockStyle}"
+                               Margin="0,0,0,0"
+                               Text="{Binding Title}"/>
+                    <TextBlock x:Name="SubTitle"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               Margin="0,4,0,8"
+                               Text="{Binding Subtitle}"/>
+
+                    <Grid x:Name="CategoryGrid" Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="InfoGridGrid"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" HorizontalAlignment="Left"
+                                   Text="类别" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      Grid.Column="1" HorizontalAlignment="Left"
+                                      Margin="12,0,0,0">
+                            <TextBlock Text="{Binding Category}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <Grid x:Name="DateGrid" Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="InfoGridGrid"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" HorizontalAlignment="Left"
+                                   Text="首播日期" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      Grid.Column="1" HorizontalAlignment="Left"
+                                      Margin="12,0,0,0">
+                            <TextBlock Text="{Binding Date}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        </ScrollViewer>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding MetadataDict}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="InfoGridGrid"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" HorizontalAlignment="Left"
+                                               Text="{Binding Key}" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                  VerticalScrollBarVisibility="Disabled"
+                                                  Grid.Column="1" HorizontalAlignment="Left"
+                                                  Margin="12,0,0,0">
+                                        <TextBlock Text="{Binding Value}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ui:Card>
+</UserControl>

@@ -40,26 +40,33 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="border"
-            Background="{TemplateBinding Background}"
-            CornerRadius="6"
-            SnapsToDevicePixels="True"
-            Effect="{StaticResource DropShadow}">
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="6"
+                                    SnapsToDevicePixels="True"
+                                    Effect="{StaticResource DropShadow}">
                                 <ContentPresenter HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          RecognizesAccessKey="True"/>
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border"
-                    Property="Background"
-                    Value="{Binding Background,
-                            RelativeSource={RelativeSource TemplatedParent},
-                            Converter={StaticResource DesaturateConverter}}"/>
+                                            Property="Background"
+                                            Value="{Binding Background,
+                                            RelativeSource={RelativeSource TemplatedParent},
+                                            Converter={StaticResource DesaturateConverter}}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+            <Style x:Key="BasicButton_NoShadow" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" >
+                <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei"/>
+                <Setter Property="Cursor" Value="Arrow"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>
 
 
@@ -68,9 +75,18 @@
                 <Setter Property="Background" Value="White"/>
                 <Setter Property="Foreground" Value="Black"/>
             </Style>
+            <Style x:Key="BaseRoundedButtonStyle_NoShadow" TargetType="Button" BasedOn="{StaticResource BasicButton_NoShadow}">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="Black"/>
+            </Style>
 
             <!--小按钮-->
             <Style x:Key="RoundedButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseRoundedButtonStyle}">
+                <Setter Property="Width" Value="32"/>
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+            <Style x:Key="RoundedButtonStyle_NoShadow" TargetType="Button" BasedOn="{StaticResource BaseRoundedButtonStyle_NoShadow}">
                 <Setter Property="Width" Value="32"/>
                 <Setter Property="Height" Value="32"/>
                 <Setter Property="FontSize" Value="16"/>
@@ -94,6 +110,9 @@
 
             <!--图标按钮-->
             <Style x:Key="RoundedButton_SegoeFluentIcon" TargetType="Button" BasedOn="{StaticResource RoundedButtonStyle}">
+                <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
+            </Style>
+            <Style x:Key="RoundedButton_SegoeFluentIcon_NoShadow" TargetType="Button" BasedOn="{StaticResource RoundedButtonStyle_NoShadow}">
                 <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
             </Style>
 

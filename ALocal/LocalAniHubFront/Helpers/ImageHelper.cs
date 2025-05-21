@@ -66,5 +66,24 @@ namespace LocalAniHubFront.Helpers
                 return Colors.DarkSlateGray;
             }
         }
+
+        // System.Drawing.Image 转换为 ImageSource
+        public static BitmapSource ToImageSource(System.Drawing.Image image)
+        {
+            if (image == null) return null;
+
+            using var ms = new MemoryStream();
+            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            ms.Position = 0;
+
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = ms;
+            bitmap.EndInit();
+            bitmap.Freeze(); // 避免跨线程异常
+
+            return bitmap;
+        }
     }
 }
