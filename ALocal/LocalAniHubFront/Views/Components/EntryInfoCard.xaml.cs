@@ -2,6 +2,7 @@
 using LocalAniHubFront.ViewModels.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +45,12 @@ namespace LocalAniHubFront.Views.Components
             {
                 control.DataContext = new EntryInfoCardViewModel(newSet);
             }
+        }
+
+        private void EntryInfoSetCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Window addEntryWindow = new Views.Windows.AddEntryWindow(/*EntryInfoSet*/);
+            addEntryWindow.Show();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             MetadataFromEntryInfoSet.Add(new("声优", "羊宫妃那 立石凛 青木阳菜 小日向美香 林鼓子"));
             MetadataFromEntryInfoSet.Add(new("导演", "柿本广大"));
             MetadataFromEntryInfoSet.Add(new("音乐", "藤田淳平 藤间仁"));
-            KvImage = 
+            KvImage = Image.FromFile(@"C:\Users\95842\Desktop\FSC\shumatsuTrain.jpg");
         }
 
         // 元数据（来自输入（EntryInfoSet））
@@ -41,6 +41,11 @@ namespace LocalAniHubFront.ViewModels.Windows
         public void AddPair(KeyValuePair<string, string> pair)
         {
             MetadataItems.Add(pair);
+        }
+
+        public void ChangeKeyVisual(string filePath)
+        {
+            KvImage = Image.FromFile(filePath);
         }
 
         [ObservableProperty]

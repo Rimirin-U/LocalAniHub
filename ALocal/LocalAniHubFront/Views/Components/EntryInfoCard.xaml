@@ -13,7 +13,9 @@
              HorizontalAlignment="Stretch"
              VerticalAlignment="Top"
              VerticalContentAlignment="Top"
-             Margin="12">
+             Margin="12"
+             MouseLeftButtonDown="EntryInfoSetCard_MouseLeftButtonDown"
+             Cursor="Hand">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="256"/>
@@ -21,11 +23,11 @@
             </Grid.ColumnDefinitions>
 
             <ui:Image x:Name="KV"
-                      Grid.Column="0"
-                      Source="{Binding KvImageSource}"
-                      CornerRadius="4"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Top"/>
+                        Grid.Column="0"
+                        Source="{Binding KvImageSource}"
+                        CornerRadius="4"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"/>
 
             <Grid x:Name="InfoGrid" Grid.Column="1" Margin="16,0,0,0">
                 <StackPanel Grid.IsSharedSizeScope="True">

@@ -29,9 +29,9 @@
         <Grid x:Name="MainGrid"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" MinWidth="80"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="4"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" MinWidth="80"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="2">
@@ -69,25 +69,219 @@
             <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto"
                           Grid.Column="0">
+                
                 <Grid x:Name="MainEditGrid">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" x:Name="TopRow"/>
-                        <RowDefinition Height="Auto" x:Name="MainInfoRow"/>
-                        <RowDefinition Height="Auto" x:Name="SettingRow"/>
+                        <RowDefinition Height="Auto" x:Name="MainInfoSettingRow"/>
                         <RowDefinition Height="*" x:Name="MetadataRow"/>
                     </Grid.RowDefinitions>
 
                     <Grid x:Name="TopGrid"
-                          Grid.Row="0">
+                          Grid.Row="0"
+                          Margin="12,0,8,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" x:Name="ImageArea"/>
-                            <ColumnDefinition Width="2*" x:Name="TitleArea"/>
+                            <ColumnDefinition Width="200" x:Name="ImageArea" MinWidth="80"/>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="*" x:Name="TitleArea"/>
                         </Grid.ColumnDefinitions>
 
-                        <ui:Image Source="{Binding ViewModel.KvImageSource}"/>
+                        <ui:Image x:Name="KeyVisual"
+                                  VerticalAlignment="Top"
+                                  Grid.Column="0"
+                                  Source="{Binding ViewModel.KvImageSource}"
+                                  Margin="0,8,8,8"
+                                  CornerRadius="4"
+                                  Cursor="Hand"
+                                  MouseLeftButtonDown="KeyVisual_MouseLeftButtonDown"/>
+                        
+                        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"/>
+
+                        <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                            <components:EditableTextBlock Text="原名" IsReadOnly="True"
+                                                          AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                            <TextBox Margin="0,0,0,0"
+                                     Text="{Binding ViewModel.OriginalName}"
+                                     FontSize="18"
+                                     FontWeight="Bold"
+                                     PreviewDragEnter="TextBox_PreviewDragEnter"
+                                     PreviewDragOver="TextBox_PreviewDragOver"
+                                     AllowDrop="True" Drop="TextBox_DropValue"/>
+                            
+                            <components:EditableTextBlock Text="译名" IsReadOnly="True"
+                                                          Margin="0,8,0,0"
+                                                          AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                            <TextBox Margin="0,0,0,0"
+                                     Text="{Binding ViewModel.TranslatedName}"
+                                     FontSize="18"
+                                     PreviewDragEnter="TextBox_PreviewDragEnter"
+                                     PreviewDragOver="TextBox_PreviewDragOver"
+                                     AllowDrop="True" Drop="TextBox_DropValue"/>
+                        </StackPanel>
 
                     </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="80"/>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="*" MinWidth="80"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid x:Name="MainInfoGrid"
+                          Margin="12,12,8,0"
+                          Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="主要信息" Grid.Row="0"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   Margin="4,0,0,0"/>
+
+                            <StackPanel x:Name="MainInfoPanel" Grid.Row="1"
+                                    Margin="0,8,0,0" Grid.IsSharedSizeScope="True">
+
+                                <Grid Margin="0,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="类别" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <TextBox Margin="0,0,0,0" Grid.Column="1"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Left"
+                                         MinWidth="160"
+                                         Text="{Binding ViewModel.Category}"
+                                         PreviewDragEnter="TextBox_PreviewDragEnter"
+                                         PreviewDragOver="TextBox_PreviewDragOver"
+                                         AllowDrop="True" Drop="TextBox_DropValue"/>
+                                </Grid>
+
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="首播日期" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <DatePicker Grid.Column="1"
+                                            SelectedDate="{Binding ViewModel.ReleaseDate}"
+                                            SelectedDateFormat="Short"
+                                            MinWidth="160"
+                                            HorizontalAlignment="Left"/>
+                                </Grid>
+
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="播出时间" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <TextBox Margin="0,0,0,0" Grid.Column="1"
+                                         MinWidth="160" HorizontalAlignment="Left"
+                                         VerticalAlignment="Center"
+                                         Text="{Binding ViewModel.BroadcastTimeString}"
+                                         PreviewDragEnter="TextBox_PreviewDragEnter"
+                                         PreviewDragOver="TextBox_PreviewDragOver"
+                                         AllowDrop="True" Drop="TextBox_DropValue"/>
+                                </Grid>
+
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="集数" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <ui:NumberBox Grid.Column="1" MinWidth="160"
+                                              Value="{Binding EpisodeCount}"
+                                              HorizontalAlignment="Left"
+                                              Minimum="1"/>
+                                </Grid>
+
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="集数" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding ViewModel.States}"
+                                          SelectedIndex="{Binding ViewModel.StateID, Mode=TwoWay}"
+                                          MinWidth="160" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                                </Grid>
+
+                            </StackPanel>
+
+                        </Grid>
+                        
+                        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"/>
+
+                        <Grid x:Name="SettingGrid"
+                          Margin="12,12,8,0"
+                          Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="设置" Grid.Row="0"
+                                   Style="{StaticResource SubtitleTextBlockStyle}"
+                                   Margin="4,0,0,0"/>
+
+                            <StackPanel x:Name="SettingPanel" Grid.Row="1"
+                                    Margin="0,8,0,0" Grid.IsSharedSizeScope="True">
+
+                                <Grid Margin="0,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="类别" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <TextBox Margin="0,0,0,0" Grid.Column="1"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Left"
+                                         MinWidth="160"
+                                         Text="{Binding ViewModel.Category}"
+                                         PreviewDragEnter="TextBox_PreviewDragEnter"
+                                         PreviewDragOver="TextBox_PreviewDragOver"
+                                         AllowDrop="True" Drop="TextBox_DropValue"/>
+                                </Grid>
+
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <components:EditableTextBlock Text="首播日期" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                                              VerticalAlignment="Center"
+                                                              AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                                    <DatePicker Grid.Column="1"
+                                            SelectedDate="{Binding ViewModel.ReleaseDate}"
+                                            SelectedDateFormat="Short"
+                                            MinWidth="160"
+                                            HorizontalAlignment="Left"/>
+                                </Grid>
+
+                            </StackPanel>
+
+                        </Grid>
+
+                    </Grid>
+
 
 
 

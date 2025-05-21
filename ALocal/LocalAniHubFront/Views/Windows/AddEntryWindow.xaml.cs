@@ -1,4 +1,6 @@
 ﻿using LocalAniHubFront.ViewModels.Windows;
+using LocalAniHubFront.Views.Components;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +61,15 @@ namespace LocalAniHubFront.Views.Windows
                 tb.Text = pair.Key;
             }
         }
+        private void EditableTextBlock_DropKey(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KeyValuePair<string, string>)))
+            {
+                var pair = (KeyValuePair<string, string>)e.Data.GetData(typeof(KeyValuePair<string, string>));
+                var tb = sender as EditableTextBlock;
+                tb.Text = pair.Key;
+            }
+        }
 
         private void TextBox_DropValue(object sender, DragEventArgs e)
         {
@@ -69,6 +80,62 @@ namespace LocalAniHubFront.Views.Windows
                 tb.Text = pair.Value;
             }
         }
+        private void EditableTextBlock_DropValue(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KeyValuePair<string, string>)))
+            {
+                var pair = (KeyValuePair<string, string>)e.Data.GetData(typeof(KeyValuePair<string, string>));
+                var tb = sender as EditableTextBlock;
+                tb.Text = pair.Value;
+            }
+        }
 
+        private void TextBox_PreviewDragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KeyValuePair<string, string>)))
+            {
+                e.Effects = DragDropEffects.Copy;
+                e.Handled = true;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+            }
+        }
+        private void TextBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KeyValuePair<string, string>)))
+            {
+                e.Effects = DragDropEffects.Copy;
+                e.Handled = true;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+            }
+        }
+
+        private void KeyVisual_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "图片文件|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tiff|所有文件|*.*"
+            };
+
+            // 显示文件选择对话框
+            bool? result = openFileDialog.ShowDialog();
+
+            // 选择文件后
+            if (result == true)
+            {
+                string filePath = openFileDialog.FileName;
+
+                // 这里你可以处理文件路径，比如更新ViewModel的属性
+                ViewModel.ChangeKeyVisual(filePath);
+            }
+
+        }
     }
 }
