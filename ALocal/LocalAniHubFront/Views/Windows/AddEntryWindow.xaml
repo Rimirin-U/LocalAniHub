@@ -14,7 +14,8 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         AllowsTransparency="False"
-        Title="AddEntryWindow">
+        Title="AddEntryWindow"
+        x:Name="root">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -205,7 +206,7 @@
                                                               VerticalAlignment="Center"
                                                               AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
                                     <ui:NumberBox Grid.Column="1" MinWidth="160"
-                                              Value="{Binding EpisodeCount}"
+                                              Value="{Binding ViewModel.EpisodeCount}"
                                               HorizontalAlignment="Left"
                                               Minimum="1"/>
                                 </Grid>
@@ -215,7 +216,7 @@
                                         <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <components:EditableTextBlock Text="集数" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                    <components:EditableTextBlock Text="观看状态" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
                                                               VerticalAlignment="Center"
                                                               AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
                                     <ComboBox Grid.Column="1"
@@ -293,7 +294,8 @@
                             <TextBlock Text="其他信息"
                                        Grid.Column="0"
                                        Style="{StaticResource SubtitleTextBlockStyle}"
-                                       Margin="4,0,0,0"/>
+                                       Margin="4,0,0,0"
+                                       VerticalAlignment="Center"/>
                             <Button x:Name="AddMetadataButton"
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
@@ -305,28 +307,44 @@
                                     DragEnter="Button_DragEnter"/>
                         </Grid>
 
-                        <!---->
-                        <StackPanel x:Name="MetaPanel" Grid.Row="1"
-                                    Margin="0,8,0,0" Grid.IsSharedSizeScope="True">
-
-                            <Grid Margin="0,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <components:EditableTextBlock Text="类别" IsReadOnly="False" Grid.Column="0" Margin="0,0,8,0"
-                                                              VerticalAlignment="Center"
-                                                              AllowDrop="True" Drop="EditableTextBlock_DropKey"/>
-                                <TextBox Margin="0,0,0,0" Grid.Column="1"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Stretch"
-                                         Text="{Binding ViewModel.Category}"
-                                         PreviewDragEnter="TextBox_PreviewDragEnter"
-                                         PreviewDragOver="TextBox_PreviewDragOver"
-                                         AllowDrop="True" Drop="TextBox_DropValue"/>
-                            </Grid>
-                        </StackPanel>
-
+                        <ItemsControl Grid.Row="1"
+                                      ItemsSource="{Binding ViewModel.MetadataItems}"
+                                      Margin="0,0,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <components:EditableTextBlock Text="{Binding Key}" IsReadOnly="False" Grid.Column="0" Margin="0,0,8,0"
+                                                                      VerticalAlignment="Center"
+                                                                      AllowDrop="True" Drop="EditableTextBlock_DropKey"/>
+                                        <TextBox Margin="0,0,0,0" Grid.Column="1"
+                                                 VerticalAlignment="Center"
+                                                 HorizontalAlignment="Stretch"
+                                                 Text="{Binding Value}"
+                                                 PreviewDragEnter="TextBox_PreviewDragEnter"
+                                                 PreviewDragOver="TextBox_PreviewDragOver"
+                                                 AllowDrop="True" Drop="TextBox_DropValue"/>
+                                        <Button x:Name="RemoveMetadataButton"
+                                                Grid.Column="2"
+                                                Margin="8,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                                                Content="&#xE738;"
+                                                Command="{Binding ViewModel.RemovePairCommand, ElementName=root}"
+                                                CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Grid.IsSharedSizeScope="True"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </Grid>
 
 

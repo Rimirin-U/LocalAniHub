@@ -36,18 +36,26 @@ namespace LocalAniHubFront.ViewModels.Windows
         private ObservableCollection<KeyValuePair<string, string>> metadataFromEntryInfoSet = new();
 
         // 元数据（用于构建EntryMetadata对象）
+        // KeyValuePair为只读，因此自定义了可读写的MutableKeyValuePair<TKey, TValue>
         [ObservableProperty]
-        private ObservableCollection<KeyValuePair<string, string>> metadataItems = new();
+        private ObservableCollection<MutableKeyValuePair<string, string>> metadataItems = new();
 
         [RelayCommand]
         private void AddEmptyPair()
         {
-            MetadataItems.Add(new KeyValuePair<string, string>("", ""));
+            MetadataItems.Add(new MutableKeyValuePair<string, string>("数据项", ""));
+        }
+
+        [RelayCommand]
+        private void RemovePair(MutableKeyValuePair<string,string> toRmv)
+        {
+            MetadataItems.Remove(toRmv);
         }
 
         public void AddPair(KeyValuePair<string, string> pair)
         {
-            MetadataItems.Add(pair);
+            MutableKeyValuePair<string,string> newPair = new(pair.Key, pair.Value);
+            MetadataItems.Add(newPair);
         }
 
         public void ChangeKeyVisual(string filePath)
@@ -59,5 +67,17 @@ namespace LocalAniHubFront.ViewModels.Windows
         [NotifyPropertyChangedFor(nameof(KvImageSource))]
         private Image kvImage;
         public ImageSource KvImageSource => ImageHelper.ToImageSource(KvImage); // 真正用于绑定
+    }
+
+    public class MutableKeyValuePair<TKey, TValue>
+    {
+        public TKey Key { get; set; }
+        public TValue Value { get; set; }
+
+        public MutableKeyValuePair(TKey key, TValue value)
+        {
+            Key = key;
+            Value = value;
+        }
     }
 }
