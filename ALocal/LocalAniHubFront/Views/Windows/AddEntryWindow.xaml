@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:LocalAniHubFront.Views.Windows"
         xmlns:components="clr-namespace:LocalAniHubFront.Views.Components"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Width="1100"
-        Height="650"
+        Width="1200"
+        Height="800"
         mc:Ignorable="d"
         ExtendsContentIntoTitleBar="True"
         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -37,10 +37,11 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="2"
-                  Margin="0,0,0,12">
+                  Margin="0,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
@@ -65,6 +66,26 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
+
+                <Grid x:Name="ButtonGrid"
+                      Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button x:Name="SaveButton" Margin="0,0,12,0"
+                            Grid.Column="0" HorizontalAlignment="Right"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            Content="保存" FontWeight="Bold"
+                            Height="36" Width="84"/>
+                    <Button x:Name="CancelButton" Margin="0,0,12,0"
+                            Grid.Column="1" HorizontalAlignment="Right"
+                            Style="{StaticResource RoundedButtonStyle_NoShadow}"
+                            Content="取消"
+                            Height="36" Width="84"/>
+
+                </Grid>
             </Grid>
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"/>
@@ -283,6 +304,7 @@
                           Margin="12,24,8,12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
@@ -306,8 +328,24 @@
                                     Drop="Button_Drop"
                                     DragEnter="Button_DragEnter"/>
                         </Grid>
-
-                        <ItemsControl Grid.Row="1"
+                        <Grid Grid.Row="1" Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="MainInfoGroup"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <components:EditableTextBlock Text="标签（用/分隔）" IsReadOnly="True" Grid.Column="0" Margin="0,0,8,0"
+                                  VerticalAlignment="Center"
+                                  AllowDrop="False" Drop="EditableTextBlock_DropKey"/>
+                            <TextBox Margin="0,0,0,0" Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Stretch"
+                                 Text="{Binding ViewModel.TagsString}"
+                                 PreviewDragEnter="TextBox_PreviewDragEnter"
+                                 PreviewDragOver="TextBox_PreviewDragOver"
+                                 AllowDrop="True" Drop="TextBox_DropValue"/>
+                        </Grid>
+                        <ItemsControl Grid.Row="2"
                                       ItemsSource="{Binding ViewModel.MetadataItems}"
                                       Margin="0,0,0,0">
                             <ItemsControl.ItemTemplate>
@@ -346,7 +384,6 @@
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
                     </Grid>
-
 
                 </Grid>
             </ScrollViewer>
