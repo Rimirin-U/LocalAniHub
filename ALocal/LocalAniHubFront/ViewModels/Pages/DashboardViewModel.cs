@@ -1,4 +1,6 @@
-﻿namespace LocalAniHubFront.ViewModels.Pages
+﻿using BasicClassLibrary;
+
+namespace LocalAniHubFront.ViewModels.Pages
 {
     public partial class DashboardViewModel : ObservableObject
     {

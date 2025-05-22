@@ -2,6 +2,7 @@
 using LocalAniHubFront.ViewModels.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,11 +26,9 @@ namespace LocalAniHubFront.Views.Components
         }
 
 
-        public EntryInfoSet EntryInfoSet
-        {
-            get => (EntryInfoSet)GetValue(EntryInfoSetProperty);
-            set => SetValue(EntryInfoSetProperty, value);
-        }
+        public EntryInfoSet EntryInfoSet{ get; set; }
+
+        private bool initialized = false;
 
         public static readonly DependencyProperty EntryInfoSetProperty =
             DependencyProperty.Register(
@@ -43,7 +42,14 @@ namespace LocalAniHubFront.Views.Components
             if (d is EntryInfoCard control && e.NewValue is EntryInfoSet newSet)
             {
                 control.DataContext = new EntryInfoCardViewModel(newSet);
+                control.EntryInfoSet = newSet;
             }
+        }
+
+        private void EntryInfoSetCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Window addEntryWindow = new Views.Windows.AddEntryWindow(EntryInfoSet);
+            addEntryWindow.Show();
         }
     }
 }
