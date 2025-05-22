@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LocalAniHubFront.Views.Windows"
+        xmlns:components="clr-namespace:LocalAniHubFront.Views.Components"
         mc:Ignorable="d"
         Title="InitializeWindow" Height="650" Width="1100"
                  
@@ -14,8 +15,73 @@
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen">
     <Grid>
-        <ui:TitleBar x:Name="TitleBar"
-                     Title="初始化"/>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar x:Name="TitleBar" Grid.Row="0"/>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      Grid.Row="1" Margin="24">
+            <Grid x:Name="MainSettingGrid"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="初始化" Style="{StaticResource TitleTextBlockStyle}"
+                           Grid.Row="0"
+                           HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                <StackPanel Grid.Row="1" x:Name="SettingsPanel" Margin="0,24,0,0" Grid.IsSharedSizeScope="True"
+                            Orientation="Vertical">
+                    
+                    <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="ColumnGroup0"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="全局父文件夹（存放资源、评价等数据的父文件夹）" 
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                 Text="{Binding ViewModel.GlobalBaseFolder}"/>
+                        <Button x:Name="SelectGlobalBaseFolder" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                                Content="&#xE8AD;" Grid.Column="2" HorizontalAlignment="Right" Margin="12,0,0,0"
+                                Click="SelectGlobalBaseFolder_Click"/>
+                    </Grid>
+
+                    <Grid Margin="0,12,0,0" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="ColumnGroup0"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="资源下载暂存路径" 
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                 Text="{Binding ViewModel.DownloadPath}"/>
+                        <Button x:Name="SelectDownloadPath" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                                Content="&#xE8AD;" Grid.Column="2" HorizontalAlignment="Right" Margin="12,0,0,0"
+                                Click="SelectDownloadPath_Click"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" Margin="24,0,24,24">
+            <Button Style="{DynamicResource AccentButtonStyle}" x:Name="SaveButton" Content="保存"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Width="72" Click="SaveButton_Click"/>
+        </Grid>
+
     </Grid>
 </ui:FluentWindow>
