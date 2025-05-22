@@ -10,6 +10,85 @@
       Title="DownloadPage">
 
     <Grid>
-        
+        <ItemsControl ItemsSource="{Binding DownloadManagers}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ui:Card Margin="0,24,0,0"
+                             Padding="24">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
+                                       Text="{Binding DownloadStatus.Title}" 
+                                       HorizontalAlignment="Left"/>
+                            <Grid Grid.Row="1"
+                                  Margin="0,24,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding DownloadStatus.Progress,StringFormat={}{0:F2}}" 
+                                           HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="%" 
+                                           HorizontalAlignment="Left"/>
+                                <ProgressBar Grid.Column="2"
+                                             Margin="24,0,0,0"
+                                             Value="{Binding DownloadStatus.Progress ,Mode=OneWay}"
+                                             IsIndeterminate="False"/>
+                            </Grid>
+                            <Grid Grid.Row="2" Margin="0,24,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="速度："/>
+                                    <TextBlock Text="{Binding DownloadStatus.Speed}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="状态："/>
+                                    <TextBlock Text="{Binding DownloadStatus.TorrentState}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="连接数："/>
+                                    <TextBlock Text="{Binding DownloadStatus.PeersAvailable}" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="3" Margin="0,24,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ui:Button Grid.Column="0"
+                                           Content="暂停/继续"
+                                           Command="{Binding StartPauseCommand}"/>
+                                <ui:Button Grid.Column="1"
+                                           Grid.Row="1"
+                                           Margin="0,12,0,0"
+                                           Content="终止"
+                                           Command="{Binding StopCommand}"/>
+                            </Grid>
+                        </Grid>
+                    </ui:Card>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+        </ItemsControl>
     </Grid>
 </Page>

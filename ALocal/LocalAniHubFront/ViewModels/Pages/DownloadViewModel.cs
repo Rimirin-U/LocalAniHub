@@ -3,12 +3,32 @@ using System.Collections.ObjectModel;
 
 namespace LocalAniHubFront.ViewModels.Pages
 {
-    public partial class DownloadViewModel: ObservableObject
+    public partial class DownloadViewModel : ObservableObject
     {
         private System.Timers.Timer _statusUpdateTimer;
-        
+
         [ObservableProperty]
-        private ObservableCollection<MagnetDownloadManager> downloadManagers= new ();
+        private ObservableCollection<MagnetDownloadManager> downloadManagers = new();
+
+        [RelayCommand]
+        private async Task StartPause(MagnetDownloadManager manager)
+        {
+            if (manager.DownloadStatus.TorrentState == MonoTorrent.Client.TorrentState.Downloading)
+            {
+                await manager.Pause();
+            }
+            else if (manager.DownloadStatus.TorrentState == MonoTorrent.Client.TorrentState.Paused)
+            {
+                await manager.Start();
+            }
+            else return;
+        }
+
+        [RelayCommand]
+        private async Task Stop(MagnetDownloadManager manager)
+        {
+            await manager.Stop();
+        }
 
         public DownloadViewModel()
         {
