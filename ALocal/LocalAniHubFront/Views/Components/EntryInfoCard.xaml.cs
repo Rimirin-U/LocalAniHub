@@ -26,11 +26,9 @@ namespace LocalAniHubFront.Views.Components
         }
 
 
-        public EntryInfoSet EntryInfoSet
-        {
-            get => (EntryInfoSet)GetValue(EntryInfoSetProperty);
-            set => SetValue(EntryInfoSetProperty, value);
-        }
+        public EntryInfoSet EntryInfoSet{ get; set; }
+
+        private bool initialized = false;
 
         public static readonly DependencyProperty EntryInfoSetProperty =
             DependencyProperty.Register(
@@ -44,6 +42,7 @@ namespace LocalAniHubFront.Views.Components
             if (d is EntryInfoCard control && e.NewValue is EntryInfoSet newSet)
             {
                 control.DataContext = new EntryInfoCardViewModel(newSet);
+                control.EntryInfoSet = newSet;
             }
         }
 

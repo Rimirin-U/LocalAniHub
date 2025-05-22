@@ -10,9 +10,6 @@ namespace LocalAniHubFront.ViewModels.Pages
         [RelayCommand]
         private void OnCounterIncrement()
         {
-            // debug
-            Window window = new Views.Windows.AddEntryWindow();
-            window.Show();
             Counter++;
         }
     }
