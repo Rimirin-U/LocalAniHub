@@ -1,5 +1,6 @@
 ﻿using BasicClassLibrary;
 using System.Collections.ObjectModel;
+using System.Timers;
 
 namespace LocalAniHubFront.ViewModels.Pages
 {
@@ -32,11 +33,41 @@ namespace LocalAniHubFront.ViewModels.Pages
 
         public DownloadViewModel()
         {
-            // 从ResourceDownloadService获取所有下载任务列表，每秒获取一次（**待完成**）
+            // 从ResourceDownloadService获取所有下载任务列表，每秒获取一次
+            LoadDownloads();
             // 初始化定时器，每秒更新一次
             _statusUpdateTimer = new(1000);
-            _statusUpdateTimer.Elapsed += (sender, e) => UpdateDownloadStatuses();// 每秒更新一次下载状态
+            _statusUpdateTimer.Elapsed += (sender, e) =>
+            {
+                LoadDownloads();
+                UpdateDownloadStatuses();
+            };// 每秒更新一次下载状态 下载任务列表
             _statusUpdateTimer.Start();
+        }
+        private void LoadDownloads()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var latestDownloads = ResourceDownloadService.Instance.GetAllDownloads();
+
+                // 添加新任务
+                foreach (var download in latestDownloads)
+                {
+                    if (!DownloadManagers.Contains(download))
+                    {
+                        DownloadManagers.Add(download);
+                    }
+                }
+
+                // 移除已删除的任务
+                for (int i = DownloadManagers.Count - 1; i >= 0; i--)
+                {
+                    if (!latestDownloads.Contains(DownloadManagers[i]))
+                    {
+                        DownloadManagers.RemoveAt(i);
+                    }
+                }
+            });
         }
 
         // 定时更新下载状态
