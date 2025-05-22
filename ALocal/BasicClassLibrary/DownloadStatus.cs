@@ -9,14 +9,16 @@ namespace BasicClassLibrary
 {
     public class DownloadStatus
     {
-        public DownloadStatus(double progress, string speed, TorrentState torrentState, int peersAvailable)
+        public DownloadStatus(string title,double progress, string speed, TorrentState torrentState, int peersAvailable)
         {
+            Title = title;
             Progress = progress;
             Speed = speed;
             TorrentState = torrentState;
             PeersAvailable = peersAvailable;
         }
 
+        public string Title { get; set; }
         public double Progress { get; set; }
         public string Speed { get; set; }
         public TorrentState TorrentState { get; set; }

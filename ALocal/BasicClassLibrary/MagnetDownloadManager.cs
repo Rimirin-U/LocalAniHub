@@ -52,6 +52,7 @@ namespace BasicClassLibrary
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
             DownloadStatus = new DownloadStatus(
+                GetTitle(),
                 manager.Progress,
                 Tools.FormatSpeed(manager.Monitor.DownloadRate),
                 manager.State,
@@ -61,8 +62,7 @@ namespace BasicClassLibrary
 
         public string GetTitle()
         {
-            if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
-            return manager.Name;
+            return manager == null ? "" : manager.Name;
         }
 
         public async Task Start()
