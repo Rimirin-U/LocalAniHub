@@ -2,16 +2,17 @@
 using MonoTorrent.Trackers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BasicClassLibrary
 {
-    public class MagnetDownloadManager
+    public class MagnetDownloadManager : INotifyPropertyChanged
     {
         // initialize
-        public MagnetDownloadManager(string magnetUrl,string savePath, ClientEngine clientEngine, TrackerManager trackerManager)
+        public MagnetDownloadManager(string magnetUrl, string savePath, ClientEngine clientEngine, TrackerManager trackerManager)
         {
             // SavePath = GlobalSettingsService.Instance.GetValue("downloadPath");
             SavePath = savePath;
@@ -21,7 +22,7 @@ namespace BasicClassLibrary
             this.trackerManager = trackerManager;
             MagnetUrl = magnetUrl;
             manager = null;
-            DownloadStatus = new(0, "", TorrentState.Starting, 0);
+            DownloadStatus = new("", 0, "", TorrentState.Starting, 0);
         }
 
         public string MagnetUrl { get; init; }
@@ -30,6 +31,12 @@ namespace BasicClassLibrary
         private readonly ClientEngine clientEngine;
         private readonly TrackerManager trackerManager;
         private TorrentManager? manager;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public async Task Initialize()
         {
@@ -46,12 +53,21 @@ namespace BasicClassLibrary
             }
         }
 
-        public DownloadStatus DownloadStatus { get; set; }
+        private DownloadStatus downloadStatus;
+        public DownloadStatus DownloadStatus
+        {
+            get => downloadStatus; set
+            {
+                downloadStatus = value;
+                OnPropertyChanged(nameof(DownloadStatus));
+            }
+        }
 
         public void UpdateDownloadStatus()
         {
             if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
             DownloadStatus = new DownloadStatus(
+                GetTitle(),
                 manager.Progress,
                 Tools.FormatSpeed(manager.Monitor.DownloadRate),
                 manager.State,
@@ -61,8 +77,7 @@ namespace BasicClassLibrary
 
         public string GetTitle()
         {
-            if (manager == null) throw new Exception("MagnetDownloadProcedure: not initialized");
-            return manager.Name;
+            return manager == null ? "" : manager.Name;
         }
 
         public async Task Start()
