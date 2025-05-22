@@ -22,7 +22,7 @@ namespace BasicClassLibrary
             this.trackerManager = trackerManager;
             MagnetUrl = magnetUrl;
             manager = null;
-            DownloadStatus = new(0, "", TorrentState.Starting, 0);
+            DownloadStatus = new("", 0, "", TorrentState.Starting, 0);
         }
 
         public string MagnetUrl { get; init; }
