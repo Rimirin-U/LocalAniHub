@@ -29,6 +29,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         {
             if (!_isInitialized)
             {
+                CurrentView = new Collection_SimpleEntryTimeList();
                 InitializeViewModel();
             }
             return Task.CompletedTask;

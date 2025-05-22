@@ -30,6 +30,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         {
             if (!_isInitialized)
             {
+                CurrentView = new Recent_SeasonTable();
                 InitializeViewModel();
             }
             return Task.CompletedTask;
