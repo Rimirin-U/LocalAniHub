@@ -14,13 +14,11 @@ namespace BasicClassLibrary
     public class ResourceService
     {
         private readonly ResourceManager _resourceManager;
-        private readonly ResourceDownload _resourceDownload;
 
         // 构造函数
         public ResourceService(ResourceManager resourceManager, ResourceDownload resourceDownload)
         {
             _resourceManager = resourceManager;
-            _resourceDownload = resourceDownload;
         }
 
         // 将现有资源加入资源管理
@@ -29,7 +27,6 @@ namespace BasicClassLibrary
             _resourceManager.Addresource(resource);
         }
         // 下载资源
-        // 修改 DownloadAndAddResource 变为异步
         public async Task DownloadAndAddResource(ResourceItem resourceItem)
         {
             if (resourceItem == null)
@@ -40,8 +37,8 @@ namespace BasicClassLibrary
             {
                 throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
             }
-            // 下载资源并等待完成
-            await _resourceDownload.GetMagnetDownloadManager(resourceItem.DownloadUrl);
+            // 使用ResourceDownloadService来下载资源
+            await ResourceDownloadService.Instance.AddAndStartDownload(resourceItem.DownloadUrl);
         }
 
         // 按最大保存日期清理

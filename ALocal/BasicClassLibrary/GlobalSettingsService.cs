@@ -40,9 +40,20 @@ namespace BasicClassLibrary
             {"downloadPath", Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)} ,// 默认值：MyVideos文件夹
 
 
-            //资源拉取数据源
+            //资源搜索数据源
             {"defaultResourceSearchSource","0" },//0:自AnimesGarden（默认值）
+           
+            //批量添加素材指定文件夹
+            {"BatchSourceFolder","" },  //路径（默认值：空）
 
+            //全局父文件夹（资源、笔记、素材父文件夹的父文件夹）
+            {"globalBaseFolder","" }, //路径（默认值：空）
+
+            //程序是否已初始化
+            //（用途：在为false时会将用户导航到初始化页面，进行一些设置的初始化操作，最后将isInitialized设为true）
+            {"isInitialized", "false"}, //bool（默认值：false）
+
+            //前端
             //收藏页面默认显示方式
             {"defaultCollectionDisplayView", "0"}, // 0: 简单列表（收藏时间排序，默认值）
             
@@ -56,8 +67,8 @@ namespace BasicClassLibrary
             //string newVisiblePropertiesJson = "[{\"Name\":\"TranslatedName\",\"DisplayName\":\"译名\"}]";
             //GlobalSettingsService.Instance.SetValue("visiblePropertiesKey", newVisiblePropertiesJson);
 
-            //批量添加素材指定文件夹
-            {"BatchSourceFolder","" }  //路径（默认值：空）
+            
+            {"entryWindowMainTitle", "0"}//0:原名，1：译名
         };
 
         // 私有构造函数：禁止外部 new 创建实例

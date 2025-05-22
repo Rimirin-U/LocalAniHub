@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using LocalAniHubFront.Helpers;
+using LocalAniHubFront.ViewModels.Pages;
 
 namespace LocalAniHubFront.Views.Pages
 {

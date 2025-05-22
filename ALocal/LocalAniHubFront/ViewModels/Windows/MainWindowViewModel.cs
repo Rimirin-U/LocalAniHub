@@ -11,17 +11,36 @@ namespace LocalAniHubFront.ViewModels.Windows
         [ObservableProperty]
         private ObservableCollection<object> _menuItems = new()
         {
+            // 导航栏定义处
             new NavigationViewItem()
             {
-                Content = "Home",
+                Content = "TestHome",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             },
             new NavigationViewItem()
             {
-                Content = "Data",
+                Content = "收藏",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
-                TargetPageType = typeof(Views.Pages.DataPage)
+                TargetPageType = typeof(Views.Pages.CollectionPage)
+            },
+            new NavigationViewItem()
+            {
+                Content = "发现",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Search24 },
+                TargetPageType = typeof(Views.Pages.SearchPage)
+            },
+            new NavigationViewItem()
+            {
+                Content = "下载",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowDownload24 },
+                TargetPageType = typeof(Views.Pages.DownloadPage)
+            },
+            new NavigationViewItem()
+            {
+                Content = "最近",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
+                TargetPageType = typeof(Views.Pages.RecentPage)
             }
         };
 

@@ -15,6 +15,15 @@ namespace BasicClassLibrary
         public int? EntryId { get; set; } // 外键 对应条目ID
         public Entry? Entry { get; set; } // 导航属性 对应条目
 
+        public EntryMetadata(int? entryId)
+        {
+            EntryId = entryId;
+        }
+
+        public EntryMetadata()
+        {
+        }
+
         // 核心字典属性，存储元数据
         private Dictionary<string, string> _metadataValues { get; set; } = new();
         // 通过特殊前缀区分标签

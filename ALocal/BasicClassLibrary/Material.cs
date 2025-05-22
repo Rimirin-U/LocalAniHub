@@ -10,10 +10,10 @@ namespace BasicClassLibrary
     public class Material : IEntityWithId, IEntryNavigation
     {
         // Constructor
-        public Material(int? entryId, Entry? entry, string name, string kind, string path)
+        public Material(int? entryId, string name, string kind, string path)
         {
             EntryId = entryId;
-            Entry = entry;
+            // Entry = entry;
             this.Name = name;
             this.Kind = kind;
             this.Path = path;

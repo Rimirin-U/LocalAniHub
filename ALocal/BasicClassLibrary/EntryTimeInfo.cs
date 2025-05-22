@@ -17,10 +17,9 @@ namespace BasicClassLibrary
         public DayOfWeek BroadcastWeekday { get; set; }// 播出星期
         public DateTime BroadcastTime { get; set; }//播出时间点（23：56）
         // 构造函数，初始化所有必要属性
-        public EntryTimeInfo(int? entryId, Entry? entry, DayOfWeek broadcastWeekday, DateTime broadcastTime)
+        public EntryTimeInfo(int? entryId, DayOfWeek broadcastWeekday, DateTime broadcastTime)
         {
             EntryId = entryId;
-            Entry = entry;
             BroadcastWeekday = broadcastWeekday;
             BroadcastTime = broadcastTime;
         }

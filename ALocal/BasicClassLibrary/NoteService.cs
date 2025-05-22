@@ -15,7 +15,9 @@ namespace BasicClassLibrary
         public NoteService(NoteManager noteManager)
         {
             this.NoteManager = noteManager;
-            BaseDirectory = "/base/NoteService";
+            // 从全局设置读取父文件夹
+            var globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+            BaseDirectory = Path.Combine(globalBaseFolder, "Note");
             Directory.CreateDirectory(BaseDirectory); // 确保服务文件夹存在
             //该方法会创建指定路径的目录，要是该目录已经存在，就不会再次创建。
             //如果指定路径中的父目录不存在，此方法会递归创建所有必要的父目录。
