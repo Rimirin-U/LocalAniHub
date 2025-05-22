@@ -43,7 +43,6 @@ namespace LocalAniHubFront.Views.Windows
         {
             if (!ViewModel.Check())
             {
-                MessageBox.Show("请重试。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             ViewModel.Save();
