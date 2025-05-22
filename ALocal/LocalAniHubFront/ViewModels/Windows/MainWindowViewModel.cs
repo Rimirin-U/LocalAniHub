@@ -32,6 +32,12 @@ namespace LocalAniHubFront.ViewModels.Windows
             },
             new NavigationViewItem()
             {
+                Content = "下载",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowDownload24 },
+                TargetPageType = typeof(Views.Pages.DownloadPage)
+            },
+            new NavigationViewItem()
+            {
                 Content = "最近",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
                 TargetPageType = typeof(Views.Pages.RecentPage)
