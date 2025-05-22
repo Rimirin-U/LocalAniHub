@@ -99,7 +99,7 @@ namespace BasicClassLibrary
                         var table = entryNode.SelectSingleNode("following-sibling::div[1]/table");
                         if (table == null) continue;
 
-                    // 译名：class="title_cn_r" + 其他
+                    // 译名：class="title_cn" + 其他
                     var translatedName = table.SelectSingleNode(".//p[starts-with(@class, 'title_cn')]")?.InnerText.Trim() ?? "";
                     // 原名：class="title_jp" + 其他
                     var originalName = table.SelectSingleNode(".//p[starts-with(@class, 'title_jp')]")?.InnerText.Trim() ?? "";
@@ -193,10 +193,13 @@ namespace BasicClassLibrary
                             // 下载图片为Image对象
                             Image? keyVisualImage = await DownloadImageAsImageAsync(coverUrl);
 
+                        // 类型标签：class="type_tag" + 其他
+                        var typeTag = table.SelectSingleNode(".//td[starts-with(@class, 'type_tag')]")?.InnerText.Trim() ?? "";
+
                         // 9. 创建条目
                         var metadata = new Dictionary<string, string>
                         {
-                            ["类型标签"] = table.SelectSingleNode(".//td[@class='type_tag_r']")?.InnerText.Trim() ?? "",
+                            ["类型标签"] = typeTag??"",
                             ["声优"] = castValue ?? "",
                             ["集数信息"] = table.SelectSingleNode(".//p[@class='broadcast_ex_r']")?.InnerText.Trim() ?? "",
                             //["相关链接"] = string.Join(" | ", links.Select(kv => $"{kv.Key}:{kv.Value}"))
