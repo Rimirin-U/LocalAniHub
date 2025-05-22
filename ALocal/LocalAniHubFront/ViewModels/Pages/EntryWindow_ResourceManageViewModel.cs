@@ -6,6 +6,8 @@ using System.Windows.Input;
 using Wpf.Ui.Abstractions.Controls;
 using System.IO;
 using System.Text.RegularExpressions;
+using LocalAniHubFront.Views.Windows;
+using LocalAniHubFront.ViewModels.Windows;
 
 namespace LocalAniHubFront.ViewModels
 {
@@ -35,21 +37,9 @@ namespace LocalAniHubFront.ViewModels
         private readonly ResourceManager _resourceManager = new();
         private readonly EpisodeManager _episodeManager = new();
 
-        // 命令定义
-        public ICommand ResourcePlayCommand { get; }
-        public ICommand ResourceDeleteCommand { get; }
-        public ICommand AddResourceCommand { get; }
-
         public EntryWindow_ResourceManageViewModel(int entryId)
         {
             EntryId = entryId;
-
-            // 初始化命令
-            ResourcePlayCommand = new RelayCommand<int>(PlayResource);
-            ResourceDeleteCommand = new RelayCommand<int>(DeleteResource);
-            AddResourceCommand = new RelayCommand(AddResources);
-
-            // 加载初始数据
             LoadData();
             LoadEntryData();
             LoadResources();
@@ -65,6 +55,7 @@ namespace LocalAniHubFront.ViewModels
                 IsAutoDelete = entry.AutoClearResources;
             }
         }
+
         private void LoadData()
         {
             try
@@ -114,7 +105,7 @@ namespace LocalAniHubFront.ViewModels
             }
         }
 
-        // 播放资源
+        [RelayCommand]
         private void PlayResource(int resourceId)
         {
             try
@@ -145,7 +136,7 @@ namespace LocalAniHubFront.ViewModels
             }
         }
 
-        // 删除资源
+        [RelayCommand]
         private void DeleteResource(int resourceId)
         {
             if (MessageBox.Show("确定要删除此资源吗？", "确认删除", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -155,28 +146,18 @@ namespace LocalAniHubFront.ViewModels
             }
         }
 
-        // 添加资源
-        private void AddResources()
+        public void AddResources(string[] filePaths)
         {
             try
             {
-                var dialog = new OpenFileDialog
-                {
-                    Title = "导入资源",
-                    Filter = "视频文件 (*.mp4;*.avi;*.mov;*.mkv;*.wmv;*.flv)|*.mp4;*.avi;*.mov;*.mkv;*.wmv;*.flv",
-                    Multiselect = true
-                };
-
-                if (dialog.ShowDialog() == true)
-                {
-                    ProcessFiles(dialog.FileNames);
-                }
+                ProcessFiles(filePaths);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"导入失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void ProcessFiles(IEnumerable<string> filePaths)
         {
             var entry = _entryManager.FindById(EntryId);
@@ -198,7 +179,7 @@ namespace LocalAniHubFront.ViewModels
                     var episode = GetOrCreateEpisode(episodeNumber);
                     if (episode == null) continue;
 
-                    var resource = new Resource(episode.Id, episode, DateTime.Now, filePath);
+                    var resource = new Resource(episode.Id, DateTime.Now, filePath);
                     _resourceManager.Addresource(resource);
                 }
                 catch (Exception ex)
@@ -209,6 +190,7 @@ namespace LocalAniHubFront.ViewModels
 
             LoadResources();
         }
+
         private Episode? GetOrCreateEpisode(int episodeNumber)
         {
             var episode = _episodeManager.Query(e => e.EntryId == EntryId && e.EpisodeNumber == episodeNumber)
@@ -216,7 +198,7 @@ namespace LocalAniHubFront.ViewModels
 
             if (episode == null)
             {
-                episode = new Episode(EntryId, null, episodeNumber);
+                episode = new Episode(EntryId,episodeNumber,State.NotWatched);
                 _episodeManager.Add(episode);
             }
 
@@ -239,7 +221,7 @@ namespace LocalAniHubFront.ViewModels
         }
 
         public Task OnNavigatedFromAsync() => Task.CompletedTask;
-        
+
         [RelayCommand]
         private void SaveResourceName(ResourceDisplayItem item)
         {
