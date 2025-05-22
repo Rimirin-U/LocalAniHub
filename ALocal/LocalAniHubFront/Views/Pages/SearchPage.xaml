@@ -74,7 +74,7 @@
                     ItemsSource="{Binding ViewModel.EntryInfoSets}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <components:EntryInfoCard EntryInfoSet="{Binding}"/>
+                            <components:EntryInfoCard EntryInfoSet="{Binding Mode=OneTime}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
 
