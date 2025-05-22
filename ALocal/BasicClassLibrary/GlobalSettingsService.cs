@@ -28,20 +28,36 @@ namespace BasicClassLibrary
         {
             // 视频播放相关设置
             {"defaultPlayerType", "0"},      // 0: PotPlayer（默认值）
+
             {"defaultPlayerPath", ""},       // 路径（默认值：空）
        
             // 条目拉取相关设置
             {"defaultEntryFetchSource", "0"}, // 0: 自yuc.wiki（默认值）
 
+
+             // 下载相关设置
+            //在代码中通过该键名（如 GetValue("downloadPath")）获取或设置对应的路径值。
+            {"downloadPath", Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)} ,// 默认值：MyVideos文件夹
+
+
             //资源拉取数据源
             {"defaultResourceSearchSource","0" },//0:自AnimesGarden（默认值）
+
+            //收藏页面默认显示方式
+            {"defaultCollectionDisplayView", "0"}, // 0: 简单列表（收藏时间排序，默认值）
             
-            // 资源管理相关设置
-            {"defaultparentFolderPath", ""},  // 路径（默认值）
-            
-            // 下载相关设置
-            //在代码中通过该键名（如 GetValue("downloadPath")）获取或设置对应的路径值。
-            {"downloadPath", Environment.GetFolderPath(Environment.SpecialFolder.MyVideos)} // 默认值：MyVideos文件夹
+            // 在 SeasonTable 中显示的数据项
+            {"visiblePropertiesKey", "[]"}, // 默认值为空的JSON 数组
+
+            //// 获取 visiblePropertiesKey 的值
+            //string visiblePropertiesJson = GlobalSettingsService.Instance.GetValue("visiblePropertiesKey");
+
+            //// 设置 visiblePropertiesKey 的值
+            //string newVisiblePropertiesJson = "[{\"Name\":\"TranslatedName\",\"DisplayName\":\"译名\"}]";
+            //GlobalSettingsService.Instance.SetValue("visiblePropertiesKey", newVisiblePropertiesJson);
+
+            //批量添加素材指定文件夹
+            {"BatchSourceFolder","" }  //路径（默认值：空）
         };
 
         // 私有构造函数：禁止外部 new 创建实例

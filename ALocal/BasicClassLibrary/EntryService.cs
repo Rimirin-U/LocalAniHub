@@ -92,6 +92,11 @@ namespace BasicClassLibrary
                 episodeManager.Add(episode); // 添加单集
             }
         }
+        public List<Entry> GetEntriesByReleaseDateRange(DateTime startDate, DateTime endDate)
+        {
+            // 使用 EntryManager 的 ByReleaseDateRange 查询条件
+            return manager.Query(EntryManager.ByReleaseDateRange(startDate, endDate));
+        }
     }
 
 }
