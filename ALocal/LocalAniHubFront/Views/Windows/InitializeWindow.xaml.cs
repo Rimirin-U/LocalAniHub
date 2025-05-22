@@ -50,10 +50,16 @@ namespace LocalAniHubFront.Views.Windows
             Close();
         }
 
+        public bool ShouldShutDown = false;
+
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            if (!_isSettingsSaved) Application.Current.Shutdown();
+            if (!_isSettingsSaved)
+            {
+                ShouldShutDown = true;
+                Application.Current.Shutdown();
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ namespace LocalAniHubFront.Services
                     // 弹出初始化设置窗口
                     var initializeWindow = new InitializeWindow();
                     initializeWindow.ShowDialog();  // ShowDialog:模态窗口，关闭后才能继续
+                    if (initializeWindow.ShouldShutDown) return;
                 }
 
                 // 打开MainWindow
