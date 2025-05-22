@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
 namespace BasicClassLibrary
 {
     public class MaterialService
@@ -32,6 +32,18 @@ namespace BasicClassLibrary
                 throw new IOException("文件已存在：" + fileName);
 
             File.Move(sourceFilePath, targetPath);
+        }
+        public void AddMaterial(Entry entry, Image image)
+        {
+            // 验证条目文件夹有效性（自动创建目录）
+            ValidateEntryFolder(entry);
+
+            // 生成一个唯一的文件名，防止文件名冲突
+            string uniqueFileName = Guid.NewGuid().ToString() + ".png"; // 默认保存为png格式
+            string targetPath = GetEntryMaterialPath(entry, uniqueFileName);
+
+            // 将Image对象保存到目标路径
+            image.Save(targetPath, System.Drawing.Imaging.ImageFormat.Png); //似乎部分低级版本不支持
         }
 
         public void RemoveMaterial(Entry entry, string fileName)
