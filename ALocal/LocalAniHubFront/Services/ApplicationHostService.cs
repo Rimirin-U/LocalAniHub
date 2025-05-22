@@ -1,4 +1,5 @@
-﻿using LocalAniHubFront.Views.Pages;
+﻿using BasicClassLibrary;
+using LocalAniHubFront.Views.Pages;
 using LocalAniHubFront.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -51,14 +52,12 @@ namespace LocalAniHubFront.Services
 
                 // 初始化状态检测与窗口打开
                 // 检查是否是首次运行
-                bool isFirstRun = true;// ...
-                if (isFirstRun)
+                bool isInitialized = GlobalSettingsService.Instance.GetValue("isInitialized") == "true";
+                if (!isInitialized)
                 {
                     // 弹出初始化设置窗口
                     var initializeWindow = new InitializeWindow();
                     initializeWindow.ShowDialog();  // ShowDialog:模态窗口，关闭后才能继续
-                    // 设置完毕后，更新标志
-                    // ...
                 }
 
                 // 打开MainWindow
