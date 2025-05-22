@@ -1,5 +1,6 @@
 ﻿using BasicClassLibrary;
 using LocalAniHubFront.Helpers;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,8 +42,7 @@ namespace LocalAniHubFront.ViewModels.Windows
 
 
         [ObservableProperty]
-        //这里是否要修改为string类型？
-        private DateTime broadcastTimeString  = new DateTime(1, 1, 1, 0, 0, 0); // 默认时间为 00:00
+        private string broadcastTimeString = "00:00"; // 默认值改为字符串形式
 
         [ObservableProperty]
         private string category;
@@ -122,8 +122,6 @@ namespace LocalAniHubFront.ViewModels.Windows
             KvImage = Image.FromFile(filePath);
             // 更新图像源
             OnPropertyChanged(nameof(KvImageSource));
-
-            // 保存图片到文件系统
             SaveKeyVisualToFileSystem();
         }
         private void InitializeFromEntryInfoSet()
@@ -171,6 +169,26 @@ namespace LocalAniHubFront.ViewModels.Windows
             if (Score < 0)
                 Score = 0;
         }
+        private bool TryParseBroadcastTime(out DateTime result)
+        {
+            result = default;
+
+            if (string.IsNullOrWhiteSpace(BroadcastTimeString))
+                return false;
+
+            try
+            {
+                // 可以处理如 "20:30" 或 "8:30 PM"
+                var timeSpan = TimeSpan.Parse(BroadcastTimeString.Trim());
+                var today = DateTime.Today;
+                result = new DateTime(today.Year, today.Month, today.Day, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public bool CheckDataValidity()
         {
             if (string.IsNullOrWhiteSpace(OriginalName))
@@ -190,6 +208,28 @@ namespace LocalAniHubFront.ViewModels.Windows
                 MessageBox.Show("集数必须大于0！");
                 return false;
             }
+            //校验 BroadcastTimeString 是否合法格式
+            if (!TryParseBroadcastTime(out _))
+            {
+                MessageBox.Show("播出时间格式不正确，请输入类似 \"20:30\" 的时间");
+                return false;
+            }
+            //校验 Metadata 键是否为空或重复
+            HashSet<string> keys = new(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in MetadataItems)
+            {
+                if (string.IsNullOrWhiteSpace(item.Key))
+                {
+                    MessageBox.Show("Metadata 中存在空的键，请修正后重试。");
+                    return false;
+                }
+                if (keys.Contains(item.Key))
+                {
+                    MessageBox.Show($"Metadata 中存在重复的键：{item.Key}，请勿重复添加。");
+                    return false;
+                }
+                keys.Add(item.Key);
+            }
 
             /*if (BroadcastTimeString.TimeOfDay.TotalSeconds == 0 && !ReleaseDate.HasValue)
             {
@@ -204,6 +244,12 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             try
             {
+                // 解析 BroadcastTimeString 成 DateTime
+                if (!TryParseBroadcastTime(out var broadcastTime))
+                {
+                    MessageBox.Show("播出时间格式错误，无法保存。");
+                    return;
+                }
                 // 构建 Entry 对象
                 var entry = new Entry(
                     TranslatedName,
@@ -218,35 +264,58 @@ namespace LocalAniHubFront.ViewModels.Windows
                     HasUpdateTime,
                     AutoClearResources,
                     GetKeywordsFromTags());
+                var entryManager = new EntryManager();
+                entryManager.Add(entry);
+                int entryId = entry.Id;
+                if (entryId <= 0)
+                {
+                    MessageBox.Show("条目保存失败，未获得有效 ID。");
+                    return;
+                }
                 // 构建 EntryTimeInfo
                 var entryTimeInfo = new EntryTimeInfo(
                     entry.Id,
                     BroadcastWeekday,
-                    BroadcastTimeString);
+                    broadcastTime);
+                var timeInfoManager = new EntryTimeInfoManager();
+                timeInfoManager.Add(entryTimeInfo);
                 // 构建 EntryMetadata
                 var entryMetadata = new EntryMetadata(entry.Id);
                 foreach (var item in MetadataItems)
                 {
                     entryMetadata.AddOrUpdateMetadata(item.Key, item.Value);
                 }
+                var metaDataManager = new EntryMetaDataManager();
+                metaDataManager.Add(entryMetadata);
                 // 构建 EntryRating
                 var entryRating = new EntryRating(entry.Id, Score);
+                var ratingManager = new EntryRatingManager();
+                ratingManager.Add(entryRating);
                 // 构建所有 Episode
+                var episodeManager = new EpisodeManager();
                 Episodes.Clear();
                 for (int i = 1; i <= EpisodeCount; i++)
                 {
-                    Episodes.Add(new Episode(entry.Id, i, GetStateFromStateID() == State.Watched ? State.Watched : State.NotWatched));
+                    var episode = new Episode(entryId, i, GetStateFromStateID() == State.Watched ? State.Watched : State.NotWatched);
+                    episodeManager.Add(episode);
                 }
+                // 保存图片到文件系统
+               // SaveKeyVisualToFileSystem();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"保存失败：{ex.Message}");
             }
+            /*catch (DbUpdateException ex)
+            {
+                var innerMessage = ex.InnerException?.Message ?? "无内部异常信息";
+                MessageBox.Show($"数据库更新失败：{ex.Message}\n\n详细信息：{innerMessage}");
+            }*/
         }
-        private void SaveKeyVisualToFileSystem()
-        {
+        //!这里保存的路径可能有点问题
+       private void SaveKeyVisualToFileSystem()
+       {
             if (KvImage == null || string.IsNullOrEmpty(KeyVisualFileName)) return;
-
             string folderPath = Path.Combine("Material", MaterialSubFolder, "KV");
             Directory.CreateDirectory(folderPath);
 
@@ -257,9 +326,9 @@ namespace LocalAniHubFront.ViewModels.Windows
             {
                 KvImage.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
             }
-        }
-    }
+       }
 
+    }
     public class MutableKeyValuePair<TKey, TValue>
     {
         public TKey Key { get; set; }
