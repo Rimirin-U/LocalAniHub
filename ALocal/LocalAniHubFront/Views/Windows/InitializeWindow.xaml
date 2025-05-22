@@ -47,7 +47,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="全局父文件夹（存放资源、评价等数据的父文件夹）" 
-                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Style="{StaticResource BodyTextBlockStyle}" FontSize="16"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center" Margin="0,0,12,0"/>
                         <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
@@ -64,7 +64,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="资源下载暂存路径" 
-                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Style="{StaticResource BodyTextBlockStyle}" FontSize="16"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center" Margin="0,0,12,0"/>
                         <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
