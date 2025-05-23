@@ -137,16 +137,19 @@
                                     <Button Content="{Binding Number}"
                                             Click="EpisodeButton_Click" Tag="{Binding EpisodeId}">
                                         <Button.Style>
-                                            <Style TargetType="Button">
+                                            <Style TargetType="Button" BasedOn="{StaticResource EpisodeButton}">
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding State}" Value="0">
-                                                        <Setter Property="Style" Value="{StaticResource EpisodeButton_Watched}" />
+                                                        <Setter Property="Background" Value="#FFFFF2CC"/>
+                                                        <!-- Watched -->
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding State}" Value="1">
-                                                        <Setter Property="Style" Value="{StaticResource EpisodeButton_NotWatched}" />
+                                                        <Setter Property="Background" Value="#FFFFFFFF"/>
+                                                        <!-- NotWatched -->
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding State}" Value="2">
-                                                        <Setter Property="Style" Value="{StaticResource EpisodeButton_NotAvailable}" />
+                                                        <Setter Property="Background" Value="#FFBFBFBF"/>
+                                                        <!-- NotAvailable -->
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -154,6 +157,11 @@
                                     </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
                         </ItemsControl>
 
                     </WrapPanel>
@@ -173,31 +181,31 @@
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -208,34 +216,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -246,34 +254,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -284,34 +292,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -322,34 +330,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -360,34 +368,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -398,34 +406,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -436,34 +444,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -474,34 +482,34 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
                                             <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Foreground" Value="#FFE699"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -512,31 +520,31 @@
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource StarIconStyle}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Score}" Value="1">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="2">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="3">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="4">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="5">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="6">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="7">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="8">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="9">
-                                            <Setter Property="Foreground" Value="#FFE699"/>
+                                            <Setter Property="Foreground" Value="White"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Score}" Value="10">
                                             <Setter Property="Foreground" Value="#FFE699"/>
@@ -550,7 +558,8 @@
                         <TextBlock x:Name="Score"
                                    Style="{StaticResource BoldWhiteTextStyle}"
                                    Margin="8,0,0,0"
-                                   Text="{Binding Score}"/>
+                                   Text="{Binding Score}"
+                                   Width="24"/>
                     </StackPanel>
                 </Grid>
 

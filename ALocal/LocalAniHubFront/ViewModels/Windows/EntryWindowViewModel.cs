@@ -39,6 +39,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             _entry = entryManager.FindById(entryId)
         ?? throw new ArgumentException($"未找到ID为{entryId}的条目");
+            InitializeViewModel(); // 直接在构造函数中初始化
         }
 
         // 初始化 ViewModel
@@ -56,7 +57,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             MainTitle = useOriginalName ? _entry.OriginalName : _entry.TranslatedName;
 
             // 2. 设置副标题（格式：2023 · 动画 · 在看）
-            TimeSubTitle = $"{_entry.ReleaseDate:yyyy} · {_entry.Category} · {GetStateString(_entry.State)}";
+            TimeSubTitle = $"{_entry.ReleaseDate:yyyy.M}";
 
             // 3. 加载背景图
             LoadKeyVisual();

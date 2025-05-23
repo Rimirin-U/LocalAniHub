@@ -53,7 +53,8 @@
                             <!--同时还需要提供一个字符串供前端直接输出-->
                             <!--以及打开对应条目的窗口的方法（可以暂缓）-->
                             <ItemsControl Name="EntriesOfYear"
-                                          ItemsSource="{Binding EntryLines}">
+                                          ItemsSource="{Binding EntryLines}"
+                                          Grid.Row="1">
                                 <ItemsControl.ItemTemplate>
                                     <!--DataTemplate for Entry-->
                                     <DataTemplate DataType="{x:Type models:EntryLine}">
@@ -65,7 +66,7 @@
                                                        FontSize="16"
                                                        Cursor="Hand">
                                                 <TextBlock.InputBindings>
-                                                    <MouseBinding Gesture="LeftClick" Command="{Binding OpenEntryWindow}"/>
+                                                    <MouseBinding Gesture="LeftClick" Command="{Binding OpenEntryWindowCommand}"/>
                                                 </TextBlock.InputBindings>
                                             </TextBlock>
                                         </StackPanel>

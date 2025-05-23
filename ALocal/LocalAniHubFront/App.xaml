@@ -20,6 +20,7 @@
             <helpers:DesaturateBrushConverter x:Key="DesaturateConverter" DesaturationAmount="0.2"/>
             <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <helpers:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
 
             <!--阴影效果-->
             <DropShadowEffect x:Key="DropShadow"
@@ -95,15 +96,15 @@
                 <Setter Property="Margin" Value="8,0,0,8"/>
             </Style>
 
-            <!--选集按钮：已看-->
+            <!--选集按钮：已看（弃用）-->
             <Style x:Key="EpisodeButton_Watched" TargetType="Button" BasedOn="{StaticResource EpisodeButton}">
                 <Setter Property="Background" Value="#FFFFF2CC"/>
             </Style>
 
-            <!--选集按钮：在看/未看-->
+            <!--选集按钮：在看/未看（弃用）-->
             <Style x:Key="EpisodeButton_NotWatched" TargetType="Button" BasedOn="{StaticResource EpisodeButton}"/>
 
-            <!--选集按钮：未更新-->
+            <!--选集按钮：未更新（弃用）-->
             <Style x:Key="EpisodeButton_NotAvailable" TargetType="Button" BasedOn="{StaticResource EpisodeButton}">
                 <Setter Property="Background" Value="#FFBFBFBF"/>
             </Style>
