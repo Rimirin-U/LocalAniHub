@@ -36,7 +36,6 @@ namespace LocalAniHubFront.ViewModels.Windows
         public ImageSource KvImageSource => ImageHelper.ToImageSource(KvImage); // 真正用于绑定
 
 
-
         [ObservableProperty]
         private DateTime? releaseDate;
 
@@ -54,12 +53,12 @@ namespace LocalAniHubFront.ViewModels.Windows
         // private State state = State.Watching;
         public ObservableCollection<string> States { get; } = new ObservableCollection<string>(new List<string>
         {
-          "Watching",
-          "NotWatched",
-          "Watched",
-          "GivenUp"
+          "未看",
+          "正在看",
+          "已看完",
+          "抛弃"
         });
-        private int stateID=0;
+        private int stateID=1;
         public int StateID
         {
             get => stateID;
@@ -122,7 +121,6 @@ namespace LocalAniHubFront.ViewModels.Windows
             KvImage = Image.FromFile(filePath);
             // 更新图像源
             OnPropertyChanged(nameof(KvImageSource));
-            SaveKeyVisualToFileSystem();
         }
         private void InitializeFromEntryInfoSet()
         {
@@ -272,6 +270,12 @@ namespace LocalAniHubFront.ViewModels.Windows
                     MessageBox.Show("条目保存失败，未获得有效 ID。");
                     return;
                 }
+                // 保存 KV 图片到文件系统！！！
+                var materialService = new MaterialService();
+               if (KvImage != null && !string.IsNullOrEmpty(KeyVisualFileName))
+               {
+                    materialService.AddMaterial(entry, KvImage, KeyVisualFileName);
+               }
                 // 构建 EntryTimeInfo
                 var entryTimeInfo = new EntryTimeInfo(
                     entry.Id,
@@ -299,8 +303,6 @@ namespace LocalAniHubFront.ViewModels.Windows
                     var episode = new Episode(entryId, i, GetStateFromStateID() == State.Watched ? State.Watched : State.NotWatched);
                     episodeManager.Add(episode);
                 }
-                // 保存图片到文件系统
-               // SaveKeyVisualToFileSystem();
             }
             catch (Exception ex)
             {
@@ -313,7 +315,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             }*/
         }
         //!这里保存的路径可能有点问题
-       private void SaveKeyVisualToFileSystem()
+      /* private void SaveKeyVisualToFileSystem()
        {
             if (KvImage == null || string.IsNullOrEmpty(KeyVisualFileName)) return;
             string folderPath = Path.Combine("Material", MaterialSubFolder, "KV");
@@ -326,8 +328,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             {
                 KvImage.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
             }
-       }
-
+       }*/
     }
     public class MutableKeyValuePair<TKey, TValue>
     {
