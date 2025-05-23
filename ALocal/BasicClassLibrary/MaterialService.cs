@@ -46,12 +46,14 @@ namespace BasicClassLibrary
             // 获取目标路径
             string targetPath = GetEntryMaterialPath(entry, fileName);
 
-            // 如果文件已存在，抛出异常
+            // 如果文件已存在，抛出异常 
             if (File.Exists(targetPath))
                 throw new IOException("文件已存在：" + fileName);
 
+            Bitmap copy = new Bitmap(image);
+
             // 将Image对象保存到目标路径
-            image.Save(targetPath, ImageFormat.Png); // 部分低级版本不支持
+            copy.Save(targetPath, ImageFormat.Png); // 部分低级版本不支持
         }
 
         public void RemoveMaterial(Entry entry, string fileName)
