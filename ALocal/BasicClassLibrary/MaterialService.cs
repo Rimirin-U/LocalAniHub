@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
+using System.Drawing.Imaging;
 namespace BasicClassLibrary
 {
     public class MaterialService
@@ -32,6 +33,25 @@ namespace BasicClassLibrary
                 throw new IOException("文件已存在：" + fileName);
 
             File.Move(sourceFilePath, targetPath);
+        }
+        public void AddMaterial(Entry entry, Image image, string fileName)
+        {
+            // 验证条目文件夹有效性（自动创建目录）
+            ValidateEntryFolder(entry);
+
+            // 确保文件名有效
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("文件名不能为空");
+
+            // 获取目标路径
+            string targetPath = GetEntryMaterialPath(entry, fileName);
+
+            // 如果文件已存在，抛出异常
+            if (File.Exists(targetPath))
+                throw new IOException("文件已存在：" + fileName);
+
+            // 将Image对象保存到目标路径
+            image.Save(targetPath, ImageFormat.Png); // 部分低级版本不支持
         }
 
         public void RemoveMaterial(Entry entry, string fileName)
