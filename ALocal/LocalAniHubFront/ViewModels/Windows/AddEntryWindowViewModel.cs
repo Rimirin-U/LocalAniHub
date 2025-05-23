@@ -53,7 +53,16 @@ namespace LocalAniHubFront.ViewModels.Windows
         private string category;
 
         [ObservableProperty]
-        private int episodeCount = 12;
+        private string episodeCount = "12";//修改成字符串格式
+        // 新增一个方法用于将 EpisodeCount 字符串转为 int 类型，并进行有效性检查
+        private int GetEpisodeCountAsInt()
+        {
+            if (int.TryParse(EpisodeCount, out int count) && count > 0)
+            {
+                return count;
+            }
+            return 0; // 返回0表示无效输入
+        }
 
         // [ObservableProperty]
         // private State state = State.Watching;
@@ -154,10 +163,10 @@ namespace LocalAniHubFront.ViewModels.Windows
          .Select(kvp => kvp.Value)
          .Where(v => !string.IsNullOrEmpty(v)));
         }
-        private List<string> GetKeywordsFromTags()
+       /* private List<string> GetKeywordsFromTags()
         {
             return TagsString.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
-        }
+        }*/
 
         private void InitializeDefaultValues()
         {
@@ -166,9 +175,6 @@ namespace LocalAniHubFront.ViewModels.Windows
 
             if (string.IsNullOrEmpty(Category))
                 Category = "动画";
-
-            if (EpisodeCount <= 0)
-                EpisodeCount = 12;
 
             if (Score < 0)
                 Score = 0;
@@ -207,9 +213,10 @@ namespace LocalAniHubFront.ViewModels.Windows
                 return false;
             }
 
-            if (EpisodeCount <= 0)
+            var episodeCountValue = GetEpisodeCountAsInt();
+            if (episodeCountValue <= 0)
             {
-                MessageBox.Show("集数必须大于0！");
+                MessageBox.Show("请输入有效的集数（大于0的整数）");
                 return false;
             }
             //校验 BroadcastTimeString 是否合法格式
@@ -254,6 +261,7 @@ namespace LocalAniHubFront.ViewModels.Windows
                     MessageBox.Show("播出时间格式错误，无法保存。");
                     return;
                 }
+                var episodeCountValue = GetEpisodeCountAsInt();
                 // 构建 Entry 对象
                 var entry = new Entry(
                     TranslatedName,
@@ -261,13 +269,13 @@ namespace LocalAniHubFront.ViewModels.Windows
                     ReleaseDate ?? CollectionDate,
                     CollectionDate,
                     Category,
-                    EpisodeCount,
+                    episodeCountValue,
                     GetStateFromStateID(),
                     MaterialSubFolder,
                     KeyVisualFileName,
                     HasUpdateTime,
                     AutoClearResources,
-                    GetKeywordsFromTags());
+                     new List<string>());// Keywords 暂时空列表，等待功能扩展
                 var entryManager = new EntryManager();
                 entryManager.Add(entry);
                 int entryId = entry.Id;
@@ -304,7 +312,7 @@ namespace LocalAniHubFront.ViewModels.Windows
                 // 构建所有 Episode
                 var episodeManager = new EpisodeManager();
                 Episodes.Clear();
-                for (int i = 1; i <= EpisodeCount; i++)
+                for (int i = 1; i <= episodeCountValue; i++)
                 {
                     var episode = new Episode(entryId, i, GetStateFromStateID() == State.Watched ? State.Watched : State.NotWatched);
                     episodeManager.Add(episode);
