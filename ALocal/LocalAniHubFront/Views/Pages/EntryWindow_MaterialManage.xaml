@@ -55,7 +55,7 @@
                 <!-- 未选中提示 -->
                 <TextBlock Text="请从左侧选择一个文件以查看详细信息"
                FontSize="16"
-               Foreground="Gray"
+               Foreground="White"
                VerticalAlignment="Center"
                HorizontalAlignment="Center"
                Visibility="{Binding SelectedFile, ElementName=MaterialPage, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
