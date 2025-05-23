@@ -27,8 +27,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid x:Name="TimeSelectionGrid"
-                      Grid.Row="0"
-                      HorizontalAlignment="Right">
+                      Grid.Row="0">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -36,6 +35,14 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
+
+                    <Button x:Name="AddEntryButton"
+                            Grid.Column="0"
+                            Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                            Content="&#xE710;"
+                            HorizontalAlignment="Left"
+                            Height="36" Width="36"
+                            Click="AddEntryButton_Click"/>
 
                     <ComboBox x:Name="YearSelection"
                               Grid.Column="1"
