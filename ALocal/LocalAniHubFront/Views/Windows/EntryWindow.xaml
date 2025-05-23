@@ -8,7 +8,7 @@
         xmlns:helper="clr-namespace:LocalAniHubFront.Helpers"
         xmlns:components="clr-namespace:LocalAniHubFront.ViewModels.Components"
         mc:Ignorable="d"
-        Title="fTestWindow" Height="650" Width="1100"
+        Title="{Binding MainTitle}" Height="650" Width="1100"
         x:Name="EntryWindowInstance"
                   
         ExtendsContentIntoTitleBar="True"
