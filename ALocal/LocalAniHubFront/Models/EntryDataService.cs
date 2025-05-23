@@ -26,11 +26,27 @@ namespace LocalAniHubFront.Models
                 unifiedEntry.AddProperty(property.Name, value);
             }
 
-            // 添加 EntryMetadata 的属性
+            //// 添加 EntryMetadata 的属性
+            //foreach (var property in typeof(EntryMetadata).GetProperties())
+            //{
+            //    var value = property.GetValue(metadata) ?? string.Empty; // 如果值为 null，则使用 string.Empty
+            //    unifiedEntry.AddProperty(property.Name, value);
+            //}
+            // 添加 EntryMetadata 的属性（跳过索引器）
             foreach (var property in typeof(EntryMetadata).GetProperties())
             {
-                var value = property.GetValue(metadata) ?? string.Empty; // 如果值为 null，则使用 string.Empty
+                if (property.GetIndexParameters().Length > 0) // 跳过索引器
+                    continue;
+
+                var value = property.GetValue(metadata) ?? string.Empty;
                 unifiedEntry.AddProperty(property.Name, value);
+            }
+
+            // 添加 EntryMetadata 的元数据字典内容
+            foreach (var key in metadata.GetAllKeys())
+            {
+                var value = metadata.GetMetadataValue(key) ?? string.Empty;
+                unifiedEntry.AddProperty(key, value);
             }
 
             // 添加 EntryRating 的属性
@@ -48,7 +64,7 @@ namespace LocalAniHubFront.Models
             }
 
             // 添加 Episode 的信息
-            unifiedEntry.AddProperty("Episodes", episodes);
+            unifiedEntry.AddProperty("EpisodeCount", entry.EpisodeCount);
 
             return unifiedEntry;
         }
