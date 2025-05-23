@@ -50,7 +50,7 @@ namespace BasicClassLibrary
         {
             return context.Logs
                 .Where(le => le.LogType == logType)
-                .OrderBy(le => le.Timestamp)
+                .OrderBy(le => le.Timestamp.Ticks)//// 使用Ticks来进行排序
                 .FirstOrDefault();
         }
 
@@ -59,7 +59,7 @@ namespace BasicClassLibrary
         {
             return context.Logs
                 .Where(le => le.LogType == logType)
-                .OrderByDescending(le => le.Timestamp)
+                .OrderByDescending(le => le.Timestamp.Ticks)// 使用Ticks来进行降序排列
                 .FirstOrDefault();
         }
         // 查询指定剧集的最早观影日志
@@ -68,8 +68,16 @@ namespace BasicClassLibrary
             return context.Logs
                 .OfType<WatchLogEntry>()
                 .Where(w => w.EpisodeId == episodeId)
-                .OrderBy(w => w.Timestamp)
+                .OrderBy(w => w.Timestamp.Ticks)  // 使用 Ticks 排序来绕过 SQLite 对 DateTimeOffset 的限制
                 .FirstOrDefault();
         }
+        /* public WatchLogEntry? FindEarliestWatchLogForEpisode(int episodeId)
+         {
+             return context.Logs
+                 .OfType<WatchLogEntry>()
+                 .Where(w => w.EpisodeId == episodeId)
+                 .OrderBy(w => w.Timestamp)
+                 .FirstOrDefault();
+         }*/
     }
 }
