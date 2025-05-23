@@ -165,7 +165,7 @@
                     Panel.ZIndex="1"
                     Margin="0,0,0,0"
                     IsHitTestVisible="False"
-                    Fill="{Binding AverageColor}"/>
+                    Fill="{Binding AverageColor, Converter={StaticResource ColorToBrushConverter}}"/>
 
                 <!--主要内容容器-->
                 <Grid x:Name="MainContainer"
