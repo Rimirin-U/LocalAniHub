@@ -9,10 +9,12 @@ namespace BasicClassLibrary
     public class NoteManager : Manager<Note>
     {
         private readonly LogManager _logManager;
+        private static NoteService _noteService;
         //构造函数
         public NoteManager() : base(new AppDbContext())
         {
             _logManager = new LogManager();
+            _noteService = new NoteService();
         }
         // 根据作品ID查找关联笔记
         public readonly static Func<ICollection<int>, Func<Note, bool>> ByEntriesId =
@@ -24,7 +26,7 @@ namespace BasicClassLibrary
 
         // 根据关键字搜索笔记内容
         public readonly static Func<string, Func<Note, bool>> ByKeyword =
-            keyword => (n => n.Content.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+            keyword => (n =>_noteService.LoadNoteContent(n).Contains(keyword));
 
         // 获取未关联任何作品或剧集的笔记
         public readonly static Func<Note, bool> OrphanNotes =

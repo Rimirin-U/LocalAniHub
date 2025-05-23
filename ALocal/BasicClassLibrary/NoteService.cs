@@ -1,52 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace BasicClassLibrary
 {
     public class NoteService
     {
-        private readonly NoteManager NoteManager;
-        private readonly string BaseDirectory;
-
-        public NoteService(NoteManager noteManager)
+        private readonly string _notesDirectory;
+        private readonly NoteManager _noteManager;
+        public NoteService()
         {
-            this.NoteManager = noteManager;
-            // 从全局设置读取父文件夹
             var globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
-            BaseDirectory = Path.Combine(globalBaseFolder, "Note");
-            Directory.CreateDirectory(BaseDirectory); // 确保服务文件夹存在
-            //该方法会创建指定路径的目录，要是该目录已经存在，就不会再次创建。
-            //如果指定路径中的父目录不存在，此方法会递归创建所有必要的父目录。
+            _notesDirectory = Path.Combine(globalBaseFolder, "Note");
+            Directory.CreateDirectory(_notesDirectory);
+            _noteManager = new NoteManager();
         }
 
-        // 保存笔记为 Markdown 文件
-        public void SaveNoteAsMarkdown(Note note)
+        // 通过标题创建笔记文件并返回笔记对象
+        public void SaveNote(string noteTitle, string content)
+        {
+            ValidateNoteTitle(noteTitle);
+            if (content == null) throw new ArgumentNullException(nameof(content));
+
+            // 创建新的笔记对象
+            var note = new Note
+            {
+                NoteTitle = noteTitle
+            };
+            _noteManager.Add(note); // 添加到数据库
+
+            // 保存笔记内容
+            File.WriteAllText(GetNoteFilePath(noteTitle), content);
+        }
+
+        // 通过Note对象更新笔记文件
+        public void SaveNote(Note note, string content)
         {
             if (note == null) throw new ArgumentNullException(nameof(note));
-            if (string.IsNullOrWhiteSpace(note.NoteTitle)) throw new ArgumentException("NoteTitle cannot be null or empty.", nameof(note.NoteTitle));
+            ValidateNoteTitle(note.NoteTitle);
+            if (content == null) throw new ArgumentNullException(nameof(content));
 
-            string filePath = Path.Combine(BaseDirectory, $"{note.NoteTitle}.md");
-            File.WriteAllText(filePath, note.Content);
+            File.WriteAllText(GetNoteFilePath(note.NoteTitle), content);
         }
 
-        // 加载 Markdown 文件为 Note 对象
-        public Note LoadNoteFromMarkdown(string noteTitle)
+        // 读取笔记内容
+        public string LoadNoteContent(Note note)
         {
-            if (string.IsNullOrWhiteSpace(noteTitle)) throw new ArgumentException("NoteTitle cannot be null or empty.", nameof(noteTitle));
+            if (note == null) throw new ArgumentNullException(nameof(note));
 
-            string filePath = Path.Combine(BaseDirectory, $"{noteTitle}.md");
-            if (!File.Exists(filePath)) throw new FileNotFoundException("The specified note file does not exist.", filePath);
+            string path = GetNoteFilePath(note.NoteTitle);
+            return File.Exists(path) ? File.ReadAllText(path) : string.Empty;
+        }
 
-            string content = File.ReadAllText(filePath);
-            return new Note
-            {
-                NoteTitle = noteTitle,
-                Content = content
-            };
+        // 删除笔记文件
+        public void DeleteNoteFile(Note note)
+        {
+            if (note == null) throw new ArgumentNullException(nameof(note));
+
+            string path = GetNoteFilePath(note.NoteTitle);
+            if (File.Exists(path)) File.Delete(path);
+            _noteManager.RemoveById(note.Id); // 删除数据库中的笔记记录
+        }
+
+        private string GetNoteFilePath(string noteTitle)
+            => Path.Combine(_notesDirectory, $"{noteTitle}.md");
+
+        private void ValidateNoteTitle(string noteTitle)
+        {
+            if (string.IsNullOrWhiteSpace(noteTitle))
+                throw new ArgumentException("笔记标题不能为空或空白");
         }
     }
 }
