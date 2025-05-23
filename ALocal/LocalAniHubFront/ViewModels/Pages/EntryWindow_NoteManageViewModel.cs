@@ -30,7 +30,7 @@ namespace LocalAniHubFront.ViewModels.Pages
 
         // 标题显示模式相关属性
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SubTitle))]
+        [NotifyPropertyChangedFor(nameof(Subtitle))]
         private string _selectedTitleMode;
 
         private bool _isInitialized = false;
@@ -39,6 +39,8 @@ namespace LocalAniHubFront.ViewModels.Pages
         public EntryWindow_NoteManageViewModel(int entryId)
         {
             _entryId = entryId;
+            LoadEntry(); // 提前加载 Entry 数据
+            LoadInitialState(); // 初始化标题模式
         }
 
         public Task OnNavigatedToAsync()
@@ -62,13 +64,14 @@ namespace LocalAniHubFront.ViewModels.Pages
         private void LoadEntry()
         {
             _entry = _entryManager.FindById(_entryId);
+            OnPropertyChanged(nameof(Subtitle)); // 手动触发 Subtitle 更新
         }
 
         private void LoadInitialState()
         {
             // 加载标题显示模式
             var titleDisplayMode = GlobalSettingsService.Instance.GetValue("entryWindowMainTitle");
-            SelectedTitleMode = int.TryParse(titleDisplayMode, out int mode) && mode == 1 ? "Translated" : "Original";
+            SelectedTitleMode = int.TryParse(titleDisplayMode, out int mode) && mode == 0 ? "Translated" : "Original";
 
         }
 
@@ -86,7 +89,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
 
         // 计算属性：根据SelectedTitleMode返回原名或译名
-        public string SubTitle => SelectedTitleMode switch
+        public string Subtitle => SelectedTitleMode switch
         {
             "Original" => _entry?.OriginalName ?? "",
             "Translated" => _entry?.TranslatedName ?? "",
