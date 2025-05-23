@@ -54,8 +54,8 @@ namespace LocalAniHubFront.ViewModels.Windows
         public ObservableCollection<string> States { get; } = new ObservableCollection<string>(new List<string>
         {
           "未看",
-          "正在看",
-          "已看完",
+          "在看",
+          "已看",
           "抛弃"
         });
         private int stateID=1;
@@ -92,7 +92,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         public string MaterialSubFolder =>
        $"[{ReleaseDate?.ToString("yyyyMM")}]{OriginalName}";
         public string KeyVisualFileName =>
-        $"{OriginalName}KV";
+        $"{OriginalName}KV.png";
         public DayOfWeek BroadcastWeekday => ReleaseDate.HasValue ? ReleaseDate.Value.DayOfWeek : DayOfWeek.Monday;
         public double Score { get; set; } = 0.0;
         public List<Episode> Episodes { get; private set; } = new();
