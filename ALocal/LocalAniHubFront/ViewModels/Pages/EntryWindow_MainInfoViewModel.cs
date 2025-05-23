@@ -60,7 +60,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             LoadEntryData(_entryId);
         }
 
-        /*
+        /* 已改为在构造函数中调用Load系列逻辑
         public async Task OnNavigatedToAsync()
         {
             if (!_isInitialized)
