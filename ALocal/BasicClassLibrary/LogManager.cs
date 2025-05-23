@@ -50,6 +50,7 @@ namespace BasicClassLibrary
         {
             return context.Logs
                 .Where(le => le.LogType == logType)
+                .AsEnumerable()  // 将之前的查询结果转为内存中的操作
                 .OrderBy(le => le.Timestamp.Ticks)//// 使用Ticks来进行排序
                 .FirstOrDefault();
         }
@@ -59,6 +60,7 @@ namespace BasicClassLibrary
         {
             return context.Logs
                 .Where(le => le.LogType == logType)
+                .AsEnumerable()  // 将之前的查询结果转为内存中的操作
                 .OrderByDescending(le => le.Timestamp.Ticks)// 使用Ticks来进行降序排列
                 .FirstOrDefault();
         }
@@ -68,8 +70,8 @@ namespace BasicClassLibrary
             return context.Logs
                 .OfType<WatchLogEntry>()
                 .Where(w => w.EpisodeId == episodeId)
-                .OrderBy(w => w.Timestamp.Ticks)  // 使用 Ticks 排序来绕过 SQLite 对 DateTimeOffset 的限制
-                .FirstOrDefault();
+                .AsEnumerable() // 切换到客户端评估
+                .MinBy(w => w.Timestamp.Ticks);
         }
         /* public WatchLogEntry? FindEarliestWatchLogForEpisode(int episodeId)
          {
