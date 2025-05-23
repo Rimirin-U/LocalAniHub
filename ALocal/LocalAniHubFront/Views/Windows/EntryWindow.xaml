@@ -113,7 +113,7 @@
                                Grid.Column="0"
                                VerticalAlignment="Bottom"
                                Text="{Binding MainTitle}"
-                               FontFamily="Segoe UI"
+                               FontFamily="Segoe UI, Microsoft YaHei"
                                FontWeight="Bold"
                                Foreground="White"
                                FontSize="40"
