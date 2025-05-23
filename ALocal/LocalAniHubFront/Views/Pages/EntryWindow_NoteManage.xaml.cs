@@ -38,7 +38,6 @@ namespace LocalAniHubFront.Views.Pages
 
         public EntryWindow_NoteManage()
         {
-            DataContext = new EntryWindow_NoteManageViewModel(EntryId);
             InitializeComponent();
         }
 

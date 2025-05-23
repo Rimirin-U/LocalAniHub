@@ -43,9 +43,7 @@ namespace LocalAniHubFront.Views.Pages
 
         public EntryWindow_MaterialManage()
         {
-            DataContext = new EntryWindow_MaterialManageViewModel(EntryId);
             InitializeComponent();
-            InitializeFolder();
         }
 
         public void InitializeViewModel()

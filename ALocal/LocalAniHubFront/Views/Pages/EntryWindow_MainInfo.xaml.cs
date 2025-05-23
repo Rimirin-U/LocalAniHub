@@ -61,10 +61,10 @@ namespace LocalAniHubFront.Views.Pages
         }
         private void NoteButton_Click(object sender, RoutedEventArgs e)
         {
-            //var page = new EntryWindow_NoteManage();
-            //page.EntryId = EntryId;
-            //page.InitializeViewModel();
-            //NavigationService.Navigate(page);
+            var page = new EntryWindow_NoteManage();
+            page.EntryId = EntryId;
+            page.InitializeViewModel();
+            NavigationService.Navigate(page);
         }
         private void HistoryButton_Click(object sender, RoutedEventArgs e)
         {
