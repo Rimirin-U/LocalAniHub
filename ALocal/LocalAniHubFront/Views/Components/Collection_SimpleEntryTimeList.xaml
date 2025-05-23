@@ -62,13 +62,22 @@
                                             Margin="0,12,0,0"
                                             HorizontalAlignment="Left"
                                             Orientation="Horizontal">
+
                                             <TextBlock Text="{Binding LineText}"
                                                        FontSize="16"
                                                        Cursor="Hand">
                                                 <TextBlock.InputBindings>
                                                     <MouseBinding Gesture="LeftClick" Command="{Binding OpenEntryWindowCommand}"/>
                                                 </TextBlock.InputBindings>
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="删除"
+                                                              Command="{Binding PlacementTarget.DataContext.DeleteEntryCommand,
+                                                                                RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
                                             </TextBlock>
+
                                         </StackPanel>
                                     </DataTemplate>
                                     <!--排列：垂直排列-->
