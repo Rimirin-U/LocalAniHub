@@ -19,10 +19,29 @@ namespace LocalAniHubFront.Views.Components
 {
     public partial class Setting_Selection : UserControl
     {
-        public Setting_Selection(SelectionSettingEntry settingEntry)
+        public Setting_Selection()
         {
-            DataContext = new Setting_SelectionViewModel(settingEntry);// 该ViewModel构造函数传参
+            // DataContext = new Setting_SelectionViewModel(settingEntry);// 该ViewModel构造函数传参
             InitializeComponent();
         }
+
+        public SelectionSettingEntry SelectionSettingEntry { get; set; }
+
+        public static readonly DependencyProperty SelectionSettingEntryProperty =
+            DependencyProperty.Register(
+                nameof(SelectionSettingEntry),
+                typeof(SelectionSettingEntry),
+                typeof(Setting_Selection),
+                new PropertyMetadata(null, OnSelectionSettingEntryChanged));
+
+        private static void OnSelectionSettingEntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Setting_Selection control && e.NewValue is SelectionSettingEntry newSettingEntry)
+            {
+                control.DataContext = new Setting_SelectionViewModel(newSettingEntry);
+                control.SelectionSettingEntry = newSettingEntry;
+            }
+        }
+
     }
 }
