@@ -17,6 +17,12 @@ namespace LocalAniHubFront.ViewModels.Windows
     public partial class AddEntryWindowViewModel : ObservableObject
     {
         private readonly EntryInfoSet _entryInfoSet;
+
+        public AddEntryWindowViewModel() {
+            KvImage = System.Drawing.Image.FromFile(@"Assets/DefaultKeyVisual.png");
+            InitializeDefaultValues();
+        }
+
         public AddEntryWindowViewModel(EntryInfoSet entryInfoSet)
         {
             _entryInfoSet = entryInfoSet;
