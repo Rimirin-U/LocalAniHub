@@ -50,13 +50,22 @@ namespace LocalAniHubFront.ViewModels.Pages
         private readonly EntryManager _entryManager = new();
         private readonly EntryMetaDataManager _metaDataManager = new();
         private readonly EntryRatingManager _ratingManager = new();
-        private readonly MaterialManager _materialManager = new();
         private readonly EpisodeManager _episodeManager = new();
+        private readonly EntryTimeInfoManager _timeInfoManager = new();
+        private readonly EntryService _entryService;
         private int _entryId;
         private bool _isInitialized = false;
         public EntryWindow_MainInfoViewModel(int entryId)
         {
             _entryId = entryId;
+            _entryService = new EntryService(
+                new EntryFetch(),
+                _entryManager,
+                _episodeManager,
+                _ratingManager,
+                _metaDataManager,
+                _timeInfoManager
+            );
         }
         public async Task OnNavigatedToAsync()
         {
@@ -81,7 +90,16 @@ namespace LocalAniHubFront.ViewModels.Pages
                 : entry.TranslatedName;
 
             Kind = entry.Category;
-            TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 每周X XX:XX";
+            // 加载并设置播出时间信息
+            var timeInfo = await Task.Run(() => _timeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault());
+            if (timeInfo != null)
+            {
+                TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 每周{GetChineseWeekday(timeInfo.BroadcastWeekday)} {timeInfo.BroadcastTime:HH:mm}";
+            }
+            else
+            {
+                TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 时间未设置";
+            }
 
             // 3. 并行加载其他数据
             await Task.WhenAll(
@@ -91,6 +109,21 @@ namespace LocalAniHubFront.ViewModels.Pages
                 LoadMetadata(entryId)
             );
         }
+        private string GetChineseWeekday(DayOfWeek weekday)
+        {
+            return weekday switch
+            {
+                DayOfWeek.Sunday => "日",
+                DayOfWeek.Monday => "一",
+                DayOfWeek.Tuesday => "二",
+                DayOfWeek.Wednesday => "三",
+                DayOfWeek.Thursday => "四",
+                DayOfWeek.Friday => "五",
+                DayOfWeek.Saturday => "六",
+                _ => "?"
+            };
+        }
+
         private async Task LoadTags(int entryId)
         {
             var metadata = await Task.Run(() => _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault());
@@ -107,13 +140,44 @@ namespace LocalAniHubFront.ViewModels.Pages
         {
             var episodes = await Task.Run(() => _episodeManager.Query(EpisodeManager.ByEntryId(entryId)));
 
-            Episodes = new ObservableCollection<EpisodeTempData>(
-                episodes.Select(e => new EpisodeTempData(
-                    e.EpisodeNumber,
-                    e.Id,
-                    (EpisodeState)e.State
-                ))
-            );
+            var episodeList = new List<EpisodeTempData>();
+
+            foreach (var episode in episodes)
+            {
+                // 判断是否已播出
+                bool isAired;
+                try
+                {
+                    isAired = _entryService.IsEpisodeAired(entryId, episode.EpisodeNumber);
+                }
+                catch
+                {
+                    isAired = false;
+                }
+
+                EpisodeState displayState;
+
+                if (!isAired)
+                {
+                    displayState = EpisodeState.Unreleased;
+                }
+                else
+                {
+                    displayState = episode.State switch
+                    {
+                        BasicClassLibrary.State.Watched => EpisodeState.Watched,
+                        _ => EpisodeState.Unwatched
+                    };
+                }
+
+                episodeList.Add(new EpisodeTempData(
+                    episode.EpisodeNumber,
+                    episode.Id,
+                    displayState
+                ));
+            }
+
+            Episodes = new ObservableCollection<EpisodeTempData>(episodeList);
         }
         private async Task LoadMetadata(int entryId)
         {
