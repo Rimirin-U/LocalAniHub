@@ -250,18 +250,22 @@ namespace LocalAniHubFront.ViewModels.Windows
 
             return true;
         }
-
-        public void Save()
+        public bool Save()
         {
+            var context = new AppDbContext(); 
+            using var transaction = context.Database.BeginTransaction(); // 开启事务
+
             try
             {
                 // 解析 BroadcastTimeString 成 DateTime
                 if (!TryParseBroadcastTime(out var broadcastTime))
                 {
                     MessageBox.Show("播出时间格式错误，无法保存。");
-                    return;
+                    return false;
                 }
+
                 var episodeCountValue = GetEpisodeCountAsInt();
+
                 // 构建 Entry 对象
                 var entry = new Entry(
                     TranslatedName,
@@ -275,74 +279,161 @@ namespace LocalAniHubFront.ViewModels.Windows
                     KeyVisualFileName,
                     HasUpdateTime,
                     AutoClearResources,
-                     new List<string>());// Keywords 暂时空列表，等待功能扩展
-                var entryManager = new EntryManager();
+                    new List<string>()); // Keywords 暂时空列表，等待功能扩展
+
+                var entryManager = new EntryManager(context);
                 entryManager.Add(entry);
+
                 int entryId = entry.Id;
                 if (entryId <= 0)
                 {
                     MessageBox.Show("条目保存失败，未获得有效 ID。");
-                    return;
+                    return false;
                 }
-                // 保存 KV 图片到文件系统！！！
+
+                // 保存 KV 图片到文件系统
                 var materialService = new MaterialService();
-               if (KvImage != null && !string.IsNullOrEmpty(KeyVisualFileName))
-               {
+                if (KvImage != null && !string.IsNullOrEmpty(KeyVisualFileName))
+                {
                     materialService.AddMaterial(entry, KvImage, KeyVisualFileName);
-               }
+                }
+
                 // 构建 EntryTimeInfo
                 var entryTimeInfo = new EntryTimeInfo(
                     entry.Id,
                     BroadcastWeekday,
                     broadcastTime);
-                var timeInfoManager = new EntryTimeInfoManager();
+
+                var timeInfoManager = new EntryTimeInfoManager(context);
                 timeInfoManager.Add(entryTimeInfo);
+
                 // 构建 EntryMetadata
                 var entryMetadata = new EntryMetadata(entry.Id);
                 foreach (var item in MetadataItems)
                 {
                     entryMetadata.AddOrUpdateMetadata(item.Key, item.Value);
                 }
-                var metaDataManager = new EntryMetaDataManager();
+
+                var metaDataManager = new EntryMetaDataManager(context);
                 metaDataManager.Add(entryMetadata);
+
                 // 构建 EntryRating
                 var entryRating = new EntryRating(entry.Id, Score);
-                var ratingManager = new EntryRatingManager();
+                var ratingManager = new EntryRatingManager(context);
                 ratingManager.Add(entryRating);
+
                 // 构建所有 Episode
-                var episodeManager = new EpisodeManager();
+                var episodeManager = new EpisodeManager(context);
                 Episodes.Clear();
                 for (int i = 1; i <= episodeCountValue; i++)
                 {
                     var episode = new Episode(entryId, i, GetStateFromStateID() == State.Watched ? State.Watched : State.NotWatched);
                     episodeManager.Add(episode);
                 }
+
+                // 提交事务
+                transaction.Commit();
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"保存失败：{ex.Message}");
-            }
-            /*catch (DbUpdateException ex)
-            {
+                // 回滚事务
+                transaction.Rollback();
+
                 var innerMessage = ex.InnerException?.Message ?? "无内部异常信息";
-                MessageBox.Show($"数据库更新失败：{ex.Message}\n\n详细信息：{innerMessage}");
-            }*/
-        }
-        //!这里保存的路径可能有点问题
-      /* private void SaveKeyVisualToFileSystem()
-       {
-            if (KvImage == null || string.IsNullOrEmpty(KeyVisualFileName)) return;
-            string folderPath = Path.Combine("Material", MaterialSubFolder, "KV");
-            Directory.CreateDirectory(folderPath);
-
-            string filePath = Path.Combine(folderPath, $"{KeyVisualFileName}.png");
-
-            // 使用 System.Drawing.Image.Save() 直接保存图片
-            using (var fs = new FileStream(filePath, FileMode.Create))
-            {
-                KvImage.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                MessageBox.Show($"保存失败：{ex.Message}\n\n详细信息：{innerMessage}");
+                return false;
             }
-       }*/
+        }
+
+        /* public void Save()
+         {
+             try
+             {
+                 // 解析 BroadcastTimeString 成 DateTime
+                 if (!TryParseBroadcastTime(out var broadcastTime))
+                 {
+                     MessageBox.Show("播出时间格式错误，无法保存。");
+                     return;
+                 }
+                 var episodeCountValue = GetEpisodeCountAsInt();
+                 // 构建 Entry 对象
+                 var entry = new Entry(
+                     TranslatedName,
+                     OriginalName,
+                     ReleaseDate ?? CollectionDate,
+                     CollectionDate,
+                     Category,
+                     episodeCountValue,
+                     GetStateFromStateID(),
+                     MaterialSubFolder,
+                     KeyVisualFileName,
+                     HasUpdateTime,
+                     AutoClearResources,
+                      new List<string>());// Keywords 暂时空列表，等待功能扩展
+                 var entryManager = new EntryManager();
+                 entryManager.Add(entry);
+                 int entryId = entry.Id;
+                 if (entryId <= 0)
+                 {
+                     MessageBox.Show("条目保存失败，未获得有效 ID。");
+                     return;
+                 }
+                 // 保存 KV 图片到文件系统！！！
+                 var materialService = new MaterialService();
+                if (KvImage != null && !string.IsNullOrEmpty(KeyVisualFileName))
+                {
+                     materialService.AddMaterial(entry, KvImage, KeyVisualFileName);
+                }
+                 // 构建 EntryTimeInfo
+                 var entryTimeInfo = new EntryTimeInfo(
+                     entry.Id,
+                     BroadcastWeekday,
+                     broadcastTime);
+                 var timeInfoManager = new EntryTimeInfoManager();
+                 timeInfoManager.Add(entryTimeInfo);
+                 // 构建 EntryMetadata
+                 var entryMetadata = new EntryMetadata(entry.Id);
+                 foreach (var item in MetadataItems)
+                 {
+                     entryMetadata.AddOrUpdateMetadata(item.Key, item.Value);
+                 }
+                 var metaDataManager = new EntryMetaDataManager();
+                 metaDataManager.Add(entryMetadata);
+                 // 构建 EntryRating
+                 var entryRating = new EntryRating(entry.Id, Score);
+                 var ratingManager = new EntryRatingManager();
+                 ratingManager.Add(entryRating);
+                 // 构建所有 Episode
+                 var episodeManager = new EpisodeManager();
+                 Episodes.Clear();
+                 for (int i = 1; i <= episodeCountValue; i++)
+                 {
+                     var episode = new Episode(entryId, i, GetStateFromStateID() == State.Watched ? State.Watched : State.NotWatched);
+                     episodeManager.Add(episode);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 MessageBox.Show($"保存失败：{ex.Message}");
+             }
+         }*/
+
+        //!这里保存的路径可能有点问题
+        /* private void SaveKeyVisualToFileSystem()
+         {
+              if (KvImage == null || string.IsNullOrEmpty(KeyVisualFileName)) return;
+              string folderPath = Path.Combine("Material", MaterialSubFolder, "KV");
+              Directory.CreateDirectory(folderPath);
+
+              string filePath = Path.Combine(folderPath, $"{KeyVisualFileName}.png");
+
+              // 使用 System.Drawing.Image.Save() 直接保存图片
+              using (var fs = new FileStream(filePath, FileMode.Create))
+              {
+                  KvImage.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+              }
+         }*/
     }
     public class MutableKeyValuePair<TKey, TValue>
     {

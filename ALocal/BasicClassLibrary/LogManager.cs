@@ -9,6 +9,7 @@ namespace BasicClassLibrary
     public class LogManager : Manager<LogEntry>
     {
         public LogManager() : base(new AppDbContext()) { }
+        public LogManager(AppDbContext context) : base(context) { }
 
         // 添加观影日志
         public void AddWatchLog(int episodeId)

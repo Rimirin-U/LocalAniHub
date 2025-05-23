@@ -13,6 +13,10 @@ namespace BasicClassLibrary
         {
             _logManager = new LogManager();
         }
+        public EntryRatingManager(AppDbContext context) : base(context)
+        {
+            _logManager = new LogManager(context);
+        }
 
         public static readonly Func<int, Func<EntryRating, bool>> ByEntryId = (entryId => (o => o.EntryId == entryId));
 
