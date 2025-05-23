@@ -20,6 +20,7 @@
             <helpers:DesaturateBrushConverter x:Key="DesaturateConverter" DesaturationAmount="0.2"/>
             <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <helpers:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
 
             <!--阴影效果-->
             <DropShadowEffect x:Key="DropShadow"
