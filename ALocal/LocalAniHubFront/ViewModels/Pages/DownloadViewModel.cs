@@ -46,28 +46,31 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         private void LoadDownloads()
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (Application.Current != null)
             {
-                var latestDownloads = ResourceDownloadService.Instance.GetAllDownloads();
-
-                // 添加新任务
-                foreach (var download in latestDownloads)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    if (!DownloadManagers.Contains(download))
-                    {
-                        DownloadManagers.Add(download);
-                    }
-                }
+                    var latestDownloads = ResourceDownloadService.Instance.GetAllDownloads();
 
-                // 移除已删除的任务
-                for (int i = DownloadManagers.Count - 1; i >= 0; i--)
-                {
-                    if (!latestDownloads.Contains(DownloadManagers[i]))
+                    // 添加新任务
+                    foreach (var download in latestDownloads)
                     {
-                        DownloadManagers.RemoveAt(i);
+                        if (!DownloadManagers.Contains(download))
+                        {
+                            DownloadManagers.Add(download);
+                        }
                     }
-                }
-            });
+
+                    // 移除已删除的任务
+                    for (int i = DownloadManagers.Count - 1; i >= 0; i--)
+                    {
+                        if (!latestDownloads.Contains(DownloadManagers[i]))
+                        {
+                            DownloadManagers.RemoveAt(i);
+                        }
+                    }
+                });
+            }
         }
 
         // 定时更新下载状态
