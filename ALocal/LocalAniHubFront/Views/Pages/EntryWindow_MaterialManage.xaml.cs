@@ -9,12 +9,26 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using LocalAniHubFront.Helpers;
 using LocalAniHubFront.ViewModels.Pages;
+using Microsoft.Win32;
 
 namespace LocalAniHubFront.Views.Pages
 {
     public partial class EntryWindow_MaterialManage : Page, INotifyPropertyChanged
     {
-        public ObservableCollection<FileItem> Files { get; set; } = new();
+        private ObservableCollection<FileItem> _files = new();
+        public ObservableCollection<FileItem> Files
+        {
+            get => _files;
+            set
+            {
+                if (_files != value)
+                {
+                    _files = value;
+                    OnPropertyChanged(nameof(Files));
+                }
+            }
+        }
+
 
         private FileItem _selectedFile;
         public FileItem SelectedFile
@@ -119,5 +133,33 @@ namespace LocalAniHubFront.Views.Pages
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = DataContext as EntryWindow_MaterialManageViewModel;
+            if (viewModel == null) return;
+
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = "选择要添加的文件",
+                Filter = "所有文件|*.*",
+                InitialDirectory = viewModel.MaterialFolderPath
+            };
+
+            // 显示文件选择对话框
+            bool? result = openFileDialog.ShowDialog();
+
+            // 选择文件后
+            if (result == true)
+            {
+                string filePath = openFileDialog.FileName;
+                viewModel.AddMaterial(filePath);
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitializeFolder();
+        }
     }
 }

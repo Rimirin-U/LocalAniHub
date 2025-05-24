@@ -29,21 +29,11 @@ namespace LocalAniHubFront.ViewModels.Pages
             //拼接完整路径
             MaterialFolderPath = Path.Combine(globalBaseFolder, "Material", entry.MaterialFolder);
         }
-        /* public int EntryId { get; }
 
-         public EntryWindow_MaterialManageViewModel(int entryId)
-         {
-             EntryId = entryId;
-         }
-
-         public string MaterialFolderPath
-         {
-             get
-             {
-                 // 假设全局设置服务已实现-这里还需要再修改一下
-                 string parentFolder = GlobalSettingsService.Instance.GetValue("defaultMaterialParentFolderPath");
-                 return Path.Combine(parentFolder, EntryId.ToString());
-             }
-         }*/
+        // 添加路径为filePath的文件
+        public void AddMaterial(string filePath)
+        {
+            // ...
+        }
     }
 }
