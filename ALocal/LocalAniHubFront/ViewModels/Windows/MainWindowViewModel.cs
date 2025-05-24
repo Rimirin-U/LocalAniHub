@@ -14,15 +14,15 @@ namespace LocalAniHubFront.ViewModels.Windows
             // 导航栏定义处
             new NavigationViewItem()
             {
-                Content = "TestHome",
+                Content = "主页",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             },
             new NavigationViewItem()
             {
-                Content = "收藏",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
-                TargetPageType = typeof(Views.Pages.CollectionPage)
+                Content = "最近",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Clock24 },
+                TargetPageType = typeof(Views.Pages.RecentPage)
             },
             new NavigationViewItem()
             {
@@ -32,15 +32,15 @@ namespace LocalAniHubFront.ViewModels.Windows
             },
             new NavigationViewItem()
             {
-                Content = "下载",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowDownload24 },
-                TargetPageType = typeof(Views.Pages.DownloadPage)
+                Content = "收藏",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Star24 },
+                TargetPageType = typeof(Views.Pages.CollectionPage)
             },
             new NavigationViewItem()
             {
-                Content = "最近",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
-                TargetPageType = typeof(Views.Pages.RecentPage)
+                Content = "下载",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowDownload24 },
+                TargetPageType = typeof(Views.Pages.DownloadPage)
             }
         };
 
