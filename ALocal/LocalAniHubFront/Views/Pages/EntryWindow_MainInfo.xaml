@@ -616,36 +616,42 @@
                     </Border.Effect>
                 </Border>
 
+                <ItemsControl ItemsSource="{Binding Metadata}"
+                              Grid.Row="4"
+                              Margin="-8,16,0,0"
+                              VerticalAlignment="Top">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3"/>
+                            <!-- 或者使用自定义 Grid, 复杂布局需要写行为 -->
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ScrollViewer Style="{StaticResource MetadataScrollViewerStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource BoldWhiteTextStyle}"
+                               Text="{Binding KeyString}"/>
+                                    <TextBlock Margin="4,0,0,0"
+                               Style="{StaticResource WhiteTextStyle}"
+                               Text="{Binding ValueString}"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--
                 <Grid x:Name="MetaDataRowGrid"
                       Grid.Row="4"
                       Margin="-8,16,0,0"
                       helpers:GridHelper.RowCount="{Binding RowCount}">
-                    <!--分行数量 = 元数据数量 / 3.0 向上取整-->
-
-                    <!--均分三列-->
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
-                    <!--每一个单元格中放入一个这个ScrollViewer-->
-
-
-                    <!--Episodes: ObservableCollection<MetadataTempData>-->
-                    <!--Row和Column:按从左到右从上到下的顺序，例：-->
-                    <!--
-                    index  row  column
-                    0       0   0
-                    1       0   1
-                    2       0   2
-                    3       1   0
-                    4       1   1
-                    5       1   2
-                    6       2   0
-                    7       2   1
-                    8       2   2
-                    -->
                     <ItemsControl ItemsSource="{Binding Metadata}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -661,7 +667,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </Grid>
+                </Grid>-->
             </Grid>
     </ScrollViewer>
 
