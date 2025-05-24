@@ -11,14 +11,12 @@ namespace LocalAniHubFront.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<string> _displayModes = new ObservableCollection<string>
         {
-            "SimpleEntryTimeList",
-            "Mode2",
-            "Mode3"
+            "简单列表（收藏时间降序）",
         };
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentView))]
-        private string _selectedMode = "SimpleEntryTimeList"; // 设置默认值为第一个模式
+        private string _selectedMode = "简单列表（收藏时间降序）"; // 设置默认值为第一个模式
 
         [ObservableProperty]
         private UserControl _currentView;
@@ -53,9 +51,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             // 根据SelectedMode 切换用户控件
             CurrentView = value switch
             {
-                "SimpleEntryTimeList" => new Collection_SimpleEntryTimeList(),
-                "Mode2" => throw new NotSupportedException("Mode2 is not supported yet."),
-                "Mode3" => throw new NotSupportedException("Mode3 is not supported yet."),
+                "简单列表（收藏时间降序）" => new Collection_SimpleEntryTimeList(),
                 _ => throw new NotSupportedException($"SelectedMode '{value}' is not supported.")
             };
         }

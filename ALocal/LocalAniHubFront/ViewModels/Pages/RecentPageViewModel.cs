@@ -12,14 +12,12 @@ namespace LocalAniHubFront.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<string> _displayModes = new ObservableCollection<string>
         {
-            "Recent_SeasonTableViewModel",
-            "Mode2",
-            "Mode3"
+            "本季度",
         };
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CurrentView))]
-        private string _selectedMode = "Recent_SeasonTableViewModel"; // 设置默认值为第一个模式
+        private string _selectedMode = "本季度"; // 设置默认值为第一个模式
 
         [ObservableProperty]
         private UserControl _currentView;
@@ -54,9 +52,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             // 根据SelectedMode 切换用户控件
             CurrentView = value switch
             {
-                "Recent_SeasonTableViewModel" => new Recent_SeasonTable(),
-                "Mode2" => throw new NotSupportedException("Mode2 is not supported yet."),
-                "Mode3" => throw new NotSupportedException("Mode3 is not supported yet."),
+                "本季度" => new Recent_SeasonTable(),
                 _ => throw new NotSupportedException($"SelectedMode '{value}' is not supported.")
             };
         }
