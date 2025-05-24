@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
+using MonoTorrent.Client;
 
 namespace BasicClassLibrary
 {
@@ -27,7 +28,7 @@ namespace BasicClassLibrary
             _resourceManager.Addresource(resource);
         }
         // 下载资源
-        public async Task DownloadAndAddResource(ResourceItem resourceItem)
+        public async Task DownloadAndAddResource(ResourceItem resourceItem, EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler = null)
         {
             if (resourceItem == null)
             {
@@ -38,7 +39,7 @@ namespace BasicClassLibrary
                 throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
             }
             // 使用ResourceDownloadService来下载资源
-            await ResourceDownloadService.Instance.AddAndStartDownload(resourceItem.DownloadUrl);
+            await ResourceDownloadService.Instance.AddAndStartDownload(resourceItem.DownloadUrl, torrentStateChangeEventHandler: torrentStateChangeEventHandler);
         }
 
         // 按最大保存日期清理
@@ -48,7 +49,7 @@ namespace BasicClassLibrary
                 throw new ArgumentException("Days to keep must be positive.", nameof(daysToKeep));
 
             var threshold = DateTime.Now.AddDays(-daysToKeep);
-            var resources = _resourceManager.Query(r=>true);
+            var resources = _resourceManager.Query(r => true);
             CleanupByTime(resources, threshold);
         }
 

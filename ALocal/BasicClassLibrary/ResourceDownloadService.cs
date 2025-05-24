@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MonoTorrent.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,14 +18,14 @@ namespace BasicClassLibrary
         private List<MagnetDownloadManager> downloadManagers = [];
 
         // 添加下载任务（并启动下载）
-        public Task<MagnetDownloadManager> AddAndStartDownload(string magnetUrl, string? downloadPath = null)
+        public Task<MagnetDownloadManager> AddAndStartDownload(string magnetUrl, string? downloadPath = null, EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler =null)
         {
             // 在后台线程创建下载任务
             return Task.Run(async () =>
             {
                 MagnetDownloadManager manager = downloadPath == null
-                    ? await _resourceDownload.GetMagnetDownloadManager(magnetUrl)
-                    : await _resourceDownload.GetMagnetDownloadManager(magnetUrl, downloadPath);
+                    ? await _resourceDownload.GetMagnetDownloadManager(magnetUrl, torrentStateChangeEventHandler)
+                    : await _resourceDownload.GetMagnetDownloadManager(magnetUrl, downloadPath, torrentStateChangeEventHandler);
                 lock (downloadManagers)
                 {
                     downloadManagers.Add(manager);

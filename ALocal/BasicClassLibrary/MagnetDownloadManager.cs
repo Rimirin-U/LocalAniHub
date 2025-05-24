@@ -38,7 +38,7 @@ namespace BasicClassLibrary
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task Initialize()
+        public async Task Initialize(EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler=null)
         {
             // magnet link parse
             MonoTorrent.MagnetLink magnetLink = MonoTorrent.MagnetLink.Parse(MagnetUrl);
@@ -51,6 +51,8 @@ namespace BasicClassLibrary
             {
                 await manager.TrackerManager.AddTrackerAsync(new Uri(tracker.Url));
             }
+
+            manager.TorrentStateChanged += torrentStateChangeEventHandler;
         }
 
         private DownloadStatus downloadStatus;
