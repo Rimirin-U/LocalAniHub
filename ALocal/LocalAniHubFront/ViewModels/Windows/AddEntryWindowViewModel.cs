@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace LocalAniHubFront.ViewModels.Windows
 {
@@ -157,13 +158,11 @@ namespace LocalAniHubFront.ViewModels.Windows
             }
             // 提取 TAGS
             // TagsString = string.Join("/", _entryInfoSet.Metadata.Values.Where(v => !string.IsNullOrEmpty(v)));
-            /*TagsString = string.Join("/",
+            TagsString = string.Join("/",
          _entryInfoSet.Metadata
          .Where(kvp => kvp.Key.Equals("tag", StringComparison.OrdinalIgnoreCase))
          .Select(kvp => kvp.Value)
-         .Where(v => !string.IsNullOrEmpty(v)));*/
-            var entryMetadata = new EntryMetadata();
-            TagsString = string.Join("/", entryMetadata.GetTags());
+         .Where(v => !string.IsNullOrEmpty(v)));
         }
        /* private List<string> GetKeywordsFromTags()
         {
@@ -311,13 +310,20 @@ namespace LocalAniHubFront.ViewModels.Windows
 
                 // 构建 EntryMetadata
                 var entryMetadata = new EntryMetadata(entry.Id);
-                AddPair(new KeyValuePair<string, string>("标签", TagsString));
 
                 foreach (var item in MetadataItems)
                 {
                     entryMetadata.AddOrUpdateMetadata(item.Key, item.Value);
                 }
-
+                // 拆分并清理空值
+                var tags = tagsString.Split('/')
+                                    .Select(t => t.Trim())
+                                    .Where(t => !string.IsNullOrEmpty(t));
+                // 逐个调用 AddTag 方法
+                foreach (var tag in tags)
+                {
+                    entryMetadata.AddTag(tag);
+                }
                 var metaDataManager = new EntryMetaDataManager(context);
                 metaDataManager.Add(entryMetadata);
 
