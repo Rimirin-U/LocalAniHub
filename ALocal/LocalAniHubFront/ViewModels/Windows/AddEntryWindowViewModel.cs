@@ -157,11 +157,13 @@ namespace LocalAniHubFront.ViewModels.Windows
             }
             // 提取 TAGS
             // TagsString = string.Join("/", _entryInfoSet.Metadata.Values.Where(v => !string.IsNullOrEmpty(v)));
-            TagsString = string.Join("/",
+            /*TagsString = string.Join("/",
          _entryInfoSet.Metadata
          .Where(kvp => kvp.Key.Equals("tag", StringComparison.OrdinalIgnoreCase))
          .Select(kvp => kvp.Value)
-         .Where(v => !string.IsNullOrEmpty(v)));
+         .Where(v => !string.IsNullOrEmpty(v)));*/
+            var entryMetadata = new EntryMetadata();
+            TagsString = string.Join("/", entryMetadata.GetTags());
         }
        /* private List<string> GetKeywordsFromTags()
         {
@@ -309,6 +311,8 @@ namespace LocalAniHubFront.ViewModels.Windows
 
                 // 构建 EntryMetadata
                 var entryMetadata = new EntryMetadata(entry.Id);
+                AddPair(new KeyValuePair<string, string>("标签", TagsString));
+
                 foreach (var item in MetadataItems)
                 {
                     entryMetadata.AddOrUpdateMetadata(item.Key, item.Value);
