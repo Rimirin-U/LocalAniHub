@@ -10,12 +10,12 @@ namespace LocalAniHub.ViewModels.Windows
         public ObservableCollection<TextBoxItemViewModel> TextBoxes { get; } = new();
 
         [ObservableProperty]
-        private ObservableCollection<ResourceItem> resourceItems;/* = new() { 
+        private ObservableCollection<ResourceItem> resourceItems = new() { 
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][1080P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl" },
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][720P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl1" },
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][2160P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl2" },
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][42][GB][1080P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl3" }
-        };*/
+        };
 
         [ObservableProperty]
         private string windowTitle = "资源搜索: BanG Dream! Ave Mujica 第2集";// 示例
@@ -26,6 +26,7 @@ namespace LocalAniHub.ViewModels.Windows
             var item = new TextBoxItemViewModel();
             item.RequestDelete = (self, _) => RemoveTextBox(self);
             TextBoxes.Add(item);
+            RequestFocus?.Invoke(item);
         }
 
 

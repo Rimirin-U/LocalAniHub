@@ -37,7 +37,7 @@ namespace LocalAniHub.Views.Windows
                 if (child.DataContext == vm)
                 {
                     child.Focus();
-                    child.SelectAll(); // 可选：选中文本
+                    child.SelectAll();
                     break;
                 }
             }

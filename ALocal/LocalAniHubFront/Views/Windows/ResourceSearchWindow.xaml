@@ -114,60 +114,66 @@
                 </StackPanel>
             </Grid>
 
-            <ScrollViewer x:Name="ResultArea" Grid.Row="1" Margin="12,12,12,12"
+            <ui:Card Grid.Row="1" Margin="12,12,12,12" VerticalAlignment="Top">
+                <ScrollViewer x:Name="ResultArea" 
                           HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <Grid x:Name="ResultGrid" Grid.IsSharedSizeScope="True" VerticalAlignment="Top">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid x:Name="TitleGrid" Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn" MinWidth="400"/>
-                            <ColumnDefinition Width="4"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="DownloadButtonColumn"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="标题" 
+                    <Grid x:Name="ResultGrid" Grid.IsSharedSizeScope="True" VerticalAlignment="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="TitleGrid" Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn" MinWidth="200"/>
+                                <ColumnDefinition Width="4"/>
+                                <ColumnDefinition Width="*" MinWidth="200"/>
+                                <ColumnDefinition Width="52" SharedSizeGroup="DownloadButtonColumn"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="标题" 
                                    FontSize="18" FontWeight="Black" HorizontalAlignment="Center"/>
-                        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"/>
-                        <TextBlock Grid.Column="2" Text="更新时间" 
+                            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"
+                                          ResizeBehavior="PreviousAndNext"/>
+                            <TextBlock Grid.Column="2" Text="更新时间" 
                                    FontSize="18" FontWeight="Black" HorizontalAlignment="Center"/>
-                    </Grid>
+                            <!--
+                            <Button x:Name="AddDownloadButton" Grid.Column="3" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                                    Margin="8,0,0,0" Visibility="Collapsed"/>-->
+                        </Grid>
 
-                    <ItemsControl ItemsSource="{Binding ViewModel.ResourceItems}" Grid.Row="1">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                
-                                <Grid Margin="0,8,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn" MinWidth="400"/>
-                                        <ColumnDefinition Width="4"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto" SharedSizeGroup="DownloadButtonColumn"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding Title}" 
+                        <ItemsControl ItemsSource="{Binding ViewModel.ResourceItems}" Grid.Row="1">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn" />
+                                            <ColumnDefinition Width="4"/>
+                                            <ColumnDefinition Width="*" MinWidth="200"/>
+                                            <ColumnDefinition Width="52" SharedSizeGroup="DownloadButtonColumn"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Title}" 
                                                FontSize="16" VerticalAlignment="Center"
                                                HorizontalAlignment="Left"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding PubDate, Converter={StaticResource DateTimeToStringConverter}}"
+                                        <TextBlock Grid.Column="2" Text="{Binding PubDate, Converter={StaticResource DateTimeToStringConverter}}"
                                                FontSize="16" VerticalAlignment="Center"
                                                HorizontalAlignment="Center"/>
-                                    <Button x:Name="AddDownloadButton" Grid.Column="3" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                                        <Button x:Name="AddDownloadButton" Grid.Column="3" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
                                             Content="&#xE896;"
                                             Margin="8,0,0,0" Command="{Binding ViewModel.AddDownloadCommand,ElementName=root}" CommandParameter="{Binding DownloadUrl}"/>
-                                </Grid>
+                                    </Grid>
 
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
 
-            </ScrollViewer>
+                </ScrollViewer>
+            </ui:Card>
         </Grid>
     </Grid>
 </ui:FluentWindow>
