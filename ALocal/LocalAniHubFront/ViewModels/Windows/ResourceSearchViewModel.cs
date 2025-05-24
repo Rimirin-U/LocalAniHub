@@ -7,19 +7,26 @@ namespace LocalAniHub.ViewModels.Windows
 {
     public partial class ResourceSearchViewModel : ObservableObject
     {
+        public ResourceSearchViewModel(int episodeId)
+        {
+            // ...
+            // 需要初始化: WindowTitle
+            // 需要初始化：默认添加的关键词，包括：原名、译名、KeyWords、集数的数字
+        }
         public ObservableCollection<TextBoxItemViewModel> TextBoxes { get; } = new();
 
         [ObservableProperty]
-        private ObservableCollection<ResourceItem> resourceItems = new() { 
+        private ObservableCollection<ResourceItem> resourceItems;/* = new() { 
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][1080P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl" },
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][720P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl1" },
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][2160P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl2" },
             new() { Title = "[BeanSub][Kusuriya no Hitorigoto][42][GB][1080P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl3" }
-        };
+        };*/
 
         [ObservableProperty]
-        private string windowTitle = "资源搜索: BanG Dream! Ave Mujica 第2集";// 示例
+        private string windowTitle;// 示例:"资源搜索: BanG Dream! Ave Mujica 第2集"
 
+        // 关键词对应的TextBox的ViewModel的列表
         [RelayCommand]
         private void AddTextBox()
         {
@@ -28,7 +35,6 @@ namespace LocalAniHub.ViewModels.Windows
             TextBoxes.Add(item);
             RequestFocus?.Invoke(item);
         }
-
 
         [RelayCommand]
         private void Search()
@@ -42,7 +48,9 @@ namespace LocalAniHub.ViewModels.Windows
         {
             // ...
             // 添加下载任务，添加成功后弹窗提示
-            Debug.WriteLine($"AddDownloadCommand Called {path}");
+            // 同时在后台运行一个进程，每秒
+            // debug:
+            Debug.WriteLine($"AddDownloadCommand called, para = {path}");
         }
 
         private void RemoveTextBox(TextBoxItemViewModel item)

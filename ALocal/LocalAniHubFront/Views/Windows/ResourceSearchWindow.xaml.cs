@@ -10,9 +10,9 @@ namespace LocalAniHub.Views.Windows
     {
         public ResourceSearchViewModel ViewModel { get; }
 
-        public ResourceSearchWindow()
+        public ResourceSearchWindow(int episodeId)
         {
-            ViewModel = new();
+            ViewModel = new(episodeId);
             DataContext = this;
             InitializeComponent();
 
