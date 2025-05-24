@@ -28,7 +28,7 @@ namespace BasicClassLibrary
             _resourceManager.Addresource(resource);
         }
         // 下载资源
-        public async Task DownloadAndAddResource(ResourceItem resourceItem, EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler = null)
+        public async Task StartDownloadResource(ResourceItem resourceItem, EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler = null)
         {
             if (resourceItem == null)
             {
@@ -108,6 +108,16 @@ namespace BasicClassLibrary
             {
                 File.Delete(resource.ResourcePath);
             }
+        }
+
+        // 在下载完成后 将资源文件从下载到的默认路径移动到其对应的资源文件夹，并创建资源对象，加入数据库中
+        // 本事件在TorrentState每次改变时都会触发，但以上逻辑只应该在TorrentState改变为 已完成 时触发
+        public static EventHandler<TorrentStateChangedEventArgs> AfterDownload(int episodeId)
+        {
+            return delegate (object? sender, TorrentStateChangedEventArgs e)
+            {
+                // ...
+            };
         }
     }
 }

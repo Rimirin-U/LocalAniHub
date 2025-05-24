@@ -13,6 +13,8 @@ namespace LocalAniHub.ViewModels.Windows
             // 需要初始化: WindowTitle
             // 需要初始化：默认添加的关键词，包括：原名、译名、KeyWords、集数的数字
         }
+        private int episodeId;
+
         public ObservableCollection<TextBoxItemViewModel> TextBoxes { get; } = new();
 
         [ObservableProperty]
@@ -44,13 +46,11 @@ namespace LocalAniHub.ViewModels.Windows
         }
 
         [RelayCommand]
-        private void AddDownload(string path)
+        private async Task AddDownload(ResourceItem resourceItem)
         {
-            // ...
-            // 添加下载任务，添加成功后弹窗提示
-            // 同时在后台运行一个进程，每秒
-            // debug:
-            Debug.WriteLine($"AddDownloadCommand called, para = {path}");
+            ResourceService resourceService = new(new(), new());
+            await resourceService.StartDownloadResource(resourceItem, ResourceService.AfterDownload(episodeId));
+            MessageBox.Show("已添加下载");
         }
 
         private void RemoveTextBox(TextBoxItemViewModel item)

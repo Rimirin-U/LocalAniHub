@@ -164,7 +164,7 @@
                                                HorizontalAlignment="Center"/>
                                         <Button x:Name="AddDownloadButton" Grid.Column="3" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
                                             Content="&#xE896;"
-                                            Margin="8,0,0,0" Command="{Binding ViewModel.AddDownloadCommand,ElementName=root}" CommandParameter="{Binding DownloadUrl}"/>
+                                            Margin="8,0,0,0" Command="{Binding ViewModel.AddDownloadCommand,ElementName=root}" CommandParameter="{Binding}"/>
                                     </Grid>
 
                                 </DataTemplate>
