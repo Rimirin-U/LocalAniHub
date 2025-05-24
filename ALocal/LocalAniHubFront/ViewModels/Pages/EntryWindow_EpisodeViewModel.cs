@@ -277,7 +277,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             }
         }
 
-        public string Date =>_entry?.ReleaseDate.AddDays((_episode?.EpisodeNumber ?? 1 - 1) * 7.0).ToString("yyyy.M.d")?? "";
+        public string Date =>_entry?.ReleaseDate.AddDays((_episode.EpisodeNumber - 1) * 7.0).ToString("yyyy.M.d")?? "";
 
         //public string Weekday => _entry?.ReleaseDate.DayOfWeek.ToString() ?? "";
         public string Weekday
