@@ -5,8 +5,8 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"   
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:LocalAniHub.ViewModels.Windows"
-        mc:Ignorable="d"
-        Title="{Binding ViewModel.WindowTitle}" Height="650" Width="1100"
+        mc:Ignorable="d" x:Name="root"
+        Title="{Binding ViewModel.WindowTitle}" Height="650" Width="1100" MinWidth="500"
         AllowsTransparency="False"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"   
@@ -69,7 +69,6 @@
                 </Grid>
 
                 <StackPanel Grid.Column="1">
-
                     <ScrollViewer>
                         <ItemsControl ItemsSource="{Binding ViewModel.TextBoxes}">
                             <ItemsControl.ItemsPanel>
@@ -115,7 +114,7 @@
                 </StackPanel>
             </Grid>
 
-            <ScrollViewer x:Name="ResultArea" Grid.Row="1" Margin="12,0,12,12"
+            <ScrollViewer x:Name="ResultArea" Grid.Row="1" Margin="12,12,12,12"
                           HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <Grid x:Name="ResultGrid" Grid.IsSharedSizeScope="True" VerticalAlignment="Top">
                     <Grid.RowDefinitions>
@@ -124,12 +123,16 @@
                     </Grid.RowDefinitions>
                     <Grid x:Name="TitleGrid" Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn" MinWidth="400"/>
                             <ColumnDefinition Width="4"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="DownloadButtonColumn"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="标题" FontWeight="Black"/>
+                        <TextBlock Grid.Column="0" Text="标题" 
+                                   FontSize="18" FontWeight="Black" HorizontalAlignment="Center"/>
+                        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#10000000"/>
+                        <TextBlock Grid.Column="2" Text="更新时间" 
+                                   FontSize="18" FontWeight="Black" HorizontalAlignment="Center"/>
                     </Grid>
 
                     <ItemsControl ItemsSource="{Binding ViewModel.ResourceItems}" Grid.Row="1">
@@ -140,6 +143,24 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
+                                
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn" MinWidth="400"/>
+                                        <ColumnDefinition Width="4"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="DownloadButtonColumn"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Title}" 
+                                               FontSize="16" VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding PubDate, Converter={StaticResource DateTimeToStringConverter}}"
+                                               FontSize="16" VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
+                                    <Button x:Name="AddDownloadButton" Grid.Column="3" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
+                                            Content="&#xE896;"
+                                            Margin="8,0,0,0" Command="{Binding ViewModel.AddDownloadCommand,ElementName=root}" CommandParameter="{Binding DownloadUrl}"/>
+                                </Grid>
 
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
