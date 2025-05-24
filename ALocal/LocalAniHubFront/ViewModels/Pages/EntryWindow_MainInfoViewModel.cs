@@ -95,7 +95,7 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             Kind = entry.Category;
             // 加载并设置播出时间信息
-            var timeInfo = await Task.Run(() => _timeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault());
+            var timeInfo =  _timeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault();
             if (timeInfo != null)
             {
                 TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 每周{GetChineseWeekday(timeInfo.BroadcastWeekday)} {timeInfo.BroadcastTime:HH:mm}";
