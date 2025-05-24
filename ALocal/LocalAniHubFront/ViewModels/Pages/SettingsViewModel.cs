@@ -1,4 +1,6 @@
-﻿using Wpf.Ui.Abstractions.Controls;
+﻿using LocalAniHubFront.ViewModels.Components;
+using System.Collections.ObjectModel;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
 
 namespace LocalAniHubFront.ViewModels.Pages
@@ -12,6 +14,27 @@ namespace LocalAniHubFront.ViewModels.Pages
 
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
+
+        [ObservableProperty]
+        private ObservableCollection<SelectionItem> entryWindowMainTitleItems = [ 
+            new(0,"主标题原名 & 副标题译名"),
+            new(1,"主标题译名 & 副标题原名")
+        ];
+        
+        [ObservableProperty]
+        private ObservableCollection<SelectionItem> defaultEntryFetchSourceItems = [ 
+            new(0,"来自Yuc's Anime List")
+        ];
+        
+        [ObservableProperty]
+        private ObservableCollection<SelectionItem> defaultResourceSearchSourceItems = [ 
+            new(0,"来自Animes Garden")
+        ];
+        
+        [ObservableProperty]
+        private ObservableCollection<SelectionItem> defaultCollectionDisplayViewItems = [ 
+            new(0,"简单列表（按收藏时间降序）")
+        ];
 
         public Task OnNavigatedToAsync()
         {

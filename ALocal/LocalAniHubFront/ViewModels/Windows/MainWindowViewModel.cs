@@ -49,7 +49,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             new NavigationViewItem()
             {
-                Content = "Settings",
+                Content = "设置",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
                 TargetPageType = typeof(Views.Pages.SettingsPage)
             }

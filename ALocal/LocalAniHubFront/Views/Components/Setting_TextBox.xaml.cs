@@ -6,11 +6,29 @@ namespace LocalAniHubFront.Views.Components
 {
     public partial class Setting_Textbox : UserControl
     {
-        // 可以先写Setting_Selection
-        public Setting_Textbox(TextboxSettingEntry settingEntry)// 这个类要定义在Models文件夹中
+        public Setting_Textbox()
         {
-            DataContext = new Setting_TextBoxViewModel(settingEntry);// 自行创建对应文件:)
+            // DataContext = new Setting_TextBoxViewModel(settingEntry);
             InitializeComponent();
         }
+
+        public TextboxSettingEntry TextboxSettingEntry { get; set; }
+
+        public static readonly DependencyProperty TextboxSettingEntryProperty =
+            DependencyProperty.Register(
+                nameof(TextboxSettingEntry),
+                typeof(TextboxSettingEntry),
+                typeof(Setting_Textbox),
+                new PropertyMetadata(null, OnTextboxSettingEntryChanged));
+
+        private static void OnTextboxSettingEntryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Setting_Textbox control && e.NewValue is TextboxSettingEntry newSettingEntry)
+            {
+                control.DataContext = new Setting_TextBoxViewModel(newSettingEntry);
+                control.TextboxSettingEntry = newSettingEntry;
+            }
+        }
+
     }
 }
