@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:LocalAniHub.ViewModels.Windows"
         mc:Ignorable="d"
-        Title="ResourceSearchWindow" Height="400" Width="600">
+        Title="ResourceSearchWindow" Height="400" Width="600"
+        AllowsTransparency="False">
 
     <Window.DataContext>
         <vm:ResourceSearchViewModel />
@@ -26,7 +27,7 @@
                     <DataTemplate>
                         <TextBox Width="100" Margin="5"
                                  Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-                                 KeyDown="TextBox_KeyDown" />
+                                 PreviewKeyDown="TextBox_KeyDown" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

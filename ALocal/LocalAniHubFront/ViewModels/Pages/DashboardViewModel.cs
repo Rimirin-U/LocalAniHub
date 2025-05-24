@@ -1,4 +1,5 @@
 ﻿using BasicClassLibrary;
+using LocalAniHub.Views.Windows;
 
 namespace LocalAniHubFront.ViewModels.Pages
 {
@@ -10,6 +11,8 @@ namespace LocalAniHubFront.ViewModels.Pages
         [RelayCommand]
         private void OnCounterIncrement()
         {
+            var window = new ResourceSearchWindow();
+            window.Show();
             Counter++;
         }
     }
