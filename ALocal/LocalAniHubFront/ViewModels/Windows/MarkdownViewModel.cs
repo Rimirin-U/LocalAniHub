@@ -132,9 +132,12 @@ namespace LocalAniHubFront.ViewModels.Windows
 
             if (note != null)
             {
-                NoteTitle = note.NoteTitle;//这个报错不用管
-                MarkdownText = note.Content;
+                NoteTitle = note.NoteTitle;
+               // MarkdownText = note.Content;
+                var noteService = new NoteService();
+                MarkdownText = noteService.LoadNoteContent(note);
             }
+            
 
             LoadAllEntries();
             LoadAllEpisodes();
@@ -163,7 +166,9 @@ namespace LocalAniHubFront.ViewModels.Windows
                 if (note != null)
                 {
                     note.NoteTitle = NoteTitle;//这个报错不用管
-                    note.Content = MarkdownText;
+                    //note.Content = MarkdownText;
+                    var noteService = new NoteService();
+                    noteService.SaveNote(note, MarkdownText);
                     note.EntriesId = EntryComboBoxList
                         .Where(vm => vm.SelectedEntryItem.HasValue)
                         .Select(vm => vm.SelectedEntryItem!.Value.EntryId).ToList();
