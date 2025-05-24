@@ -37,7 +37,7 @@ namespace LocalAniHubFront.Views.Pages
 
         public EntryWindow_MainInfo()
         {
-            DataContext = new EntryWindow_MainInfoViewModel(EntryId);
+            // DataContext = new EntryWindow_MainInfoViewModel(EntryId);
             InitializeComponent();
         }
 
@@ -54,17 +54,17 @@ namespace LocalAniHubFront.Views.Pages
         // 页面导航按钮
         private void ResourceButton_Click(object sender, RoutedEventArgs e)
         {
-            //var page = new EntryWindow_ResourceManage();
-            //page.EntryId = EntryId;
-            //page.InitializeViewModel();
-            //NavigationService.Navigate(page);
+            var page = new EntryWindow_ResourceManage();
+            page.EntryId = EntryId;
+            page.InitializeViewModel();
+            NavigationService.Navigate(page);
         }
         private void NoteButton_Click(object sender, RoutedEventArgs e)
         {
-            //var page = new EntryWindow_NoteManage();
-            //page.EntryId = EntryId;
-            //page.InitializeViewModel();
-            //NavigationService.Navigate(page);
+            var page = new EntryWindow_NoteManage();
+            page.EntryId = EntryId;
+            page.InitializeViewModel();
+            NavigationService.Navigate(page);
         }
         private void HistoryButton_Click(object sender, RoutedEventArgs e)
         {

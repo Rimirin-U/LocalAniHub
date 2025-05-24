@@ -1,4 +1,5 @@
-﻿using LocalAniHubFront.ViewModels.Pages;
+﻿using BasicClassLibrary;
+using LocalAniHubFront.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,5 +28,11 @@ namespace LocalAniHubFront.Views.Pages
         }
 
         public SearchViewModel ViewModel { get; }
+
+        private void AddEntryButton_Click(object sender, RoutedEventArgs e)
+        {
+            Window addEntryWindow = new Views.Windows.AddEntryWindow();
+            addEntryWindow.Show();
+        }
     }
 }

@@ -10,7 +10,7 @@ using Wpf.Ui.Abstractions.Controls;
 
 namespace LocalAniHubFront.ViewModels.Pages
 {
-    public partial class EntryWindow_MainInfoViewModel : ObservableObject, INavigationAware
+    public partial class EntryWindow_MainInfoViewModel : ObservableObject
     {
         // 条目基本信息 
         [ObservableProperty]
@@ -50,14 +50,26 @@ namespace LocalAniHubFront.ViewModels.Pages
         private readonly EntryManager _entryManager = new();
         private readonly EntryMetaDataManager _metaDataManager = new();
         private readonly EntryRatingManager _ratingManager = new();
-        private readonly MaterialManager _materialManager = new();
         private readonly EpisodeManager _episodeManager = new();
+        private readonly EntryTimeInfoManager _timeInfoManager = new();
+        private readonly EntryService _entryService;
         private int _entryId;
         private bool _isInitialized = false;
         public EntryWindow_MainInfoViewModel(int entryId)
         {
             _entryId = entryId;
+            _entryService = new EntryService(
+                new EntryFetch(),
+                _entryManager,
+                _episodeManager,
+                _ratingManager,
+                _metaDataManager,
+                _timeInfoManager
+            );
+            LoadEntryData(_entryId);
         }
+
+        /* 已改为在构造函数中调用Load系列逻辑
         public async Task OnNavigatedToAsync()
         {
             if (!_isInitialized)
@@ -68,11 +80,12 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
 
         public Task OnNavigatedFromAsync() => Task.CompletedTask;
+        */
 
-        private async Task LoadEntryData(int entryId)
+        private void LoadEntryData(int entryId)
         {
             // 1. 加载核心条目数据
-            var entry = await Task.Run(() => _entryManager.Query(e => e.Id == entryId).FirstOrDefault());
+            var entry = _entryManager.Query(e => e.Id == entryId).FirstOrDefault();
             if (entry == null) return;
 
             // 2. 设置基础信息
@@ -81,43 +94,97 @@ namespace LocalAniHubFront.ViewModels.Pages
                 : entry.TranslatedName;
 
             Kind = entry.Category;
-            TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 每周X XX:XX";
+            // 加载并设置播出时间信息
+            var timeInfo =  _timeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault();
+            if (timeInfo != null)
+            {
+                TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 每周{GetChineseWeekday(timeInfo.BroadcastWeekday)} {timeInfo.BroadcastTime:HH:mm}";
+            }
+            else
+            {
+                TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 时间未设置";
+            }
 
             // 3. 并行加载其他数据
-            await Task.WhenAll(
-                LoadTags(entryId),
-                LoadRating(entryId),
-                LoadEpisodes(entryId),
-                LoadMetadata(entryId)
-            );
+
+            LoadTags(entryId);
+            LoadRating(entryId);
+            LoadEpisodes(entryId);
+            LoadMetadata(entryId);
         }
-        private async Task LoadTags(int entryId)
+        private string GetChineseWeekday(DayOfWeek weekday)
         {
-            var metadata = await Task.Run(() => _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault());
+            return weekday switch
+            {
+                DayOfWeek.Sunday => "日",
+                DayOfWeek.Monday => "一",
+                DayOfWeek.Tuesday => "二",
+                DayOfWeek.Wednesday => "三",
+                DayOfWeek.Thursday => "四",
+                DayOfWeek.Friday => "五",
+                DayOfWeek.Saturday => "六",
+                _ => "?"
+            };
+        }
+
+        private void LoadTags(int entryId)
+        {
+            var metadata = _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault();
             Tags = metadata != null
                 ? new ObservableCollection<string>(metadata.GetTags())
                 : new ObservableCollection<string>();
         }
-        private async Task LoadRating(int entryId)
+        private void LoadRating(int entryId)
         {
-            var rating = await Task.Run(() => _ratingManager.Query(EntryRatingManager.ByEntryId(entryId)).FirstOrDefault());
+            var rating = _ratingManager.Query(EntryRatingManager.ByEntryId(entryId)).FirstOrDefault();
             Score = (int)(rating?.Score ?? 0);
         }
-        private async Task LoadEpisodes(int entryId)
+        private void LoadEpisodes(int entryId)
         {
-            var episodes = await Task.Run(() => _episodeManager.Query(EpisodeManager.ByEntryId(entryId)));
+            var episodes = _episodeManager.Query(EpisodeManager.ByEntryId(entryId));
 
-            Episodes = new ObservableCollection<EpisodeTempData>(
-                episodes.Select(e => new EpisodeTempData(
-                    e.EpisodeNumber,
-                    e.Id,
-                    (EpisodeState)e.State
-                ))
-            );
+            var episodeList = new List<EpisodeTempData>();
+
+            foreach (var episode in episodes)
+            {
+                // 判断是否已播出
+                bool isAired;
+                try
+                {
+                    isAired = _entryService.IsEpisodeAired(entryId, episode.EpisodeNumber);
+                }
+                catch
+                {
+                    isAired = false;
+                }
+
+                EpisodeState displayState;
+
+                if (!isAired)
+                {
+                    displayState = EpisodeState.Unreleased;
+                }
+                else
+                {
+                    displayState = episode.State switch
+                    {
+                        BasicClassLibrary.State.Watched => EpisodeState.Watched,
+                        _ => EpisodeState.Unwatched
+                    };
+                }
+
+                episodeList.Add(new EpisodeTempData(
+                    episode.EpisodeNumber,
+                    episode.Id,
+                    displayState
+                ));
+            }
+
+            Episodes = new ObservableCollection<EpisodeTempData>(episodeList);
         }
-        private async Task LoadMetadata(int entryId)
+        private void LoadMetadata(int entryId)
         {
-            var metadata = await Task.Run(() => _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault());
+            var metadata = _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault();
             if (metadata == null) return;
 
             var displayData = new List<MetadataTempData>();

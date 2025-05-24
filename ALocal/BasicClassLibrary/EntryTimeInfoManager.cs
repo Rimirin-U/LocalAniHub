@@ -10,6 +10,7 @@ namespace BasicClassLibrary
     {
         //构造函数
         public EntryTimeInfoManager() : base(new AppDbContext()) { }
+        public EntryTimeInfoManager(AppDbContext context) : base(context) { }
 
 
         //根据条目ID查询

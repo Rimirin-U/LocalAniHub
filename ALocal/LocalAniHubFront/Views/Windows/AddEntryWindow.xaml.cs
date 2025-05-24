@@ -22,6 +22,13 @@ namespace LocalAniHubFront.Views.Windows
     {
         public AddEntryWindowViewModel ViewModel { get; set; }
 
+        public AddEntryWindow()
+        {
+            ViewModel = new AddEntryWindowViewModel();
+            DataContext = this;
+            InitializeComponent();
+        }
+
         public AddEntryWindow(EntryInfoSet entryInfoSet)
         {
             ViewModel = new AddEntryWindowViewModel(entryInfoSet);

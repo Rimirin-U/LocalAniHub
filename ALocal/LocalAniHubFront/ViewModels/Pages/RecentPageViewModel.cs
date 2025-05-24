@@ -24,12 +24,19 @@ namespace LocalAniHubFront.ViewModels.Pages
         [ObservableProperty]
         private UserControl _currentView;
 
+        [RelayCommand]
+        private void Refresh()
+        {
+            OnSelectedModeChanged(SelectedMode);
+        }
+
         private bool _isInitialized = false;
 
         public Task OnNavigatedToAsync()
         {
             if (!_isInitialized)
             {
+                CurrentView = new Recent_SeasonTable();
                 InitializeViewModel();
             }
             return Task.CompletedTask;

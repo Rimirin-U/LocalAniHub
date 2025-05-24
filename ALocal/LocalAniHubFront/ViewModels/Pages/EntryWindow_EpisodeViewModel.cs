@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         private readonly LogManager _logManager = new LogManager();//此处报错后端会修改
         private readonly EntryManager _entryManager = new EntryManager();
         private readonly EpisodeManager _episodeManager = new EpisodeManager();
+        private readonly EntryService _entryService = new EntryService(new EntryFetch(),new EntryManager() ,new EpisodeManager(),new EntryRatingManager(),new EntryMetaDataManager(), new EntryTimeInfoManager());
         // 原始数据源
         private  Entry? _entry;
         private  Episode? _episode;
@@ -41,14 +43,28 @@ namespace LocalAniHubFront.ViewModels.Pages
 
         public ObservableCollection<string> StateOptionList { get; } =
             new() { "未看", "在看", "已看" };
+        
         [ObservableProperty]
-        private string watchedDate = "";
+        private string watchedDate;
+       
+        [ObservableProperty]
+        private string watchedTime;
 
-        [ObservableProperty]
-        private string watchedTime = "";
-
-        [ObservableProperty]
-        private string shortComment;
+        //[ObservableProperty]
+        //private string shortComment;
+        private string _shortComment = "";
+        public string ShortComment
+        {
+            get => string.IsNullOrEmpty(_shortComment) ? "无短评" : _shortComment;
+            set
+            {
+                if (_shortComment != value)
+                {
+                    _shortComment = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         // 标题显示模式：Original / Translated
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SubTitle))]
@@ -61,7 +77,7 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             LoadResources();
             LoadNotes();
-            _=LoadFirstWatchedTimeAsync(_episode?.Id??-1);//异步加载观看时间
+             _=LoadFirstWatchedTimeAsync(_episode?.Id??-1);//异步加载观看时间
         }
         private void LoadEpisodeAndEntry(int episodeId)
         {
@@ -98,6 +114,10 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             // 默认观看状态为“未看”
             StateSelectedOption = "未看";
+            if (_episode != null)
+            {
+                ShortComment = _episode.ShortComment;
+            }
         }
         private void LoadResources()
         {
@@ -171,6 +191,7 @@ namespace LocalAniHubFront.ViewModels.Pages
                 WatchedTime = "";
             }
         }
+       
         public async Task LoadFirstWatchedTimeAsync(int episodeId)
         {
              var firstWatchLog = await Task.Run(() =>
@@ -188,20 +209,9 @@ namespace LocalAniHubFront.ViewModels.Pages
                  WatchedDate = "";
                  WatchedTime = "";
              }
-         }
-          /*partial async Task OnStateSelectedOptionChanged(string? oldValue, string newValue)
-         {
-             if (newValue == "已看" || newValue == "在看")
-             {
-                  await LoadFirstWatchedTimeAsync(_episode?.Id ?? -1);
-             }
-             else
-             {
-                 // 如果是“未看”，清空显示
-                 WatchedDate = "";
-                 WatchedTime = "";
-             }
-         }*/
+        }
+        
+
         public string SubTitle => SelectedTitleMode switch
         {
             "Original" => _entry?.OriginalName ?? "",
@@ -213,12 +223,51 @@ namespace LocalAniHubFront.ViewModels.Pages
              _entry != null ? $"第{_episode.EpisodeNumber}/{_entry.EpisodeCount}集" : "第?/?集";
 
 
-        public string BroadcastState =>
-            _entry?.ReleaseDate <= DateTimeOffset.Now ? "已播出" : "未播出";
+        /*public string BroadcastState =>
+            _entry?.ReleaseDate <= DateTimeOffset.Now ? "已播出" : "未播出";*/
+        public string BroadcastState
+        {
+            get
+            {
+                if (_episode == null || _entry == null)
+                    return "";
 
-        public string Date => _entry?.ReleaseDate.ToString("yyyy-MM-dd") ?? "";
+                try
+                {
+                    bool isAired = _entryService.IsEpisodeAired(_entry.Id, _episode.EpisodeNumber);
+                    return isAired ? "已播出" : "未播出";
+                }
+                catch
+                {
+                    return "未知";
+                }
+            }
+        }
 
-        public string Weekday => _entry?.ReleaseDate.DayOfWeek.ToString() ?? "";
+        public string Date => _entry?.ReleaseDate.ToString("yyyy.M.d") ?? "";
+
+        //public string Weekday => _entry?.ReleaseDate.DayOfWeek.ToString() ?? "";
+        public string Weekday
+        {
+            get
+            {
+                if (_entry == null)
+                    return "";
+
+                var day = _entry.ReleaseDate.DayOfWeek;
+                return day switch
+                {
+                    DayOfWeek.Monday => "星期一",
+                    DayOfWeek.Tuesday => "星期二",
+                    DayOfWeek.Wednesday => "星期三",
+                    DayOfWeek.Thursday => "星期四",
+                    DayOfWeek.Friday => "星期五",
+                    DayOfWeek.Saturday => "星期六",
+                    DayOfWeek.Sunday => "星期日",
+                    _ => ""
+                };
+            }
+        }
 
         public string Time => _entry?.ReleaseDate.ToString("HH:mm") ?? "";
 

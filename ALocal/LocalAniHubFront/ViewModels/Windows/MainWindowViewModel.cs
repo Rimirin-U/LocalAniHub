@@ -6,7 +6,7 @@ namespace LocalAniHubFront.ViewModels.Windows
     public partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _applicationTitle = "WPF UI - LocalAniHubFront";
+        private string _applicationTitle = "LocalAniHubFront";
 
         [ObservableProperty]
         private ObservableCollection<object> _menuItems = new()

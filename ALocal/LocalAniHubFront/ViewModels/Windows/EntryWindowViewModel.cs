@@ -39,6 +39,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             _entry = entryManager.FindById(entryId)
         ?? throw new ArgumentException($"未找到ID为{entryId}的条目");
+            InitializeViewModel(); // 直接在构造函数中初始化
         }
 
         // 初始化 ViewModel
@@ -56,7 +57,7 @@ namespace LocalAniHubFront.ViewModels.Windows
             MainTitle = useOriginalName ? _entry.OriginalName : _entry.TranslatedName;
 
             // 2. 设置副标题（格式：2023 · 动画 · 在看）
-            TimeSubTitle = $"{_entry.ReleaseDate:yyyy} · {_entry.Category} · {GetStateString(_entry.State)}";
+            TimeSubTitle = $"{_entry.ReleaseDate:yyyy.M}";
 
             // 3. 加载背景图
             LoadKeyVisual();
@@ -74,11 +75,20 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             try
             {
-                string imagePath = Path.Combine(_entry.MaterialFolder, _entry.KeyVisualId);
+                // 获取全局父文件夹
+                string globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+                // 拼接完整路径
+                string imagePath = Path.Combine(
+                    globalBaseFolder,
+                    "Material",
+                    _entry.MaterialFolder,
+                    _entry.KeyVisualId
+                );
                 if (File.Exists(imagePath))
                 {
                     // 如果存在，创建BitmapImage对象并赋给KeyVisual属性
                     // 使用绝对路径URI初始化图片
+                    Console.WriteLine($"图片完整路径: {imagePath}");
                     KeyVisual = new BitmapImage(new Uri(imagePath, UriKind.Absolute));
                 }
             }

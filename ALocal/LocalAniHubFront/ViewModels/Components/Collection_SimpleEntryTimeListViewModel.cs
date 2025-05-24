@@ -10,21 +10,16 @@ using LocalAniHubFront.Models;
 
 namespace LocalAniHubFront.ViewModels.Components
 {
-    public partial class Collection_SimpleEntryTimeListViewModel : ObservableObject, INavigationAware
+    public partial class Collection_SimpleEntryTimeListViewModel : ObservableObject
     {
         [ObservableProperty]
         private ObservableCollection<YearBlock> _yearBlocks = new();
 
         // 无参数构造函数
-        public Collection_SimpleEntryTimeListViewModel() { }
-
-        public Task OnNavigatedToAsync()
+        public Collection_SimpleEntryTimeListViewModel()
         {
             LoadEntries();
-            return Task.CompletedTask;
         }
-
-        public Task OnNavigatedFromAsync() => Task.CompletedTask;
 
         private void LoadEntries()
         {
@@ -56,7 +51,7 @@ namespace LocalAniHubFront.ViewModels.Components
                     yearBlock.EntryLines.Add(new EntryLine
                     {
                         Id = entry.Id, // 直接使用模型定义的 Id 属性
-                        LineText = $"{entry.OriginalName} ({entry.TranslatedName}) - {entry.ReleaseDate:yyyy-MM-dd}"
+                        LineText = $"{entry.OriginalName} / {entry.TranslatedName}（{entry.ReleaseDate:yyyy/MM}）"
                     });
                 }
 
@@ -72,5 +67,5 @@ namespace LocalAniHubFront.ViewModels.Components
         //}
     }
 
-    
+
 }

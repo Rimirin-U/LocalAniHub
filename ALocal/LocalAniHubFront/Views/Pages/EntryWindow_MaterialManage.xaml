@@ -55,7 +55,7 @@
                 <!-- 未选中提示 -->
                 <TextBlock Text="请从左侧选择一个文件以查看详细信息"
                FontSize="16"
-               Foreground="Gray"
+               Foreground="White"
                VerticalAlignment="Center"
                HorizontalAlignment="Center"
                Visibility="{Binding SelectedFile, ElementName=MaterialPage, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
@@ -120,6 +120,16 @@
                 Style="{StaticResource RoundedButton_SegoeFluentIcon}"
                 Content="&#xE72b;"
                 Click="BackButton_Click"/>
+                <Button x:Name="AddButton"
+                Margin="0,0,8,0"
+                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                Content="&#xE710;"
+                Click="AddButton_Click"/>
+                <Button x:Name="RefreshButton"
+                Margin="0,0,8,0"
+                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                Content="&#xE72C;"
+                Click="RefreshButton_Click"/>
             </WrapPanel>
         </Grid>
     </Grid>
