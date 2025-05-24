@@ -187,31 +187,25 @@ namespace LocalAniHubFront.ViewModels.Pages
             var metadata = _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault();
             if (metadata == null) return;
 
-            var displayData = new List<MetadataTempData>();
+            var displayData = new ObservableCollection<MetadataTempData>();
 
-            // Assuming the keys are stored in the private _metadataValues dictionary
-            var keys = metadata.GetType()
-                               .GetProperty("_metadataValues", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
-                               .GetValue(metadata) as Dictionary<string, string>;
+            // 用 GetAllKeys() 获取所有键
+            var allKeys = metadata.GetAllKeys()
+                .Where(key => !key.StartsWith("Tag", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
-            if (keys != null)
+            int rowCount = (int)Math.Ceiling(allKeys.Count / 3.0);
+            for (int i = 0; i < allKeys.Count; i++)
             {
-                var filteredKeys = keys.Keys.Where(k => !k.StartsWith("Tag_"));
-                int index = 0;
-                foreach (var key in filteredKeys)
-                {
-                    if (keys[key] is string value)
-                    {
-                        displayData.Add(new MetadataTempData(
-                            key, value, index / 3, index % 3
-                        ));
-                        index++;
-                    }
-                }
+                int row = i / 3;
+                int column = i % 3;
+                var key = allKeys[i];
+                var value = metadata.GetMetadataValue(key) ?? "";
+                displayData.Add(new MetadataTempData(key, value, row, column));
             }
 
-            Metadata = new ObservableCollection<MetadataTempData>(displayData);
-            RowCount = (int)Math.Ceiling(displayData.Count / 3.0);
+            RowCount = rowCount;
+            Metadata = displayData;
         }
 
         [RelayCommand]
