@@ -23,27 +23,48 @@
 
     <StackPanel Grid.IsSharedSizeScope="True">
         <TextBlock
+            Margin="0,24,0,0"
             FontSize="20"
             FontWeight="Medium"
             Text="Personalization" />
-        <TextBlock Margin="0,12,0,0" Text="Theme" />
-        <RadioButton
-            Margin="0,12,0,0"
-            Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-            CommandParameter="theme_light"
-            Content="Light"
-            GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
-        <RadioButton
-            Margin="0,8,0,0"
-            Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-            CommandParameter="theme_dark"
-            Content="Dark"
-            GroupName="themeSelect"
-            IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+        
+        <Grid Margin="0,12,0,0" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="ColumnGroup0"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Style="{StaticResource BodyTextBlockStyle}" FontSize="16"
+                       VerticalAlignment="Center" Margin="0,0,12,0"
+                       Text="主题" />
+            <RadioButton Grid.Column="1"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                        CommandParameter="theme_light"
+                        Content="Light"
+                        GroupName="themeSelect"
+                        IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
+                         />
+            <RadioButton Grid.Column="2"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+                        CommandParameter="theme_dark"
+                        Content="Dark"
+                        GroupName="themeSelect"
+                        IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+        </Grid>
 
         <components:PathSetter SettingKey="globalBaseFolder" SettingTitle="全局父文件夹" />
         <components:PathSetter SettingKey="downloadPath" SettingTitle="资源下载暂存路径" />
+        <components:SelectionSetter SettingKey="entryWindowMainTitle" SettingTitle="详情页主副标题" SettingItems="{Binding ViewModel.EntryWindowMainTitleItems}"/>
+        <components:SelectionSetter SettingKey="defaultEntryFetchSource" SettingTitle="默认作品搜索数据源" SettingItems="{Binding ViewModel.DefaultEntryFetchSourceItems}"/>
+        <components:SelectionSetter SettingKey="defaultResourceSearchSource" SettingTitle="默认资源搜索数据源" SettingItems="{Binding ViewModel.DefaultResourceSearchSourceItems}"/>
+        <components:SelectionSetter SettingKey="defaultCollectionDisplayView" SettingTitle="收藏页面默认视图" SettingItems="{Binding ViewModel.DefaultCollectionDisplayViewItems}"/>
 
         <TextBlock
             Margin="0,24,0,0"

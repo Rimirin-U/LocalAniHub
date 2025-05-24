@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="LocalAniHubFront.Views.Components.PathSetter"
+﻿<UserControl x:Class="LocalAniHubFront.Views.Components.SelectionSetter"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,19 +8,19 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" SharedSizeGroup="ColumnGroup0"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="0" Text="{Binding SettingTitle}"
                    Style="{StaticResource BodyTextBlockStyle}" FontSize="16"
                    VerticalAlignment="Center" Margin="0,0,24,0"/>
 
-        <TextBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                 Text="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}" 
-                 LostFocus="TextBox_LostFocus"/>
-
-        <Button Grid.Column="2" Content="&#xE8AD;" Margin="12,0,0,0"
-                Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
-                Command="{Binding SelectPathCommand}"/>
+        <ComboBox Grid.Column="1"
+                  Margin="0,0,0,0"
+                  MinWidth="160"
+                  HorizontalAlignment="Left"
+                  ItemsSource="{Binding SelectionItems}"
+                  DisplayMemberPath="DisplayName"
+                  SelectedValuePath="Value"
+                  SelectedValue="{Binding SelectedValue, Mode=TwoWay}" />
     </Grid>
 </UserControl>
