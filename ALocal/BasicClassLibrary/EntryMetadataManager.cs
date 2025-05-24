@@ -10,6 +10,7 @@ namespace BasicClassLibrary
     {
         // 构造函数
         public EntryMetaDataManager() : base(new AppDbContext()) { }
+        public EntryMetaDataManager(AppDbContext context) : base(context) { }
         // 按条目ID查询条目元数据
         public static readonly Func<int, Func<EntryMetadata, bool>> ByEntryId =
             id => meta => meta.EntryId == id;

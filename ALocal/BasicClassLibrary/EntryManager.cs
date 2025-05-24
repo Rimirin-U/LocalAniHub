@@ -10,8 +10,9 @@ namespace BasicClassLibrary
     public class EntryManager : Manager<Entry>
     {
         public EntryManager():base(new AppDbContext()) { }
+        public EntryManager(AppDbContext context) : base(context) { }
         // 自定义查询谓词
-       
+
         //按名称查询
         //按译名查询
         //这是一个静态方法，它接受一个字符串参数 name，并返回一个 Func<Entry, bool> 类型的委托。

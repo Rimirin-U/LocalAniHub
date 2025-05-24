@@ -24,7 +24,10 @@ namespace LocalAniHubFront.ViewModels.Pages
             var entry = _entryManager.FindById(entryId);
             // 获取素材路径
             //MaterialFolderPath = _materialService.GetEntryMaterialPath(entry, "");
-            MaterialFolderPath = entry.MaterialFolder;
+            // 获取全局父文件夹
+            string globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+            //拼接完整路径
+            MaterialFolderPath = Path.Combine(globalBaseFolder, "Material", entry.MaterialFolder);
         }
         /* public int EntryId { get; }
 

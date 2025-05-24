@@ -116,7 +116,7 @@ namespace LocalAniHubFront.ViewModels.Components
             new PropertySetting { Name = "Score", DisplayName = "评分" },
             new PropertySetting { Name = "BroadcastWeekday", DisplayName = "播出星期" },
             new PropertySetting { Name = "BroadcastTime", DisplayName = "播出时间" },
-            new PropertySetting { Name = "Episodes", DisplayName = "集数" }
+            new PropertySetting { Name = "EpisodeCount", DisplayName = "集数" }
         };
         }
     }

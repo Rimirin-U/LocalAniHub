@@ -10,7 +10,7 @@ using Wpf.Ui.Abstractions.Controls;
 
 namespace LocalAniHubFront.ViewModels.Pages
 {
-    public partial class EntryWindow_MainInfoViewModel : ObservableObject, INavigationAware
+    public partial class EntryWindow_MainInfoViewModel : ObservableObject
     {
         // 条目基本信息 
         [ObservableProperty]
@@ -66,7 +66,10 @@ namespace LocalAniHubFront.ViewModels.Pages
                 _metaDataManager,
                 _timeInfoManager
             );
+            LoadEntryData(_entryId);
         }
+
+        /* 已改为在构造函数中调用Load系列逻辑
         public async Task OnNavigatedToAsync()
         {
             if (!_isInitialized)
@@ -77,11 +80,12 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
 
         public Task OnNavigatedFromAsync() => Task.CompletedTask;
+        */
 
-        private async Task LoadEntryData(int entryId)
+        private void LoadEntryData(int entryId)
         {
             // 1. 加载核心条目数据
-            var entry = await Task.Run(() => _entryManager.Query(e => e.Id == entryId).FirstOrDefault());
+            var entry = _entryManager.Query(e => e.Id == entryId).FirstOrDefault();
             if (entry == null) return;
 
             // 2. 设置基础信息
@@ -102,12 +106,11 @@ namespace LocalAniHubFront.ViewModels.Pages
             }
 
             // 3. 并行加载其他数据
-            await Task.WhenAll(
-                LoadTags(entryId),
-                LoadRating(entryId),
-                LoadEpisodes(entryId),
-                LoadMetadata(entryId)
-            );
+
+            LoadTags(entryId);
+            LoadRating(entryId);
+            LoadEpisodes(entryId);
+            LoadMetadata(entryId);
         }
         private string GetChineseWeekday(DayOfWeek weekday)
         {
@@ -124,21 +127,21 @@ namespace LocalAniHubFront.ViewModels.Pages
             };
         }
 
-        private async Task LoadTags(int entryId)
+        private void LoadTags(int entryId)
         {
-            var metadata = await Task.Run(() => _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault());
+            var metadata = _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault();
             Tags = metadata != null
                 ? new ObservableCollection<string>(metadata.GetTags())
                 : new ObservableCollection<string>();
         }
-        private async Task LoadRating(int entryId)
+        private void LoadRating(int entryId)
         {
-            var rating = await Task.Run(() => _ratingManager.Query(EntryRatingManager.ByEntryId(entryId)).FirstOrDefault());
+            var rating = _ratingManager.Query(EntryRatingManager.ByEntryId(entryId)).FirstOrDefault();
             Score = (int)(rating?.Score ?? 0);
         }
-        private async Task LoadEpisodes(int entryId)
+        private void LoadEpisodes(int entryId)
         {
-            var episodes = await Task.Run(() => _episodeManager.Query(EpisodeManager.ByEntryId(entryId)));
+            var episodes = _episodeManager.Query(EpisodeManager.ByEntryId(entryId));
 
             var episodeList = new List<EpisodeTempData>();
 
@@ -179,9 +182,9 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             Episodes = new ObservableCollection<EpisodeTempData>(episodeList);
         }
-        private async Task LoadMetadata(int entryId)
+        private void LoadMetadata(int entryId)
         {
-            var metadata = await Task.Run(() => _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault());
+            var metadata = _metaDataManager.Query(EntryMetaDataManager.ByEntryId(entryId)).FirstOrDefault();
             if (metadata == null) return;
 
             var displayData = new List<MetadataTempData>();

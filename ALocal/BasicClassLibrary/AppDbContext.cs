@@ -65,6 +65,39 @@ namespace BasicClassLibrary
                     v => string.Join(',', v), // 写入数据库时转为字符串
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() // 读取数据库时转回 List<string>
                 );
+
+            /////////// 级联删除 //////////
+            modelBuilder.Entity<EntryMetadata>()
+                .HasOne(r => r.Entry)
+                .WithMany() // Entry 没有反导航属性
+                .HasForeignKey(r => r.EntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<EntryRating>()
+                .HasOne(r => r.Entry)
+                .WithMany()
+              .HasForeignKey(r => r.EntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<EntryTimeInfo>()
+                .HasOne(r => r.Entry)
+                .WithMany()
+              .HasForeignKey(r => r.EntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Episode>()
+                .HasOne(r => r.Entry)
+                .WithMany()
+              .HasForeignKey(r => r.EntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Material>()
+                .HasOne(r => r.Entry)
+                .WithMany()
+              .HasForeignKey(r => r.EntryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Resource>()
+                .HasOne(r => r.Episode)
+                .WithMany()
+              .HasForeignKey(r => r.EpisodeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

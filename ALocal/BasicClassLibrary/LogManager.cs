@@ -9,6 +9,7 @@ namespace BasicClassLibrary
     public class LogManager : Manager<LogEntry>
     {
         public LogManager() : base(new AppDbContext()) { }
+        public LogManager(AppDbContext context) : base(context) { }
 
         // 添加观影日志
         public void AddWatchLog(int episodeId)
@@ -50,7 +51,8 @@ namespace BasicClassLibrary
         {
             return context.Logs
                 .Where(le => le.LogType == logType)
-                .OrderBy(le => le.Timestamp)
+                .AsEnumerable()  // 将之前的查询结果转为内存中的操作
+                .OrderBy(le => le.Timestamp.Ticks)//// 使用Ticks来进行排序
                 .FirstOrDefault();
         }
 
@@ -59,7 +61,8 @@ namespace BasicClassLibrary
         {
             return context.Logs
                 .Where(le => le.LogType == logType)
-                .OrderByDescending(le => le.Timestamp)
+                .AsEnumerable()  // 将之前的查询结果转为内存中的操作
+                .OrderByDescending(le => le.Timestamp.Ticks)// 使用Ticks来进行降序排列
                 .FirstOrDefault();
         }
         // 查询指定剧集的最早观影日志
@@ -68,8 +71,16 @@ namespace BasicClassLibrary
             return context.Logs
                 .OfType<WatchLogEntry>()
                 .Where(w => w.EpisodeId == episodeId)
-                .OrderBy(w => w.Timestamp)
-                .FirstOrDefault();
+                .AsEnumerable() // 切换到客户端评估
+                .MinBy(w => w.Timestamp.Ticks);
         }
+        /* public WatchLogEntry? FindEarliestWatchLogForEpisode(int episodeId)
+         {
+             return context.Logs
+                 .OfType<WatchLogEntry>()
+                 .Where(w => w.EpisodeId == episodeId)
+                 .OrderBy(w => w.Timestamp)
+                 .FirstOrDefault();
+         }*/
     }
 }

@@ -8,7 +8,7 @@
         xmlns:helper="clr-namespace:LocalAniHubFront.Helpers"
         xmlns:components="clr-namespace:LocalAniHubFront.ViewModels.Components"
         mc:Ignorable="d"
-        Title="fTestWindow" Height="650" Width="1100"
+        Title="{Binding MainTitle}" Height="650" Width="1100"
         x:Name="EntryWindowInstance"
                   
         ExtendsContentIntoTitleBar="True"
@@ -113,7 +113,7 @@
                                Grid.Column="0"
                                VerticalAlignment="Bottom"
                                Text="{Binding MainTitle}"
-                               FontFamily="Segoe UI"
+                               FontFamily="Segoe UI, Microsoft YaHei"
                                FontWeight="Bold"
                                Foreground="White"
                                FontSize="40"
@@ -165,7 +165,7 @@
                     Panel.ZIndex="1"
                     Margin="0,0,0,0"
                     IsHitTestVisible="False"
-                    Fill="{Binding AverageColor}"/>
+                    Fill="{Binding AverageColor, Converter={StaticResource ColorToBrushConverter}}"/>
 
                 <!--主要内容容器-->
                 <Grid x:Name="MainContainer"

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BasicClassLibrary;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 //条目元数据类
@@ -10,6 +13,7 @@ namespace BasicClassLibrary
 {
     public class EntryMetadata : IEntryNavigation, IEntityWithId
     {
+        [Key]
         public int Id { get; set; } // 主键
 
         public int? EntryId { get; set; } // 外键 对应条目ID
@@ -43,7 +47,8 @@ namespace BasicClassLibrary
 
         // 将元数据字典转换为 JSON 格式进行存储
         [JsonIgnore]
-        private string MetadataJson
+        [Column("EntryMetadatas", TypeName = "TEXT")]
+        public string MetadataJson
         {
             get => JsonConvert.SerializeObject(_metadataValues);
             set
@@ -130,3 +135,4 @@ namespace BasicClassLibrary
         public DbSet<EntryMetadata> EntryMetadatas { get; set; }
     }
 }
+
