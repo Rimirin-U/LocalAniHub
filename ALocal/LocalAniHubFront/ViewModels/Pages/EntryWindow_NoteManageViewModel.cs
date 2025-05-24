@@ -17,10 +17,16 @@ namespace LocalAniHubFront.ViewModels.Pages
     public partial class EntryWindow_NoteManageViewModel : ObservableObject, INavigationAware
     {
         // record struct 定义
-        public readonly record struct NoteData(int NoteId, string NoteTitle);
+        public readonly record struct NoteData(int NoteId, string NoteTitle)
+        {
+            // 添加显示用属性
+            public string NoteName => NoteTitle;
+           
+        }
         // 服务实例
         private readonly NoteManager _noteManager = new NoteManager();
         private readonly EntryManager _entryManager = new EntryManager();
+        private readonly NoteService _noteService = new NoteService();
 
         // 原始数据源
         private Entry? _entry;
@@ -79,12 +85,15 @@ namespace LocalAniHubFront.ViewModels.Pages
         {
             if (_entry == null) return;
 
-            var notes = _noteManager.Query(NoteManager.ByEntriesId(new List<int> { _entry.Id }));
+            var notes = _noteManager.Query(n => n.EntriesId.Contains(_entry.Id));
             NotesData.Clear();
 
             foreach (var note in notes)
             {
-                NotesData.Add(new NoteData(note.Id, note.NoteTitle));
+                NotesData.Add(new NoteData(
+                    NoteId: note.Id,
+                    NoteTitle: note.NoteTitle
+                ));
             }
         }
 
@@ -107,11 +116,17 @@ namespace LocalAniHubFront.ViewModels.Pages
         [RelayCommand]
         private void NoteDeleteCommand(int noteId)
         {
-            _noteManager.RemoveById(noteId);
-            var noteToRemove = NotesData.FirstOrDefault(n => n.NoteId == noteId);
-            if (NotesData.Contains(noteToRemove))
+            var note = _noteManager.FindById(noteId);
+            if (note != null)
             {
-                NotesData.Remove(noteToRemove);
+                _noteService.DeleteNoteFile(note); // 删除文件
+                _noteManager.RemoveById(noteId); // 删除数据库记录
+
+                var noteToRemove = NotesData.FirstOrDefault(n => n.NoteId == noteId);
+                if (NotesData.Contains(noteToRemove))
+                {
+                    NotesData.Remove(noteToRemove);
+                }
             }
         }
 
@@ -122,16 +137,36 @@ namespace LocalAniHubFront.ViewModels.Pages
             var newNote = new Note
             {
                 NoteTitle = $"新笔记-{DateTime.Now:yyyyMMdd-HHmmss}",
-                Content = "# 新笔记\n\n在这里写下你的评价...",
                 EntriesId = new List<int> { _entryId }
             };
 
             _noteManager.Add(newNote);
+            // 创建空内容文件
+            _noteService.SaveNote(newNote, "# 新笔记\n\n在这里写下你的评价...");
+
             NotesData.Add(new NoteData(newNote.Id, newNote.NoteTitle));
 
             // 打开编辑窗口
             var window = new MarkdownWindow(newNote.Id, MarkdownWindow_OpenOp.View);
             window.Show();
+        }
+
+        [RelayCommand]
+        private void NoteEditCommand(int noteId)
+        {
+            var note = _noteManager.FindById(noteId);
+            if (note != null)
+            {
+                var window = new MarkdownWindow(noteId, MarkdownWindow_OpenOp.Edit);
+                window.Closed += (s, e) => RefreshNotes();
+                window.Show();
+            }
+        }
+
+        private void RefreshNotes()
+        {
+            LoadEntry();
+            LoadNotes();
         }
 
         public void AddResources(string filePath)
@@ -142,15 +177,20 @@ namespace LocalAniHubFront.ViewModels.Pages
                 var fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
                 var content = System.IO.File.ReadAllText(filePath);
 
+
                 var newNote = new Note
                 {
                     NoteTitle = fileName,
-                    Content = content,
                     EntriesId = new List<int> { _entryId }
                 };
 
                 _noteManager.Add(newNote);
+                _noteService.SaveNote(newNote, content); // 保存内容到文件
+                
                 NotesData.Add(new NoteData(newNote.Id, newNote.NoteTitle));
+
+                 // 可选：强制属性更改通知
+                  OnPropertyChanged(nameof(NotesData));
             }
             catch (Exception ex)
             {
@@ -158,5 +198,5 @@ namespace LocalAniHubFront.ViewModels.Pages
                 System.Diagnostics.Debug.WriteLine($"导入笔记失败: {ex.Message}");
             }
         }
+        }
     }
-}
