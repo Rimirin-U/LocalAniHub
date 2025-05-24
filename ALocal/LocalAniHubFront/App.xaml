@@ -77,8 +77,6 @@
                 <Setter Property="Foreground" Value="Black"/>
             </Style>
             <Style x:Key="BaseRoundedButtonStyle_NoShadow" TargetType="Button" BasedOn="{StaticResource BasicButton_NoShadow}">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="Foreground" Value="Black"/>
             </Style>
 
             <!--小按钮-->
