@@ -7,6 +7,9 @@ namespace LocalAniHub.ViewModels.Windows
     {
         public ObservableCollection<TextBoxItemViewModel> TextBoxes { get; } = new();
 
+        [ObservableProperty]
+        private string windowTitle = "资源搜索: BanG Dream! Ave Mujica 第2集";// 示例
+
         [RelayCommand]
         private void AddTextBox()
         {
