@@ -29,8 +29,11 @@ namespace BasicClassLibrary
             string fileName = Path.GetFileName(sourceFilePath);
             string targetPath = GetEntryMaterialPath(entry, fileName);
 
+            // 如果目标文件已存在，直接覆盖
             if (File.Exists(targetPath))
-                throw new IOException("文件已存在：" + fileName);
+            {
+                File.Delete(targetPath);
+            }
 
             File.Move(sourceFilePath, targetPath);
         }
