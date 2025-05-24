@@ -7,20 +7,20 @@ namespace LocalAniHub.ViewModels.Components
 {
     public partial class TextBoxItemViewModel : ObservableObject
     {
-        public Guid Id { get; } = Guid.NewGuid();
-
         [ObservableProperty]
         private string? text;
 
-        public Action<TextBoxItemViewModel>? RequestDelete { get; set; }
+        public Action<TextBoxItemViewModel, TextBoxItemViewModel?>? RequestDelete { get; set; }
 
         public void OnKeyDown(KeyEventArgs e)
         {
-            if (e.Key == Key.Back && string.IsNullOrEmpty(this.Text))
+            if (e.Key == Key.Back && string.IsNullOrEmpty(Text))
             {
-                RequestDelete?.Invoke(this);
+                // 前一个由 ResourceSearchViewModel 查找后回调 Focus
+                RequestDelete?.Invoke(this, null);
                 e.Handled = true;
             }
         }
+
     }
 }

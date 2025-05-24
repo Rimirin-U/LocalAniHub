@@ -24,27 +24,32 @@
                      Title="{Binding ViewModel.WindowTitle, Mode=OneWay}"
                      Icon="{ui:SymbolIcon Symbol=Search12}"/>
 
+        <Grid x:Name="MainGrid" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1" Margin="12,0,12,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid x:Name="TopGrid" Grid.Row="0" Margin="12,0,12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <Grid x:Name="TopLeftGrid" Grid.Column="0" VerticalAlignment="Top" Margin="0,0,8,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                <Grid x:Name="TopLeftGrid" Grid.Column="0" VerticalAlignment="Top" Margin="0,0,8,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <Border Grid.Row="0"
+                    <Border Grid.Row="0"
                         CornerRadius="8"
                         Background="{DynamicResource AccentFillColorDefaultBrush}"
                         HorizontalAlignment="Stretch"
                         BorderBrush="#10000000"
                         BorderThickness="1"
                         Height="36" Width="88">
-                    <TextBlock Text="关键词"
+                        <TextBlock Text="关键词"
                                TextWrapping="NoWrap"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
@@ -52,30 +57,30 @@
                                FontSize="16"
                                Padding="8,0,8,0"
                                TextAlignment="Center"/>
-                </Border>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button Grid.Row="1" x:Name="AddTextBoxButton" Height="36" Width="36"
+                    </Border>
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button Grid.Row="1" x:Name="AddTextBoxButton" Height="36" Width="36"
                         Margin="0,8,8,0" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
                     Content="&#xE710;" Command="{Binding ViewModel.AddTextBoxCommand}" HorizontalAlignment="Right"/>
-                <Button Grid.Row="1" x:Name="SearchButton"  Height="36" Width="36"
+                        <Button Grid.Row="1" x:Name="SearchButton"  Height="36" Width="36"
                         Margin="0,8,0,0" Style="{StaticResource RoundedButton_SegoeFluentIcon_NoShadow}"
                     Content="&#xE721;" Command="{Binding ViewModel.SearchCommand}" HorizontalAlignment="Left"/>
-                </StackPanel>
-            </Grid>
+                    </StackPanel>
+                </Grid>
 
-            <StackPanel Grid.Column="1">
+                <StackPanel Grid.Column="1">
 
-                <ScrollViewer Height="300">
-                    <ItemsControl ItemsSource="{Binding ViewModel.TextBoxes}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Margin="-8,-8,0,0"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding ViewModel.TextBoxes}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Margin="-8,-8,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Grid.Row="0"
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Grid.Row="0"
                                         CornerRadius="8"
                                         Background="White"
                                         BorderBrush="#10000000"
@@ -83,7 +88,7 @@
                                         HorizontalAlignment="Center"
                                         Height="36"
                                         Margin="8,8,0,0">
-                                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                                              PreviewKeyDown="TextBox_KeyDown"
                                              Background="Transparent"
                                              BorderThickness="0"
@@ -93,21 +98,55 @@
                                              HorizontalContentAlignment="Center"
                                              Padding="8,0,8,0"
                                              TextAlignment="Center">
-                                        <TextBox.Template>
-                                            <ControlTemplate TargetType="TextBox">
-                                                <ScrollViewer x:Name="PART_ContentHost"
+                                            <TextBox.Template>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <ScrollViewer x:Name="PART_ContentHost"
                                                               Background="Transparent"
                                                               Focusable="False" />
-                                            </ControlTemplate>
-                                        </TextBox.Template>
-                                    </TextBox>
-                                </Border>
+                                                </ControlTemplate>
+                                            </TextBox.Template>
+                                        </TextBox>
+                                    </Border>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Grid>
+
+            <ScrollViewer x:Name="ResultArea" Grid.Row="1" Margin="12,0,12,12"
+                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Grid x:Name="ResultGrid" Grid.IsSharedSizeScope="True" VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="TitleGrid" Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="TitleColumn"/>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="DownloadButtonColumn"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="标题" FontWeight="Black"/>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding ViewModel.ResourceItems}" Grid.Row="1">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
 
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </ScrollViewer>
-            </StackPanel>
+                </Grid>
+
+            </ScrollViewer>
         </Grid>
     </Grid>
 </ui:FluentWindow>
