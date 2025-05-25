@@ -1,202 +1,183 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using BasicClassLibrary;
+﻿using BasicClassLibrary;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Wpf.Ui;
-using Wpf.Ui.Abstractions.Controls;
-using LocalAniHubFront.Models;
+using LocalAniHubFront.Helpers;
+using LocalAniHubFront.ViewModels.Windows;
 using LocalAniHubFront.Views.Windows;
-
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace LocalAniHubFront.ViewModels.Pages
 {
-    public partial class EntryWindow_NoteManageViewModel : ObservableObject, INavigationAware
+    public partial class EntryWindow_NoteManageViewModel : ObservableObject
     {
-        // record struct 定义
-        public readonly record struct NoteData(int NoteId, string NoteTitle)
-        {
-            // 添加显示用属性
-            public string NoteName => NoteTitle;
-           
-        }
-        // 服务实例
-        private readonly NoteManager _noteManager = new NoteManager();
-        private readonly EntryManager _entryManager = new EntryManager();
-        private readonly NoteService _noteService = new NoteService();
+        private readonly NoteManager _noteManager = new();
+        private readonly NoteService _noteService = new();
+        private readonly EntryManager _entryManager = new();
+        private readonly Entry _entry;
 
-        // 原始数据源
-        private Entry? _entry;
-
-        // 笔记数据源
-        public ObservableCollection<NoteData> NotesData { get; } = new();
-
-        // 标题显示模式相关属性
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(Subtitle))]
-        private string _selectedTitleMode;
+        private string _subtitle = string.Empty;
 
-        private bool _isInitialized = false;
-        private int _entryId;
+        [ObservableProperty]
+        private ObservableCollection<NoteItem> _noteData = new();
+
+        // 公开命令供XAML绑定
+        public ICommand NoteViewCommand { get; }
+        public ICommand NoteDeleteCommand { get; }
 
         public EntryWindow_NoteManageViewModel(int entryId)
         {
-            _entryId = entryId;
-            LoadEntry(); // 提前加载 Entry 数据
-            LoadInitialState(); // 初始化标题模式
+    //        // 测试数据（注释正式逻辑）
+    //        _noteData = new ObservableCollection<NoteItem>
+    //{
+    //    new NoteItem { NoteId = 1, NoteName = "测试笔记1" },
+    //    new NoteItem { NoteId = 2, NoteName = "测试笔记2" }
+    //};
+            _entry = _entryManager.FindById(entryId)
+                ?? throw new ArgumentException($"未找到ID为{entryId}的条目");
+
+            // 初始化命令
+            NoteViewCommand = new RelayCommand<int>(NoteView);
+            NoteDeleteCommand = new RelayCommand<int>(NoteDelete);
+
+            InitializeViewModel();
         }
-
-        public Task OnNavigatedToAsync()
-        {
-            if (!_isInitialized)
-                InitializeViewModel();
-
-            return Task.CompletedTask;
-        }
-
-        public Task OnNavigatedFromAsync() => Task.CompletedTask;
 
         private void InitializeViewModel()
         {
-            LoadEntry();
-            LoadInitialState();
+            UpdateSubtitle();
             LoadNotes();
-            _isInitialized = true;
         }
 
-        private void LoadEntry()
+        private void UpdateSubtitle()
         {
-            _entry = _entryManager.FindById(_entryId);
-            OnPropertyChanged(nameof(Subtitle)); // 手动触发 Subtitle 更新
-        }
+            // 从全局设置读取显示偏好 (0:原名 1:译名)
+            var displaySetting = GlobalSettingsService.Instance.GetValue("entryWindowMainTitle");
 
-        private void LoadInitialState()
-        {
-            // 加载标题显示模式
-            var titleDisplayMode = GlobalSettingsService.Instance.GetValue("entryWindowMainTitle");
-            SelectedTitleMode = int.TryParse(titleDisplayMode, out int mode) && mode == 0 ? "Translated" : "Original";
+            string displayName = displaySetting == "0"
+                ? _entry.TranslatedName
+                : _entry.OriginalName;
 
+            Subtitle = $"{displayName} ";
         }
 
         private void LoadNotes()
         {
-            if (_entry == null) return;
-
-            var notes = _noteManager.Query(n => n.EntriesId.Contains(_entry.Id));
-            NotesData.Clear();
+            NoteData.Clear();
+            var notes = _noteManager.Query(NoteManager.ByEntriesId(new List<int> { _entry.Id }))
+                                   .OrderByDescending(n => n.Id);
 
             foreach (var note in notes)
             {
-                NotesData.Add(new NoteData(
-                    NoteId: note.Id,
-                    NoteTitle: note.NoteTitle
-                ));
-            }
-        }
-
-        // 计算属性：根据SelectedTitleMode返回原名或译名
-        public string Subtitle => SelectedTitleMode switch
-        {
-            "Original" => _entry?.OriginalName ?? "",
-            "Translated" => _entry?.TranslatedName ?? "",
-            _ => _entry?.OriginalName ?? ""
-        };
-
-        [RelayCommand]
-        private void NoteViewCommand(int noteId)
-        {
-            // 创建新窗口并传入 NoteId
-            var window = new MarkdownWindow(noteId, MarkdownWindow_OpenOp.View);
-            window.Show();
-        }
-
-        [RelayCommand]
-        private void NoteDeleteCommand(int noteId)
-        {
-            var note = _noteManager.FindById(noteId);
-            if (note != null)
-            {
-                _noteService.DeleteNoteFile(note); // 删除文件
-                _noteManager.RemoveById(noteId); // 删除数据库记录
-
-                var noteToRemove = NotesData.FirstOrDefault(n => n.NoteId == noteId);
-                if (NotesData.Contains(noteToRemove))
+                NoteData.Add(new NoteItem
                 {
-                    NotesData.Remove(noteToRemove);
-                }
+                    NoteId = note.Id,
+                    NoteName = note.NoteTitle
+                });
             }
-        }
-
-        [RelayCommand]
-        private void NewNoteCommand()
-        {
-            // 创建新笔记并关联到当前条目
-            var newNote = new Note
-            {
-                NoteTitle = $"新笔记-{DateTime.Now:yyyyMMdd-HHmmss}",
-                EntriesId = new List<int> { _entryId }
-            };
-
-            _noteManager.Add(newNote);
-            // 创建空内容文件
-            _noteService.SaveNote(newNote, "# 新笔记\n\n在这里写下你的评价...");
-
-            NotesData.Add(new NoteData(newNote.Id, newNote.NoteTitle));
-
-            // 打开编辑窗口
-            var window = new MarkdownWindow(newNote.Id, MarkdownWindow_OpenOp.View);
-            window.Show();
-        }
-
-        [RelayCommand]
-        private void NoteEditCommand(int noteId)
-        {
-            var note = _noteManager.FindById(noteId);
-            if (note != null)
-            {
-                var window = new MarkdownWindow(noteId, MarkdownWindow_OpenOp.Edit);
-                window.Closed += (s, e) => RefreshNotes();
-                window.Show();
-            }
-        }
-
-        private void RefreshNotes()
-        {
-            LoadEntry();
-            LoadNotes();
         }
 
         public void AddResources(string filePath)
         {
-            // 从Markdown文件导入笔记
             try
             {
-                var fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                var content = System.IO.File.ReadAllText(filePath);
+                if (!File.Exists(filePath))
+                {
+                    MessageBox.Show("文件不存在", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
+                string content = File.ReadAllText(filePath);
+                string title = Path.GetFileNameWithoutExtension(filePath);
+
+                if (_noteManager.Query(n => n.NoteTitle == title).Any())
+                {
+                    title = $"{title}_{DateTime.Now:yyyyMMddHHmmss}";
+                }
 
                 var newNote = new Note
                 {
-                    NoteTitle = fileName,
-                    EntriesId = new List<int> { _entryId }
+                    NoteTitle = title,
+                    EntriesId = new List<int> { _entry.Id }
                 };
 
                 _noteManager.Add(newNote);
-                _noteService.SaveNote(newNote, content); // 保存内容到文件
-                
-                NotesData.Add(new NoteData(newNote.Id, newNote.NoteTitle));
+                _noteService.SaveNote(title, content);
+                LoadNotes();
 
-                 // 可选：强制属性更改通知
-                  OnPropertyChanged(nameof(NotesData));
+                MessageBox.Show($"成功导入笔记: {title}", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                // 处理异常，例如显示错误消息
-                System.Diagnostics.Debug.WriteLine($"导入笔记失败: {ex.Message}");
+                MessageBox.Show($"导入失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        [RelayCommand]
+        private void NewNote()
+        {
+            var noteTitle = $"{_entry.OriginalName} 评价 {DateTime.Now:yyyyMMddHHmm}";
+            var newNote = new Note
+            {
+                NoteTitle = noteTitle,
+                EntriesId = new List<int> { _entry.Id }
+            };
+
+            _noteManager.Add(newNote);
+            _noteService.SaveNote(noteTitle, "");
+            LoadNotes();
+            NoteView(newNote.Id); // 直接调用方法而不是通过命令
+        }
+
+        private void NoteView(int noteId)
+        {
+            var note = _noteManager.FindById(noteId);
+            if (note != null)
+            {
+                string content = _noteService.LoadNoteContent(note);
+
+                var markdownWindow = new MarkdownWindow(
+                    noteId: note.Id,
+                    openOp: MarkdownWindow_OpenOp.Edit)
+                {
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Owner = Application.Current.MainWindow
+                };
+
+                var viewModel = (MarkdownViewModel)markdownWindow.DataContext;
+                viewModel.MarkdownText = content;
+
+                markdownWindow.ShowDialog();
+            }
+        }
+
+        private void NoteDelete(int noteId)
+        {
+            var note = _noteManager.FindById(noteId);
+            if (note != null)
+            {
+                var result = MessageBox.Show($"确定要删除笔记 '{note.NoteTitle}' 吗?",
+                    "确认删除", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    _noteService.DeleteNoteFile(note);
+                    _noteManager.RemoveById(note.Id); // 确保从管理器中也删除
+                    LoadNotes();
+                }
+            }
         }
     }
+
+    public class NoteItem
+    {
+        public int NoteId { get; set; }
+        public string NoteName { get; set; } = string.Empty;
+    }
+}
