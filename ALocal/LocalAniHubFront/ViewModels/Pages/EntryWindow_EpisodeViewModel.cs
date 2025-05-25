@@ -106,18 +106,15 @@ namespace LocalAniHubFront.ViewModels.Pages
                 SelectedTitleMode = "Translated";
             }
 
-            // 默认观看状态为“未看”
-            if (_entry != null)
+            if (_entry != null && _episode != null)
             {
-                StateSelectedOption = _entry.State == State.Watched ? "已看" : "未看";
-            }
-            else
-            {
-                StateSelectedOption = "未看";
-            }
-            if (_episode != null)
-            {
-                ShortComment = _episode.ShortComment;
+                StateSelectedOption = _entry.State == State.Watched ? "已看" : _episode.State switch
+                {
+                    State.Watching => "在看",
+                    State.Watched => "已看",
+                    State.NotWatched => "未看",
+                    _ => "未看"
+                };
             }
         }
         private void LoadResources()
@@ -198,6 +195,20 @@ namespace LocalAniHubFront.ViewModels.Pages
                 // 如果是“未看”，清空显示
                 WatchedDate = "";
                 WatchedTime = "";
+            }
+            // 更新条目的状态
+            if (_episode != null)
+            {
+                _episode.State = newValue switch
+                {
+                    "未看" => State.NotWatched,
+                    "在看" => State.Watching,
+                    "已看" => State.Watched,
+                    _ => State.NotWatched
+                };
+
+                // 调用管理器的方法保存更新
+                _episodeManager.Modify(_episode);
             }
         }
         [RelayCommand]
