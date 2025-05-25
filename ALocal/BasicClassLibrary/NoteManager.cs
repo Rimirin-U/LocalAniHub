@@ -17,8 +17,11 @@ namespace BasicClassLibrary
             //_noteService = new NoteService();
         }
         // 根据作品ID查找关联笔记
+        //public readonly static Func<ICollection<int>, Func<Note, bool>> ByEntriesId =
+        //    entriesId => (n => n.EntriesId == entriesId);
+
         public readonly static Func<ICollection<int>, Func<Note, bool>> ByEntriesId =
-            entriesId => (n => n.EntriesId == entriesId);
+          entriesId => (n => n.EntriesId != null && entriesId.Any(id => n.EntriesId.Contains(id)));
 
         // 根据剧集ID查找关联笔记
         public readonly static Func<ICollection<int>, Func<Note, bool>> ByEpisodesId =
