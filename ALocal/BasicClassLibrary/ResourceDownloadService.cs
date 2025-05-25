@@ -30,6 +30,7 @@ namespace BasicClassLibrary
                 {
                     downloadManagers.Add(manager);
                 }
+                manager.Start();
                 return manager;
             });
         }
