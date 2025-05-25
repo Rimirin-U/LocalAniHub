@@ -114,10 +114,56 @@ namespace BasicClassLibrary
         // 本事件在TorrentState每次改变时都会触发，但以上逻辑只应该在TorrentState改变为 已完成 时触发
         public static EventHandler<TorrentStateChangedEventArgs> AfterDownload(int episodeId)
         {
-            return delegate (object? sender, TorrentStateChangedEventArgs e)
+            return (object? sender, TorrentStateChangedEventArgs e) =>
             {
-                // ...
+                // 只在下载完成（Seeding）时处理
+                if (e.NewState != TorrentState.Seeding)
+                    return;
+                // 获取下载管理器
+                if (sender is not MagnetDownloadManager manager)
+                    return;
+
+                // 获取下载文件夹
+                string downloadFolder = manager.SavePath;
+                if (!Directory.Exists(downloadFolder))
+                    return;
+
+                // 获取下载的文件
+                var files = Directory.GetFiles(downloadFolder);
+                if (files.Length == 0)
+                    return;
+
+                string sourceFile = files[0];
+                string fileName = Path.GetFileName(sourceFile);
+
+                // 获取全局资源父目录
+                string? parentFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+
+                // 创建目标文件夹（以集数ID命名）
+                var episodeManager = new EpisodeManager();
+                var episode = episodeManager.FindById(episodeId);
+                if (episode == null || episode.Entry == null)
+                    throw new InvalidOperationException("未找到对应的Episode或Entry");
+                
+                string destFolder = Path.Combine(parentFolder,"Resource", episode.Entry.TranslatedName);
+                Directory.CreateDirectory(destFolder);
+
+                // 目标文件路径
+                string destFile = Path.Combine(destFolder, fileName);
+
+                // 避免覆盖
+                if (File.Exists(destFile))
+                    throw new IOException($"目标文件已存在: {destFile}");
+
+                // 移动文件
+                File.Move(sourceFile, destFile);
+
+                // 创建资源对象并写入数据库
+                var resourceManager = new ResourceManager();
+                var resource = new Resource(episodeId, DateTime.Now, destFile);
+                resourceManager.Addresource(resource);
             };
         }
+
     }
 }
