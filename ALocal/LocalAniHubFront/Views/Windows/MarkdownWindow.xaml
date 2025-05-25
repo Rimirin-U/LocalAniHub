@@ -134,7 +134,7 @@
                                        Margin="0,8,0,0"/>
 
                             <!-- 关联单集 -->
-                            <ItemsControl ItemsSource="{Binding EntryComboBoxList}">
+                            <ItemsControl ItemsSource="{Binding EpisodeComboBoxList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Margin="0,8,0,0">
