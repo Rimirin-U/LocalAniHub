@@ -28,7 +28,7 @@ namespace BasicClassLibrary
             {
                 NoteTitle = noteTitle
             };
-            _noteManager.Add(note); // 添加到数据库
+            //_noteManager.Add(note); // 添加到数据库
 
             // 保存笔记内容
             File.WriteAllText(GetNoteFilePath(noteTitle), content);
