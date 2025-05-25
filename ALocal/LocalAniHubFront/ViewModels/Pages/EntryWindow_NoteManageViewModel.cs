@@ -111,7 +111,7 @@ namespace LocalAniHubFront.ViewModels.Pages
                 _noteService.SaveNote(title, content);
                 LoadNotes();
 
-                MessageBox.Show($"成功导入笔记: {title}", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show($"成功导入笔记: {title}", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
