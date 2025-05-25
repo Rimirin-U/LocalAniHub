@@ -80,28 +80,25 @@ namespace LocalAniHubFront.ViewModels
         {
             try
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ResourcesData.Clear();
-                    var episodes = _episodeManager.Query(EpisodeManager.ByEntryId(EntryId));
+                // 清空当前资源数据集合
+                ResourcesData.Clear();
+                var resources = _resourceManager.Query(r => r.EpisodeId == EntryId)
+                    .OrderBy<Resource, DateTime>(r => r.ImportData)
+                    .ToList();
 
-                    foreach (var episode in episodes)
-                    {
-                        var resources = _resourceManager.Query(ResourceManager.ByEntryId(episode.Id));
-                        foreach (var resource in resources.Where(r => !string.IsNullOrEmpty(r.ResourcePath)))
-                        {
-                            ResourcesData.Add(new ResourceDisplayItem(
-                                resource.Id,
-                                episode.EpisodeNumber,
-                                Path.GetFileName(resource.ResourcePath!)
-                            ));
-                        }
-                    }
-                });
+                // 将查询到的资源转换为 ResourceDisplayItem 并添加到 ResourcesData 集合
+                foreach (var resource in resources)
+                {
+                    ResourcesData.Add(new ResourceDisplayItem(
+                        resource.Id,
+                        resource.Episode?.EpisodeNumber ?? 0, // 如果 Episode 为 null，默认为 0
+                        Path.GetFileName(resource.ResourcePath)
+                    ));
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"资源加载失败: {ex.Message}");
+                Debug.WriteLine($"加载资源失败: {ex.Message}");
             }
         }
 
@@ -145,12 +142,48 @@ namespace LocalAniHubFront.ViewModels
                 LoadResources(); // 刷新列表
             }
         }
-
+        // 支持批量导入
         public void AddResources(string[] filePaths)
+        {
+            foreach (var filePath in filePaths)
+            {
+                AddResources(filePath);
+            }
+        }
+
+        // 单文件导入（默认归为第1集）
+        [RelayCommand]
+        public void AddResources(string filePath)
         {
             try
             {
-                ProcessFiles(filePaths);
+                if (!File.Exists(filePath))
+                {
+                    MessageBox.Show("文件不存在", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var entry = _entryManager.FindById(EntryId);
+                if (entry == null)
+                {
+                    MessageBox.Show("未找到条目信息", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // 默认归为第1集
+                var episode = GetOrCreateEpisode(1);
+                if (episode == null)
+                {
+                    MessageBox.Show("未找到或创建第1集", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // 直接用原始路径创建资源对象
+                var resource = new Resource(episode.Id, DateTime.Now, filePath);
+                _resourceManager.Addresource(resource);
+
+                // 刷新资源列表
+                LoadResources();
             }
             catch (Exception ex)
             {
@@ -158,38 +191,7 @@ namespace LocalAniHubFront.ViewModels
             }
         }
 
-        private void ProcessFiles(IEnumerable<string> filePaths)
-        {
-            var entry = _entryManager.FindById(EntryId);
-            if (entry == null) return;
 
-            foreach (var filePath in filePaths)
-            {
-                try
-                {
-                    if (!File.Exists(filePath)) continue;
-
-                    var episodeNumber = ExtractEpisodeNumber(filePath);
-                    if (episodeNumber < 1 || episodeNumber > entry.EpisodeCount)
-                    {
-                        MessageBox.Show($"集数 {episodeNumber} 超出范围", "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        continue;
-                    }
-
-                    var episode = GetOrCreateEpisode(episodeNumber);
-                    if (episode == null) continue;
-
-                    var resource = new Resource(episode.Id, DateTime.Now, filePath);
-                    _resourceManager.Addresource(resource);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"文件处理失败: {filePath}\n{ex.Message}");
-                }
-            }
-
-            LoadResources();
-        }
 
         private Episode? GetOrCreateEpisode(int episodeNumber)
         {
@@ -198,19 +200,19 @@ namespace LocalAniHubFront.ViewModels
 
             if (episode == null)
             {
-                episode = new Episode(EntryId,episodeNumber,State.NotWatched);
+                episode = new Episode(EntryId, episodeNumber, State.NotWatched);
                 _episodeManager.Add(episode);
             }
 
             return episode;
         }
 
-        // 从文件名提取集数
-        private static int ExtractEpisodeNumber(string fileName)
-        {
-            var match = Regex.Match(fileName, @"(?:\[|EP|ep|第)?(\d{1,3})(?:\]|集|话)?");
-            return match.Success ? int.Parse(match.Groups[1].Value) : 1;
-        }
+        //// 从文件名提取集数
+        //private static int ExtractEpisodeNumber(string fileName)
+        //{
+        //    var match = Regex.Match(fileName, @"(?:\[|EP|ep|第)?(\d{1,3})(?:\]|集|话)?");
+        //    return match.Success ? int.Parse(match.Groups[1].Value) : 1;
+        //}
 
         // INavigationAware 实现
         public Task OnNavigatedToAsync()
@@ -256,6 +258,41 @@ namespace LocalAniHubFront.ViewModels
             {
                 MessageBox.Show($"重命名失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 LoadResources(); // 恢复显示
+            }
+        }
+        partial void OnIsAutoFetchChanged(bool value)
+        {
+            UpdateEntrySettings();
+        }
+
+        partial void OnIsAutoDeleteChanged(bool value)
+        {
+            UpdateEntrySettings();
+        }
+
+        private void UpdateEntrySettings()
+        {
+            try
+            {
+                var entry = _entryManager.FindById(EntryId);
+                if (entry != null)
+                {
+                    entry.HasUpdateTime = IsAutoFetch;
+                    entry.AutoClearResources = IsAutoDelete;
+                    _entryManager.Modify(entry);
+                }
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var entry = _entryManager.FindById(EntryId);
+                    if (entry != null)
+                    {
+                        IsAutoFetch = entry.HasUpdateTime;
+                        IsAutoDelete = entry.AutoClearResources;
+                    }
+                });
             }
         }
     }
