@@ -1,5 +1,6 @@
 ﻿using BasicClassLibrary;
 using LocalAniHubFront.ViewModels.Pages;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +21,7 @@ using System.Windows.Shapes;
 
 namespace LocalAniHubFront.Views.Pages
 {
-    public partial class EntryWindow_Episode : Page,INotifyPropertyChanged
+    public partial class EntryWindow_Episode : Page, INotifyPropertyChanged
     {
         private int _episodeId;
         public int EpisodeId
@@ -66,6 +67,22 @@ namespace LocalAniHubFront.Views.Pages
             page.InitializeViewModel();
             NavigationService.Navigate(page);
             */
+        }
+
+        private void AddResourceButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "视频文件 (*.mp4;*.avi;*.mkv;*.mov;*.wmv)|*.mp4;*.avi;*.mkv;*.mov;*.wmv|所有文件 (*.*)|*.*";
+            openFileDialog.Multiselect = false;
+
+            // 显示对话框并判断用户是否点击了“确定”
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // 获取选中的文件路径
+                string filePath = openFileDialog.FileName;
+                var vm = DataContext as EntryWindow_EpisodeViewModel;
+                if (vm is EntryWindow_EpisodeViewModel) vm.AddResource(filePath);
+            }
         }
     }
 }

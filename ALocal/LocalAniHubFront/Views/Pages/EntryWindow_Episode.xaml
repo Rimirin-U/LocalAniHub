@@ -99,25 +99,29 @@
                   Margin="0,16,0,0">
                     <WrapPanel x:Name="UpperButtons">
                         <Button x:Name="WatchButton"
-                            Style="{StaticResource BasicButton}"
-                            Foreground="Black"
-                            Background="#FFF2CC"
-                            FontFamily="Segoe Fluent Icons"
-                            Height="32"
-                            Width="200"
-                            Content="&#xE768;"/>
+                                Style="{StaticResource BasicButton}"
+                                Foreground="Black"
+                                Background="#FFF2CC"
+                                FontFamily="Segoe Fluent Icons"
+                                Height="32"
+                                Width="200"
+                                Content="&#xE768;"
+                                Command="{Binding AutoSelectResourcePlayCommand}"/>
                         <Button x:Name="DownloadResourceButton"
-                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                            Margin="12,0,0,0"
-                            Content="&#xE896;"/>
+                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                Margin="12,0,0,0"
+                                Content="&#xE896;"
+                                Command="{Binding DownloadResourceCommand}"/>
                         <Button x:Name="AddResourceButton"
-                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                            Margin="12,0,0,0"
-                            Content="&#xE710;"/>
+                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                Margin="12,0,0,0"
+                                Content="&#xE710;"
+                                Click="AddResourceButton_Click"/>
                         <Button x:Name="WriteNoteButton"
-                            Style="{StaticResource RoundedButton_SegoeFluentIcon}"
-                            Margin="12,0,0,0"
-                            Content="&#xE70F;"/>
+                                Style="{StaticResource RoundedButton_SegoeFluentIcon}"
+                                Margin="12,0,0,0"
+                                Content="&#xE70F;"
+                                Command="{Binding WriteNoteCommand}"/>
                     </WrapPanel>
                 </Grid>
 
@@ -242,7 +246,7 @@
                                    LineHeight="30"/>
 
                         <!--与上一个同理-->
-                        <ItemsControl ItemsSource="{Binding NoteData}"
+                        <ItemsControl ItemsSource="{Binding NotesData}"
                                       Grid.Column="1">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -260,7 +264,7 @@
                                             VerticalScrollBarVisibility="Disabled">
                                             <TextBlock x:Name="ResourceName"
                                                        Style="{StaticResource WhiteTextStyle}"
-                                                       Text="{Binding NoteName}"
+                                                       Text="{Binding NoteTitle}"
                                                        VerticalAlignment="Center"/>
                                         </ScrollViewer>
 
@@ -269,7 +273,7 @@
                                                 Margin="8,0,0,0"
                                                 Style="{StaticResource RoundedButton_SegoeFluentIcon}"
                                                 Content="&#xE8ad;"
-                                                Command="{Binding DataContext.NoteViewCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                Command="{Binding DataContext.NoteViewCommand, ElementName=EpisodePage}"
                                                 CommandParameter="{Binding NoteId}"/>
                                         <!--NoteViewCommand：打开一个构造函数传入NoteId的窗口，窗口名为NoteViewWindow（待定义）-->
 
@@ -278,7 +282,7 @@
                                                 Margin="8,0,0,0"
                                                 Style="{StaticResource RoundedButton_SegoeFluentIcon}"
                                                 Content="&#xE74D;"
-                                                Command="{Binding DataContext.NoteDeleteCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                Command="{Binding DataContext.NoteDeleteCommand, ElementName=EpisodePage}"
                                                 CommandParameter="{Binding NoteId}"/>
                                     </Grid>
 
