@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using LocalAniHub.ViewModels.Components;
 using LocalAniHub.ViewModels.Windows;
-
+using BasicClassLibrary;
 namespace LocalAniHub.Views.Windows
 {
     public partial class ResourceSearchWindow

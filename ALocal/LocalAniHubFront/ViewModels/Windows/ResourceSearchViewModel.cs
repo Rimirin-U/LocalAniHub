@@ -12,19 +12,43 @@ namespace LocalAniHub.ViewModels.Windows
             // ...
             // 需要初始化: WindowTitle
             // 需要初始化：默认添加的关键词，包括：原名、译名、KeyWords、集数的数字
+            this.episodeId = episodeId;
+            var episodeManager= new EpisodeManager();
+            var _episode=episodeManager.FindById(episodeId);
+            if (_episode == null)
+            {
+                throw new InvalidOperationException($"Episode with ID {episodeId} not found.");
+            }
+            var _entryId = _episode.EntryId;
+            var entryManager = new EntryManager();
+            var _entry = entryManager.FindById((int)_entryId);
+            if (_entry == null)
+            {
+                throw new InvalidOperationException($"Entry for Episode ID {episodeId} not found.");
+            }
+            WindowTitle = $"资源搜索: {_entry.TranslatedName} 第{_episode.EpisodeNumber}集";
+            var defaultKeywords = new List<string>
+            {
+                 _entry.OriginalName,
+                 _entry.TranslatedName,
+                 _episode.EpisodeNumber.ToString()
+            };
+            defaultKeywords.AddRange(_entry.KeyWords);
+            foreach (var keyword in defaultKeywords.Distinct())
+            {
+                var item = new TextBoxItemViewModel { Text = keyword };
+                item.RequestDelete = (self, _) => RemoveTextBox(self);
+                TextBoxes.Add(item);
+            }
+
         }
         private int episodeId;
 
         public ObservableCollection<TextBoxItemViewModel> TextBoxes { get; } = new();
 
         [ObservableProperty]
-        private ObservableCollection<ResourceItem> resourceItems;/* = new() { 
-            new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][1080P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl" },
-            new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][720P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl1" },
-            new() { Title = "[BeanSub][Kusuriya no Hitorigoto][43][GB][2160P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl2" },
-            new() { Title = "[BeanSub][Kusuriya no Hitorigoto][42][GB][1080P][x264_AAC]", PubDate = new(2025, 5, 24), DownloadUrl = "testUrl3" }
-        };*/
-
+        private ObservableCollection<ResourceItem> resourceItems;
+        private readonly ResourceSearch _resourceSearcher=new ResourceSearch();
         [ObservableProperty]
         private string windowTitle;// 示例:"资源搜索: BanG Dream! Ave Mujica 第2集"
 
@@ -39,10 +63,30 @@ namespace LocalAniHub.ViewModels.Windows
         }
 
         [RelayCommand]
-        private void Search()
+        /*private void Search()
         {
             // ...
             // ... 以TextBoxes中的所有Text为List<string>，进行资源搜索，以填充resourceItems
+        }*/
+        private async Task Search()
+        {
+            var keywords = TextBoxes.Select(t => t.Text).Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
+
+            if (!keywords.Any())
+            {
+                MessageBox.Show("请输入至少一个关键词进行搜索。");
+                return;
+            }
+
+            try
+            {
+                var results = await _resourceSearcher.SearchMultipleKeywordsAsync(keywords);
+                ResourceItems = new ObservableCollection<ResourceItem>(results);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"搜索失败: {ex.Message}");
+            }
         }
 
         [RelayCommand]
