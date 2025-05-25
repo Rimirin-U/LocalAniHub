@@ -116,7 +116,7 @@
                                 Style="{StaticResource RoundedButton_SegoeFluentIcon}"
                                 Margin="12,0,0,0"
                                 Content="&#xE710;"
-                                MouseLeftButtonDown="AddResourceButton_MouseLeftButtonDown"/>
+                                Click="AddResourceButton_Click"/>
                         <Button x:Name="WriteNoteButton"
                                 Style="{StaticResource RoundedButton_SegoeFluentIcon}"
                                 Margin="12,0,0,0"

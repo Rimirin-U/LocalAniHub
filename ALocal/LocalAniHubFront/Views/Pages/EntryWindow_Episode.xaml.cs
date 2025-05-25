@@ -69,10 +69,10 @@ namespace LocalAniHubFront.Views.Pages
             */
         }
 
-        private void AddResourceButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void AddResourceButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "文本文件 (*.txt)|*.txt|所有文件 (*.*)|*.*";
+            openFileDialog.Filter = "视频文件 (*.mp4;*.avi;*.mkv;*.mov;*.wmv)|*.mp4;*.avi;*.mkv;*.mov;*.wmv|所有文件 (*.*)|*.*";
             openFileDialog.Multiselect = false;
 
             // 显示对话框并判断用户是否点击了“确定”

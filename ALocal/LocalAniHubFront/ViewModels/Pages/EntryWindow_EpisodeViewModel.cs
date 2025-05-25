@@ -230,7 +230,7 @@ namespace LocalAniHubFront.ViewModels.Pages
             {
                 Note note = new();
                 note.EpisodesId.Add(_episode.Id);
-                string title = $"{_entry.OriginalName} 第{_episode.EpisodeNumber}集 {DateTime.Now.ToString()}";
+                string title = $"{_entry.OriginalName} 第{_episode.EpisodeNumber}集 {DateTime.Now:yyyyMMddHHmm}";
                 note.NoteTitle = title;
                 NoteManager noteManager = new();
                 noteManager.Add(note);
