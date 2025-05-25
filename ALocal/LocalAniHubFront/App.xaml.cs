@@ -90,11 +90,24 @@ namespace LocalAniHubFront
                 // 自动创建数据库和表结构（如果不存在）
                 context.Database.EnsureCreated();
             }
+
+            // load trackers
+            TrackerManager trackerManager = new();
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "preloadTrackers.txt"); ;
+            var lst = File.ReadAllLines(filePath)
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => line.Trim())
+                .ToList();
+            foreach (var str in lst)
+            {
+                trackerManager.Add(new(str));
+            }
+
             // debug: 插入初始数据
-            var settingService = GlobalSettingsService.Instance;
-            settingService.SetValue("defaultPlayerPath", @"C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe");
-            //var entryManager = new EntryManager();
-            //entryManager.Add(new("迷途之子!!!!!","BanG Dream! It's MyGO!!!!!",new(2023,6,29),new(2023,10,29),"原创动画",13,State.Watching)
+            // var settingService = GlobalSettingsService.Instance;
+            // settingService.SetValue("defaultPlayerPath", @"C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe");
+            // var entryManager = new EntryManager();
+            // entryManager.Add(new("迷途之子!!!!!","BanG Dream! It's MyGO!!!!!",new(2023,6,29),new(2023,10,29),"原创动画",13,State.Watching)
         }
 
         /// <summary>
