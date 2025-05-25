@@ -8,12 +8,14 @@ namespace LocalAniHubFront.ViewModels.Pages
         [ObservableProperty]
         private int _counter = 0;
 
-        [RelayCommand]
-        private void OnCounterIncrement()
-        {
-            var window = new ResourceSearchWindow();
+       [RelayCommand]
+       private void OnCounterIncrement()
+       {
+            int episodeId = 1; // 示例ID，实际使用时应根据需要获取
+            var window = new ResourceSearchWindow(episodeId);
             window.Show();
             Counter++;
-        }
+        
+       }
     }
 }
