@@ -163,6 +163,7 @@ namespace LocalAniHubFront.ViewModels.Pages
         {
             _resourceManager.DeleteResource(resourceId);
             //ResourcesData.Remove(ResourcesData.FirstOrDefault(r => r.ResourceId == resourceId));
+            RefreshResources();
         }
         [RelayCommand]
         private void NoteView(int noteId)
@@ -200,6 +201,19 @@ namespace LocalAniHubFront.ViewModels.Pages
                 WatchedTime = "";
             }
         }
+        private void RefreshResources()
+        {
+            ResourcesData.Clear();
+
+            if (_episode == null) return;
+
+            Func<Resource, bool> predicate = r => r.EpisodeId == _episode.Id;
+            List<Resource> resourcesForEpisode = _resourceManager.Query(predicate);
+            foreach (var resource in resourcesForEpisode)
+            {
+                ResourcesData.Add(new ResourceData(resource.Id, System.IO.Path.GetFileName(resource.ResourcePath)));
+            }
+        }
         [RelayCommand]
         private void AutoSelectResourcePlay()
         {
@@ -219,6 +233,7 @@ namespace LocalAniHubFront.ViewModels.Pages
                 resourceSearchWindow.Show();
             }
         }
+        [RelayCommand]
         public void AddResource(string filePath)
         {
             if (_episode != null)
@@ -226,6 +241,21 @@ namespace LocalAniHubFront.ViewModels.Pages
                 var resource = new Resource(_episode.Id, DateTime.Now, filePath);
                 ResourceManager manager = new();
                 manager.Addresource(resource);
+            }
+            RefreshResources();
+        }
+        private void RefreshNotes()
+        {
+            NotesData.Clear();
+
+            if (_episode == null) return;
+
+            Func<Note, bool> predicate = note => note.EpisodesId.Contains(_episode.Id);
+            List<Note> notesForEpisode = _noteManager.Query(predicate);
+
+            foreach (var note in notesForEpisode)
+            {
+                NotesData.Add(new NoteData(note.Id, note.NoteTitle));
             }
         }
         [RelayCommand]
@@ -243,6 +273,8 @@ namespace LocalAniHubFront.ViewModels.Pages
                 noteService.SaveNote(note, "");
                 NoteView(noteManager.Query(n => n.NoteTitle == title)[0].Id);
             }
+            // 手动刷新笔记列表
+            RefreshNotes();
         }
 
 
