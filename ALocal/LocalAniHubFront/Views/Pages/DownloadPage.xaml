@@ -72,12 +72,14 @@
                                 </Grid.ColumnDefinitions>
                                 <ui:Button Grid.Column="0"
                                            Content="暂停/继续"
-                                           Command="{Binding ViewModel.StartPauseCommand,ElementName=root}"/>
+                                           Command="{Binding ViewModel.StartPauseCommand,ElementName=root}"
+                                           CommandParameter="{Binding}"/>
                                 <ui:Button Grid.Column="1"
                                            Grid.Row="1"
                                            Margin="0,12,0,0"
                                            Content="终止"
-                                           Command="{Binding ViewModel.StopCommand,ElementName=root}"/>
+                                           Command="{Binding ViewModel.StopCommand,ElementName=root}"
+                                           CommandParameter="{Binding}"/>
                             </Grid>
                         </Grid>
                     </ui:Card>
