@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
+using MonoTorrent.Client;
 
 namespace BasicClassLibrary
 {
@@ -27,7 +28,7 @@ namespace BasicClassLibrary
             _resourceManager.Addresource(resource);
         }
         // 下载资源
-        public async Task DownloadAndAddResource(ResourceItem resourceItem)
+        public async Task StartDownloadResource(ResourceItem resourceItem, EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler = null)
         {
             if (resourceItem == null)
             {
@@ -38,7 +39,7 @@ namespace BasicClassLibrary
                 throw new ArgumentException("Download URL cannot be null or empty.", nameof(resourceItem.DownloadUrl));
             }
             // 使用ResourceDownloadService来下载资源
-            await ResourceDownloadService.Instance.AddAndStartDownload(resourceItem.DownloadUrl);
+            await ResourceDownloadService.Instance.AddAndStartDownload(resourceItem.DownloadUrl, torrentStateChangeEventHandler: torrentStateChangeEventHandler);
         }
 
         // 按最大保存日期清理
@@ -48,7 +49,7 @@ namespace BasicClassLibrary
                 throw new ArgumentException("Days to keep must be positive.", nameof(daysToKeep));
 
             var threshold = DateTime.Now.AddDays(-daysToKeep);
-            var resources = _resourceManager.Query(r=>true);
+            var resources = _resourceManager.Query(r => true);
             CleanupByTime(resources, threshold);
         }
 
@@ -108,5 +109,102 @@ namespace BasicClassLibrary
                 File.Delete(resource.ResourcePath);
             }
         }
+
+        // 在下载完成后 将资源文件从下载到的默认路径移动到其对应的资源文件夹，并创建资源对象，加入数据库中
+        // 本事件在TorrentState每次改变时都会触发，但以上逻辑只应该在TorrentState改变为 已完成 时触发
+        public static EventHandler<TorrentStateChangedEventArgs> AfterDownload(int episodeId)
+        {
+            return (object? sender, TorrentStateChangedEventArgs e) =>
+            {
+                // 只在下载完成（Seeding）时处理
+                if (e.NewState != TorrentState.Seeding)
+                    return;
+                // 获取下载管理器
+                if (sender is not TorrentManager manager)
+                    return;
+
+                // 下载得到的文件的路径（转移前）
+                string? path = GetDownloadResultPath(manager);
+                if (string.IsNullOrEmpty(path)) return;
+
+                /*
+                // 获取下载文件夹
+                string downloadFolder = manager.SavePath;
+                if (!Directory.Exists(downloadFolder))
+                    return;
+
+                // 获取下载的文件
+                var files = manager.ContainingDirectory;//Directory.GetFiles(downloadFolder);
+                if (files.Length == 0)
+                    return;
+
+                string sourceFile = files[0];// ?
+                string fileName = Path.GetFileName(sourceFile);
+                */
+                /*
+                // 获取全局资源父目录
+                string? parentFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+
+                // 创建目标文件夹（以集数ID命名）
+                var episodeManager = new EpisodeManager();
+                var entryManager = new EntryManager();
+                var episode = episodeManager.FindById(episodeId);
+                Entry? entry = null;
+                if (episode != null && episode.EntryId is int entryId)
+                {
+                    entry = entryManager.FindById(entryId);
+                }
+                if (episode == null || entry == null)
+                    throw new InvalidOperationException("未找到对应的Episode或Entry");
+                
+                string destFolder = Path.Combine(parentFolder,"Resource", entry.TranslatedName);
+                Directory.CreateDirectory(destFolder);
+
+                // 目标文件路径
+                string destFile = Path.Combine(destFolder, fileName);
+
+                // 避免覆盖
+                if (File.Exists(destFile))
+                    throw new IOException($"目标文件已存在: {destFile}");
+
+                // 移动文件
+                File.Move(sourceFile, destFile);
+                */
+
+                // 创建资源对象并写入数据库
+                var resourceManager = new ResourceManager();
+                var resource = new Resource(episodeId, DateTime.Now, path);
+                resourceManager.Addresource(resource);// ResourceManager会将其自动放到正确的位置
+            };
+        }
+
+        public static string? GetDownloadResultPath(TorrentManager manager)
+        {
+            string containingDir = manager.ContainingDirectory;
+
+            if (!Directory.Exists(containingDir))
+                return null;
+
+            // 获取所有文件，包括子目录
+            var files = Directory.GetFiles(containingDir, "*", SearchOption.AllDirectories);
+            if (files.Length == 0)
+                return null;
+
+            // 判断是否是单文件种子：
+            // 单文件种子的 ContainingDirectory 应该与 SavePath 相同
+            bool isSingleFile = string.Equals(manager.ContainingDirectory, manager.SavePath, StringComparison.OrdinalIgnoreCase);
+
+            if (isSingleFile)
+            {
+                // 单文件：返回文件路径（通常只有一个）
+                return files[0];
+            }
+            else
+            {
+                // 多文件：返回文件所在目录（即包含所有文件的目录）
+                return containingDir;
+            }
+        }
+
     }
 }
