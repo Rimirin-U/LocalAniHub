@@ -25,7 +25,7 @@
                  Visibility="{Binding IsEditing, ElementName=Root, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"
                  LostFocus="TextBox_LostFocus"
                  KeyDown="TextBox_KeyDown"
-                 Padding="4"
+                 Padding="0"
                  Foreground="{Binding Foreground, ElementName=Root}"
                  FontSize="{Binding FontSize, ElementName=Root}"
                  FontFamily="{Binding FontFamily, ElementName=Root}"

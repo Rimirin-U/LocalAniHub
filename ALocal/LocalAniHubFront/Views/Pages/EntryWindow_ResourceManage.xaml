@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="EntryWindow_ResourceManage"
-      x:Name="ResourceManagePage">
+      x:Name="root">
 
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
@@ -135,18 +135,29 @@
                                             <ColumnDefinition x:Name="DeleteButtonClmn" Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
+                                        <!--
                                         <TextBlock Grid.Column="0" x:Name="EpisodeNumberBlock"
                                                    Text="{Binding EpisodeNumber}"
-                                                   Style="{StaticResource WhiteTextStyle}"/>
+                                                   Style="{StaticResource WhiteTextStyle}"
+                                                   VerticalAlignment="Center"/>
+                                        -->
+                                        <components:SelectableTextBlock Grid.Column="0"
+                                                                        VerticalAlignment="Center"
+                                                                        ItemsSource="{Binding DataContext.OptionalEpisode,ElementName=root}"
+                                                                        SelectedItem="{Binding EpisodeNumber,Mode=TwoWay}"
+                                                                        IsReadOnly="False" TextStyle="{StaticResource WhiteTextStyle}"/>
 
                                         <ScrollViewer
                                             Grid.Column="1"
                                             HorizontalScrollBarVisibility="Auto"
                                             VerticalScrollBarVisibility="Disabled">
                                             <components:EditableTextBlock  x:Name="ResourceName"
-                                                       Style="{StaticResource WhiteEditableTextBlockStyle}"
-                                                       Text="{Binding ResourceName,Mode=TwoWay}"
-                                                       VerticalAlignment="Center"/>
+                                                                           Foreground="White"
+                                                                           Effect="{StaticResource DropShadow}"
+                                                                           FontSize="16"
+                                                                           Text="{Binding ResourceName,Mode=TwoWay}"
+                                                                           VerticalAlignment="Center"
+                                                                           IsReadOnly="True"/>
                                         </ScrollViewer>
 
                                         <Button x:Name="PlayButton"

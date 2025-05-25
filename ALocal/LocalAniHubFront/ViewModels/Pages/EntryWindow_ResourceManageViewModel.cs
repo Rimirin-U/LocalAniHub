@@ -32,6 +32,10 @@ namespace LocalAniHubFront.ViewModels
         [ObservableProperty]
         private ObservableCollection<ResourceDisplayItem> _resourcesData = new();
 
+        // 可供选择的集数（如该Entry共12集，则该列表为1,2,3,...,12）
+        [ObservableProperty]
+        private ObservableCollection<int> optionalEpisode;
+
         // 关联的EntryManager和ResourceManager
         private readonly EntryManager _entryManager = new();
         private readonly ResourceManager _resourceManager = new();

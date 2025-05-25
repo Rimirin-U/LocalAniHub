@@ -30,7 +30,7 @@
             <Border BorderBrush="Gray" 
                     BorderThickness="1" 
                     Background="White"
-                    CornerRadius="4">
+                    CornerRadius="0">
                 <ListBox ItemsSource="{Binding ItemsSource, ElementName=Root}"
                          SelectedItem="{Binding SelectedItem, ElementName=Root, Mode=TwoWay}"
                          SelectionChanged="ListBox_SelectionChanged" />
