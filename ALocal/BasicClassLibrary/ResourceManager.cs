@@ -8,9 +8,9 @@ using System.Threading;
 
 namespace BasicClassLibrary
 {
-    public class ResourceManager: Manager<Resource>
+    public class ResourceManager : Manager<Resource>
     {
-        public ResourceManager() : base(new AppDbContext()){ }
+        public ResourceManager() : base(new AppDbContext()) { }
         private void PutResourceIntoDestination(Resource resource)
         {
             // 参数校验
@@ -18,12 +18,12 @@ namespace BasicClassLibrary
             {
                 throw new ArgumentNullException(nameof(resource));
             }
-
+            /*
             if (resource.Id <= 0)
             {
                 throw new ArgumentException("Resource must have a valid positive ID");
             }
-
+            */
             // 获取原始路径并校验
             string? sourcePath = resource.ResourcePath;
             if (string.IsNullOrWhiteSpace(sourcePath))
@@ -32,15 +32,27 @@ namespace BasicClassLibrary
             }
 
             // 校验源目录是否存在
-            if (!Directory.Exists(sourcePath))
+            if (!File.Exists(sourcePath))
             {
-                throw new DirectoryNotFoundException($"Source directory not found: {sourcePath}");
+                throw new DirectoryNotFoundException($"Source file not found: {sourcePath}");
             }
+
+            // 获取Entry名
+            var episodeManager = new EpisodeManager();
+            var entryManager = new EntryManager();
+            var episode = resource.EpisodeId is int episodeId
+                ? episodeManager.FindById(episodeId)
+                : null;
+            var entry = episode?.EntryId is int entryId
+                ? entryManager.FindById(entryId)
+                : null;
+            if (episode == null || entry == null)
+                throw new InvalidOperationException("未找到对应的Episode或Entry");
 
             // 构建目标路径
             string globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
-            string baseDestination = Path.Combine(globalBaseFolder, "Resource");
-            string destinationPath = Path.Combine(baseDestination, resource.Id.ToString());
+            string baseDestination = Path.Combine(globalBaseFolder, "Resource", entry.OriginalName);// Entry名
+            string destinationPath = Path.Combine(baseDestination, Path.GetFileName(sourcePath));// 文件名
 
             // 确保目标父目录存在
             Directory.CreateDirectory(baseDestination);
@@ -131,13 +143,13 @@ namespace BasicClassLibrary
 
         //按照导入时间排序-升序
         public static readonly Comparison<Resource> SortByImportData = (x, y) =>
-    x.ImportData.CompareTo(y.ImportData);
+            x.ImportData.CompareTo(y.ImportData);
         //按照资源对应的条目的id进行查找
         /*public static readonly Func<int, Func<Resource, bool>> ByEntryId = (entryId =>
     (resource => resource.Episode.EntryId == entryId));*/
 
         public static readonly Func<int, Func<Resource, bool>> ByEntryId = (entryId =>
-    resource => resource.Episode?.EntryId == entryId);//resource.Episode?.EntryId 表示如果 Episode 为 null，则直接返回 null，而不会尝试访问 EntryId。
+            resource => resource.Episode?.EntryId == entryId);//resource.Episode?.EntryId 表示如果 Episode 为 null，则直接返回 null，而不会尝试访问 EntryId。
     }
 }
 
