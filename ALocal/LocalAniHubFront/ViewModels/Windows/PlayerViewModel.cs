@@ -185,12 +185,17 @@ namespace LocalAniHubFront.ViewModels.Windows
 
         public event EventHandler<string>? SnapshotCompleted;
 
+
+        private  string _globalBaseFolder;
+        private  string _baseMaterialPath;
         [RelayCommand]
         private void Snapshot()
         {
+            _globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
+            _baseMaterialPath = Path.Combine(_globalBaseFolder, "Material");
+
             var dir = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "PotPlayerMini64", "Capture", "Snapshots");
+                _baseMaterialPath,_resource.Episode.Entry.MaterialFolder);
             Directory.CreateDirectory(dir);
             var file = Path.Combine(dir, $"snap_{DateTime.Now:yyyyMMdd_HHmmss}.png");
             MediaPlayer.TakeSnapshot(0, file, 0, 0);
