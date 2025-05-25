@@ -60,10 +60,10 @@ namespace BasicClassLibrary
                 _allKeys = _metadataValues.Keys.ToList();
             }
         }
-        // 获取所有键（包括普通元数据键和标签键）
+        // 获取所有键（不包括标签键）
         public List<string> GetAllKeys()
         {
-            return _allKeys;
+            return _allKeys.Where(k => !k.StartsWith(TagPrefix)).ToList();
         }
 
         // 删除指定键的元数据

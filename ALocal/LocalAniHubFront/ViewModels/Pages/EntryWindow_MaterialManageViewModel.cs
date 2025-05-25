@@ -33,7 +33,34 @@ namespace LocalAniHubFront.ViewModels.Pages
         // 添加路径为filePath的文件
         public void AddMaterial(string filePath)
         {
-            // ...
+            // 检查源文件是否存在
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("指定的文件不存在。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            try
+            {
+                // 获取关联的 Entry 对象
+                var entry = _entryManager.FindById(_entryId);
+
+                if (entry == null)
+                {
+                    MessageBox.Show("无法找到对应的条目。", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // 2. 调用 MaterialService 添加素材（内部会移动文件并保存）
+                _materialService.AddMaterial(entry, filePath);
+
+                MessageBox.Show("文件添加成功！", "成功", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                // 3. 使用 MessageBox.Show 显示异常信息给用户
+                MessageBox.Show($"无法将文件 {filePath} 添加为素材：{ex.Message}", "添加素材失败", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

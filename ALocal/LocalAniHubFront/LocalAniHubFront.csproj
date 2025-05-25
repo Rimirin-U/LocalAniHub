@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <None Remove="Assets\DefaultKeyVisual.png" />
+    <None Remove="Assets\preloadTrackers.txt" />
     <None Remove="Assets\wpfui-icon-256.png" />
     <None Remove="Assets\wpfui-icon-1024.png" />
   </ItemGroup>
@@ -40,6 +41,9 @@
 
   <ItemGroup>
     <Content Include="Assets\DefaultKeyVisual.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\preloadTrackers.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Assets\wpfui-icon-256.png" />

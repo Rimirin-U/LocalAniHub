@@ -28,20 +28,20 @@ namespace BasicClassLibrary
         private readonly MonoTorrent.Client.ClientEngine clientEngine;
 
         // use default download path
-        public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl)
+        public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl, EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler = null)
         {
             MagnetDownloadManager manager = new(magnetUrl,
                 GlobalSettingsService.Instance.GetValue("downloadPath"),
                 clientEngine, TrackerManager);
-            await manager.Initialize();
+            await manager.Initialize(torrentStateChangeEventHandler);//
             return manager;
         }
 
         // not use default download path
-        public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl,string downloadPath)
+        public async Task<MagnetDownloadManager> GetMagnetDownloadManager(string magnetUrl,string downloadPath,EventHandler<TorrentStateChangedEventArgs>? torrentStateChangeEventHandler= null)
         {
             MagnetDownloadManager manager = new(magnetUrl,downloadPath, clientEngine, TrackerManager);
-            await manager.Initialize();
+            await manager.Initialize(torrentStateChangeEventHandler);//
             return manager;
         }
 

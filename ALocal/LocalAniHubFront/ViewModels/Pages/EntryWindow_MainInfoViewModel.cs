@@ -37,7 +37,6 @@ namespace LocalAniHubFront.ViewModels.Pages
         public readonly record struct EpisodeTempData(int Number, int EpisodeId, EpisodeState State);
         [ObservableProperty]
         private ObservableCollection<EpisodeTempData> _episodes = new();
-
         // 元数据信息
         public record MetadataTempData(string KeyString, string ValueString, int Row, int Column);
         [ObservableProperty]
@@ -52,20 +51,11 @@ namespace LocalAniHubFront.ViewModels.Pages
         private readonly EntryRatingManager _ratingManager = new();
         private readonly EpisodeManager _episodeManager = new();
         private readonly EntryTimeInfoManager _timeInfoManager = new();
-        private readonly EntryService _entryService;
         private int _entryId;
         private bool _isInitialized = false;
         public EntryWindow_MainInfoViewModel(int entryId)
         {
             _entryId = entryId;
-            _entryService = new EntryService(
-                new EntryFetch(),
-                _entryManager,
-                _episodeManager,
-                _ratingManager,
-                _metaDataManager,
-                _timeInfoManager
-            );
             LoadEntryData(_entryId);
         }
 
@@ -95,7 +85,7 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             Kind = entry.Category;
             // 加载并设置播出时间信息
-            var timeInfo =  _timeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault();
+            var timeInfo = _timeInfoManager.Query(EntryTimeInfoManager.ByEntryId(entryId)).FirstOrDefault();
             if (timeInfo != null)
             {
                 TimeString = $"{entry.ReleaseDate:yyyy.M.d}起 每周{GetChineseWeekday(timeInfo.BroadcastWeekday)} {timeInfo.BroadcastTime:HH:mm}";
@@ -141,46 +131,36 @@ namespace LocalAniHubFront.ViewModels.Pages
         }
         private void LoadEpisodes(int entryId)
         {
+            // 获取条目数据
+            var entry = _entryManager.Query(e => e.Id == entryId).FirstOrDefault();
+            if (entry == null) return;
+
             var episodes = _episodeManager.Query(EpisodeManager.ByEntryId(entryId));
 
             var episodeList = new List<EpisodeTempData>();
 
             foreach (var episode in episodes)
             {
-                // 判断是否已播出
-                bool isAired;
-                try
+                // 使用 entry 计算 airDateTime
+                DateTimeOffset? airDateTime = entry.ReleaseDate.AddDays(((episode.EpisodeNumber - 1) * 7.0));
+                if (airDateTime.HasValue && airDateTime.Value <= DateTimeOffset.Now)
                 {
-                    isAired = _entryService.IsEpisodeAired(entryId, episode.EpisodeNumber);
-                }
-                catch
-                {
-                    isAired = false;
-                }
-
-                EpisodeState displayState;
-
-                if (!isAired)
-                {
-                    displayState = EpisodeState.Unreleased;
+                    episode.State = BasicClassLibrary.State.Watched;
                 }
                 else
                 {
-                    displayState = episode.State switch
-                    {
-                        BasicClassLibrary.State.Watched => EpisodeState.Watched,
-                        _ => EpisodeState.Unwatched
-                    };
+                    episode.State = BasicClassLibrary.State.NotWatched;
                 }
 
                 episodeList.Add(new EpisodeTempData(
                     episode.EpisodeNumber,
                     episode.Id,
-                    displayState
+                    episode.State == BasicClassLibrary.State.Watched ? EpisodeState.Watched : EpisodeState.Unwatched
                 ));
             }
 
             Episodes = new ObservableCollection<EpisodeTempData>(episodeList);
+            CalculateWatchState();
         }
         private void LoadMetadata(int entryId)
         {
@@ -206,6 +186,30 @@ namespace LocalAniHubFront.ViewModels.Pages
 
             RowCount = rowCount;
             Metadata = displayData;
+        }
+        private void CalculateWatchState()
+        {
+            bool allWatched = _episodes.All(e => e.State == EpisodeState.Watched);
+            bool allUnwatched = _episodes.All(e => e.State == EpisodeState.Unwatched);
+            bool someWatched = _episodes.Any(e => e.State == EpisodeState.Watched);
+            bool someUnwatched = _episodes.Any(e => e.State == EpisodeState.Unwatched);
+
+            if (allWatched)
+            {
+                State = "已看";
+            }
+            else if (allUnwatched)
+            {
+                State = "未看";
+            }
+            else if (someWatched && someUnwatched)
+            {
+                State = "在看";
+            }
+            else
+            {
+                State = "抛弃"; // 如果有未定义的状态，则默认为抛弃
+            }
         }
 
         [RelayCommand]

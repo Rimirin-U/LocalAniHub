@@ -21,6 +21,7 @@
             <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <helpers:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
+            <helpers:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
 
             <!--阴影效果-->
             <DropShadowEffect x:Key="DropShadow"
