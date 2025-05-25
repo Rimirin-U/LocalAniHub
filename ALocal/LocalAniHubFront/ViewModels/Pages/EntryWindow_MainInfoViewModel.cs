@@ -143,19 +143,27 @@ namespace LocalAniHubFront.ViewModels.Pages
             {
                 // 使用 entry 计算 airDateTime
                 DateTimeOffset? airDateTime = entry.ReleaseDate.AddDays(((episode.EpisodeNumber - 1) * 7.0));
-                if (airDateTime.HasValue && airDateTime.Value <= DateTimeOffset.Now)
+                bool isAired = airDateTime.HasValue && airDateTime.Value <= DateTimeOffset.Now;
+
+                EpisodeState displayState;
+
+                if (!isAired)
                 {
-                    episode.State = BasicClassLibrary.State.Watched;
+                    // 状态2：未播出
+                    displayState = EpisodeState.Unreleased;
                 }
                 else
                 {
-                    episode.State = BasicClassLibrary.State.NotWatched;
+                    // 已播出的集数根据数据库状态决定
+                    displayState = episode.State == BasicClassLibrary.State.Watched
+                        ? EpisodeState.Watched  // 状态0：已看
+                        : EpisodeState.Unwatched; // 状态1：未看/在看
                 }
 
                 episodeList.Add(new EpisodeTempData(
                     episode.EpisodeNumber,
                     episode.Id,
-                    episode.State == BasicClassLibrary.State.Watched ? EpisodeState.Watched : EpisodeState.Unwatched
+                    displayState
                 ));
             }
 
