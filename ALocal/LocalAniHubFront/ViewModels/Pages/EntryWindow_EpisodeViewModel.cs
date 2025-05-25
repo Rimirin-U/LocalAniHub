@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+//using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using BasicClassLibrary;
@@ -130,9 +131,10 @@ namespace LocalAniHubFront.ViewModels.Pages
         private void LoadResources()
         {
             if (_episode == null) return;
-
-            var resource = _resourceManager.FindById(_episode.Id);
-            if (resource != null)
+            Func<Resource, bool> predicate = r => r.EpisodeId == _episode.Id;
+            // 查询符合条件的所有资源，并按导入时间排序
+            List<Resource> resourcesForEpisode = _resourceManager.Query(predicate);
+            foreach(var resource in resourcesForEpisode )
             {
                 ResourcesData.Add(new ResourceData(resource.Id, System.IO.Path.GetFileName(resource.ResourcePath)));
             }
@@ -140,9 +142,12 @@ namespace LocalAniHubFront.ViewModels.Pages
         private void LoadNotes()
         {
             if (_episode == null) return;
-
-            var note = _noteManager.FindById(_episode.Id);
-            if (note != null)
+            // 构建谓词：筛选出包含当前 EpisodeId 的笔记
+            Func<Note, bool> predicate = note => note.EpisodesId.Contains(_episode.Id);
+            // 查询符合条件的所有笔记
+            List<Note> notesForEpisode = _noteManager.Query(predicate);
+            // 将找到的笔记添加到 NotesData 中
+            foreach (var note in notesForEpisode)
             {
                 NotesData.Add(new NoteData(note.Id, note.NoteTitle));
             }
