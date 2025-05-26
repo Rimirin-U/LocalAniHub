@@ -96,7 +96,7 @@ namespace LocalAniHubFront.ViewModels
                 {
                     ResourcesData.Add(new ResourceDisplayItem(
                         resource.Id,
-                        episodeNumber,
+                        resource.Episode?.EpisodeNumber ?? 0, // 如果 Episode 为 null，默认为 0
                         Path.GetFileName(resource.ResourcePath)
                     ));
                 }
