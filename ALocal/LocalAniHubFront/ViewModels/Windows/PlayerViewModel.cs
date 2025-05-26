@@ -19,6 +19,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         private readonly ResourceManager _resourceManager = new ResourceManager();
 
         private readonly EpisodeManager _episodeManager = new EpisodeManager(); // 新增 EpisodeManager
+        private readonly EntryManager _entryManager = new EntryManager();
 
         public MediaPlayer MediaPlayer => _mediaPlayer;
         public bool IsPlaying => _mediaPlayer.IsPlaying;
@@ -72,7 +73,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         private void SaveEpisodeState()
         {
             var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
-            if (episode== null) return;
+            if (episode == null) return;
             try
             {
                 _episodeManager.Modify(episode);
@@ -97,8 +98,8 @@ namespace LocalAniHubFront.ViewModels.Windows
                 // 立即更新状态为“已看”
                 if (episode != null)
                 {
-                   episode.State = State.Watched;
-                episode.Progress = _mediaPlayer.Length; // 记录完整进度
+                    episode.State = State.Watched;
+                    episode.Progress = _mediaPlayer.Length; // 记录完整进度
                     // 保存到数据库
                     SaveEpisodeState();
                     ShowMessage("已看完本集");
@@ -213,16 +214,18 @@ namespace LocalAniHubFront.ViewModels.Windows
         public event EventHandler<string>? SnapshotCompleted;
 
 
-        private  string _globalBaseFolder;
-        private  string _baseMaterialPath;
+        private string _globalBaseFolder;
+        private string _baseMaterialPath;
         [RelayCommand]
         private void Snapshot()
         {
+            var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
+            var entry = _entryManager.FindById(episode.EntryId.Value);
             _globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
             _baseMaterialPath = Path.Combine(_globalBaseFolder, "Material");
 
             var dir = Path.Combine(
-                _baseMaterialPath,_resource.Episode.Entry.MaterialFolder);
+                _baseMaterialPath, entry.MaterialFolder);
             Directory.CreateDirectory(dir);
             var file = Path.Combine(dir, $"snap_{DateTime.Now:yyyyMMdd_HHmmss}.png");
             MediaPlayer.TakeSnapshot(0, file, 0, 0);
