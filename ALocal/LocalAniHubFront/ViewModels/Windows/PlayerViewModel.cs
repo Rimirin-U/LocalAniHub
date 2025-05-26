@@ -11,6 +11,8 @@ namespace LocalAniHubFront.ViewModels.Windows
 {
     public partial class PlayerViewModel : ObservableObject, IDisposable
     {
+
+        private bool _progressRestored = false;
         private readonly LibVLC _libVLC;
         private readonly MediaPlayer _mediaPlayer;
         private Media? _currentMedia;
@@ -50,8 +52,20 @@ namespace LocalAniHubFront.ViewModels.Windows
             }
 
             // 使用 BeginInvoke 避免阻塞或死锁
+            // 改为在媒体加载完成后设置进度
             _mediaPlayer.LengthChanged += (_, e) =>
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => MediaLength = e.Length));
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    MediaLength = e.Length;
+                    // 确保只在第一次加载时恢复进度
+                    if (!_progressRestored && episode != null && episode.Progress > 0)
+                    {
+                        _mediaPlayer.Time = episode.Progress;
+                        _progressRestored = true;
+                    }
+                }));
+            };
 
             _mediaPlayer.TimeChanged += (_, e) =>
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => OnTimeChanged(e.Time)));
@@ -127,6 +141,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             _currentMedia = new Media(_libVLC, MediaPath, FromType.FromPath);
             _mediaPlayer.Media = _currentMedia;
+            _progressRestored = false; // 重置标志
             NotifyAllCommands();
         }
         private bool CanLoad() => !string.IsNullOrWhiteSpace(MediaPath);
