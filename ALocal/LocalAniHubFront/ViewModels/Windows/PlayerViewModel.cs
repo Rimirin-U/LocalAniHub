@@ -11,6 +11,8 @@ namespace LocalAniHubFront.ViewModels.Windows
 {
     public partial class PlayerViewModel : ObservableObject, IDisposable
     {
+
+        private bool _progressRestored = false;
         private readonly LibVLC _libVLC;
         private readonly MediaPlayer _mediaPlayer;
         private Media? _currentMedia;
@@ -19,6 +21,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         private readonly ResourceManager _resourceManager = new ResourceManager();
 
         private readonly EpisodeManager _episodeManager = new EpisodeManager(); // 新增 EpisodeManager
+        private readonly EntryManager _entryManager = new EntryManager();
 
         public MediaPlayer MediaPlayer => _mediaPlayer;
         public bool IsPlaying => _mediaPlayer.IsPlaying;
@@ -49,8 +52,20 @@ namespace LocalAniHubFront.ViewModels.Windows
             }
 
             // 使用 BeginInvoke 避免阻塞或死锁
+            // 改为在媒体加载完成后设置进度
             _mediaPlayer.LengthChanged += (_, e) =>
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => MediaLength = e.Length));
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    MediaLength = e.Length;
+                    // 确保只在第一次加载时恢复进度
+                    if (!_progressRestored && episode != null && episode.Progress > 0)
+                    {
+                        _mediaPlayer.Time = episode.Progress;
+                        _progressRestored = true;
+                    }
+                }));
+            };
 
             _mediaPlayer.TimeChanged += (_, e) =>
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => OnTimeChanged(e.Time)));
@@ -72,7 +87,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         private void SaveEpisodeState()
         {
             var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
-            if (episode== null) return;
+            if (episode == null) return;
             try
             {
                 _episodeManager.Modify(episode);
@@ -97,8 +112,8 @@ namespace LocalAniHubFront.ViewModels.Windows
                 // 立即更新状态为“已看”
                 if (episode != null)
                 {
-                   episode.State = State.Watched;
-                episode.Progress = _mediaPlayer.Length; // 记录完整进度
+                    episode.State = State.Watched;
+                    episode.Progress = _mediaPlayer.Length; // 记录完整进度
                     // 保存到数据库
                     SaveEpisodeState();
                     ShowMessage("已看完本集");
@@ -126,6 +141,7 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             _currentMedia = new Media(_libVLC, MediaPath, FromType.FromPath);
             _mediaPlayer.Media = _currentMedia;
+            _progressRestored = false; // 重置标志
             NotifyAllCommands();
         }
         private bool CanLoad() => !string.IsNullOrWhiteSpace(MediaPath);
@@ -213,16 +229,18 @@ namespace LocalAniHubFront.ViewModels.Windows
         public event EventHandler<string>? SnapshotCompleted;
 
 
-        private  string _globalBaseFolder;
-        private  string _baseMaterialPath;
+        private string _globalBaseFolder;
+        private string _baseMaterialPath;
         [RelayCommand]
         private void Snapshot()
         {
+            var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
+            var entry = _entryManager.FindById(episode.EntryId.Value);
             _globalBaseFolder = GlobalSettingsService.Instance.GetValue("globalBaseFolder");
             _baseMaterialPath = Path.Combine(_globalBaseFolder, "Material");
 
             var dir = Path.Combine(
-                _baseMaterialPath,_resource.Episode.Entry.MaterialFolder);
+                _baseMaterialPath, entry.MaterialFolder);
             Directory.CreateDirectory(dir);
             var file = Path.Combine(dir, $"snap_{DateTime.Now:yyyyMMdd_HHmmss}.png");
             MediaPlayer.TakeSnapshot(0, file, 0, 0);
