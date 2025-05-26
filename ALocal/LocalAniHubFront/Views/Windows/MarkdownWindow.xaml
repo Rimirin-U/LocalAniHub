@@ -102,13 +102,12 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <ComboBox Grid.Column="0"
-                                                      IsEditable="True"
+                                                      IsEditable="False"
                                                       ItemsSource="{Binding EntryItemList}"
                                                       SelectedItem="{Binding SelectedEntryItem, Mode=TwoWay}"
                                                       DisplayMemberPath="EntryName"
                                                       IsTextSearchEnabled="True"
                                                       StaysOpenOnEdit="True"
-                                                      IsReadOnly="True"
                                                       MinWidth="200"
                                                       HorizontalAlignment="Left"/>
                                             <Button x:Name="RemoveSelfButton"
@@ -146,25 +145,23 @@
                                                 <!--注意：每行的第一个ComboBox是可以重复的-->
                                                 <ComboBox Grid.Column="0"
                                                           x:Name="EntryComboBox"
-                                                          IsEditable="True"
+                                                          IsEditable="False"
                                                           ItemsSource="{Binding EntryItemList}"
                                                           SelectedItem="{Binding SelectedEntryItem, Mode=TwoWay}"
                                                           DisplayMemberPath="EntryName"
                                                           IsTextSearchEnabled="True"
                                                           StaysOpenOnEdit="True"
-                                                          IsReadOnly="True"
                                                           MinWidth="200"
                                                           HorizontalAlignment="Left"/>
                                                 <ComboBox Grid.Column="1"
                                                           x:Name="EpisodeComboBox"
                                                           Margin="8,0,0,0"
-                                                          IsEditable="True"
+                                                          IsEditable="False"
                                                           ItemsSource="{Binding EpisodeItemList}"
                                                           SelectedItem="{Binding SelectedEpisodeItem, Mode=TwoWay}"
                                                           DisplayMemberPath="EpisodeNumber"
                                                           IsTextSearchEnabled="True"
                                                           StaysOpenOnEdit="True"
-                                                          IsReadOnly="True"
                                                           MinWidth="200"
                                                           HorizontalAlignment="Left"/>
                                             </StackPanel>
