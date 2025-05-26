@@ -8,7 +8,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using LocalAniHubFront.Views.Windows;
 using LocalAniHubFront.ViewModels.Windows;
-using CommunityToolkit.Mvvm.Messaging;
 
 namespace LocalAniHubFront.ViewModels
 {
@@ -96,7 +95,7 @@ namespace LocalAniHubFront.ViewModels
                 {
                     ResourcesData.Add(new ResourceDisplayItem(
                         resource.Id,
-                        episodeNumber,
+                        resource.Episode?.EpisodeNumber ?? 0, // 如果 Episode 为 null，默认为 0
                         Path.GetFileName(resource.ResourcePath)
                     ));
                 }
@@ -108,23 +107,29 @@ namespace LocalAniHubFront.ViewModels
         }
 
         [RelayCommand]
-        private void ResourcePlay(int resourceId)
+        private void PlayResource(int resourceId)
         {
             try
             {
-                var player = new PlayerWindow(resourceId)
+                if (_resourceManager.FindById(resourceId)?.ResourcePath is not { } path || !File.Exists(path))
+                {
+                    MessageBox.Show("资源文件不存在", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                // 创建播放器窗口
+                var playerWindow = new PlayerWindow(resourceId)
                 {
                     Owner = Application.Current.MainWindow,
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
 
                 // 窗口关闭时保存观看进度
-                player.Closing += (s, e) =>
+                playerWindow.Closing += (s, e) =>
                 {
-                    (player.DataContext as PlayerViewModel)?.OnWindowClosing();
+                    (playerWindow.DataContext as PlayerViewModel)?.OnWindowClosing();
                 };
 
-                player.Show();
+                playerWindow.Show();
             }
             catch (Exception ex)
             {
@@ -133,12 +138,12 @@ namespace LocalAniHubFront.ViewModels
         }
 
         [RelayCommand]
-        private void ResourceDelete(int resourceId)
+        private void DeleteResource(int resourceId)
         {
             if (MessageBox.Show("确定要删除此资源吗？", "确认删除", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 _resourceManager.DeleteResource(resourceId);
-                LoadResources();
+                LoadResources(); // 刷新列表
             }
         }
         // 支持批量导入
