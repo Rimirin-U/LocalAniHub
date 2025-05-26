@@ -18,6 +18,8 @@ namespace LocalAniHubFront.ViewModels.Windows
         private readonly Resource _resource;
         private readonly ResourceManager _resourceManager = new ResourceManager();
 
+        private readonly EpisodeManager _episodeManager = new EpisodeManager(); // 新增 EpisodeManager
+
         public MediaPlayer MediaPlayer => _mediaPlayer;
         public bool IsPlaying => _mediaPlayer.IsPlaying;
 
@@ -31,6 +33,9 @@ namespace LocalAniHubFront.ViewModels.Windows
             _resource = _resourceManager.FindById(resourceId)
                 ?? throw new ArgumentException($"未找到ID为{resourceId}的资源");
 
+            //var episode = _resource.Episode;
+            var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
+
             MediaPath = _resource.ResourcePath ?? string.Empty;
 
             Core.Initialize();
@@ -38,9 +43,9 @@ namespace LocalAniHubFront.ViewModels.Windows
             _mediaPlayer = new MediaPlayer(_libVLC);
 
             // 恢复观看进度
-            if (_resource.Episode != null && _resource.Episode.Progress > 0)
+            if (episode != null && episode.Progress > 0)
             {
-                _mediaPlayer.Time = _resource.Episode.Progress;
+                _mediaPlayer.Time = episode.Progress;
             }
 
             // 使用 BeginInvoke 避免阻塞或死锁
@@ -63,8 +68,24 @@ namespace LocalAniHubFront.ViewModels.Windows
             _mediaPlayer.Stopped += (_, _) => Application.Current.Dispatcher.BeginInvoke(new Action(NotifyAllCommands));
         }
 
+
+        private void SaveEpisodeState()
+        {
+            var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
+            if (episode== null) return;
+            try
+            {
+                _episodeManager.Modify(episode);
+            }
+            catch (Exception ex)
+            {
+                ShowMessage($"保存进度失败: {ex.Message}");
+            }
+        }
+
         private void OnTimeChanged(long time)
         {
+            var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
             if (IsSeeking) return;
 
             Position = time;
@@ -72,6 +93,16 @@ namespace LocalAniHubFront.ViewModels.Windows
             if (!_hasReachedCompletion && MediaLength > 0 && (MediaLength - time) <= 90_000)
             {
                 _hasReachedCompletion = true;
+
+                // 立即更新状态为“已看”
+                if (episode != null)
+                {
+                   episode.State = State.Watched;
+                episode.Progress = _mediaPlayer.Length; // 记录完整进度
+                    // 保存到数据库
+                    SaveEpisodeState();
+                    ShowMessage("已看完本集");
+                }
             }
 
             NotifyAllCommands();
@@ -79,19 +110,15 @@ namespace LocalAniHubFront.ViewModels.Windows
 
         public void OnWindowClosing()
         {
-            if (_resource.Episode == null) return;
-            if (_resource.Episode.State == State.Watched) return;
+            var episode = _episodeManager.FindById(_resource.EpisodeId.Value);
+            if (episode == null) return;
+            if (episode.State == State.Watched) return;
 
-            if (_hasReachedCompletion)
-            {
-                _resource.Episode.State = State.Watched;
-                _resource.Episode.Progress = _mediaPlayer.Length;
-            }
-            else
-            {
-                _resource.Episode.State = State.Watching;
-                _resource.Episode.Progress = _mediaPlayer.Time;
-            }
+            episode.State = State.Watching;
+            episode.Progress = _mediaPlayer.Time;
+            // 保存到数据库
+            SaveEpisodeState();
+
         }
 
         [RelayCommand(CanExecute = nameof(CanLoad))]
