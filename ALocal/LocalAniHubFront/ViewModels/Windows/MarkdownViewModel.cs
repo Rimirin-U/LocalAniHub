@@ -178,27 +178,74 @@ namespace LocalAniHubFront.ViewModels.Windows
                 }
             });
         }
+        /* private void SaveNote()
+         {
+             try
+             {
+                 var note = _noteManager.FindById(_noteId);
+                 if (note != null)
+                 {
+                     note.NoteTitle = NoteTitle;//这个报错不用管
+                     //note.Content = MarkdownText;
+                     var noteService = new NoteService();
+                     noteService.SaveNote(note, MarkdownText);
+                     note.EntriesId = EntryComboBoxList
+                         .Where(vm => vm.SelectedEntryItem.HasValue)
+                         .Select(vm => vm.SelectedEntryItem!.Value.EntryId).ToList();
+
+                     note.EpisodesId = EpisodeComboBoxList
+                         .Where(vm => vm.SelectedEpisodeItem.HasValue)
+                         .Select(vm => vm.SelectedEpisodeItem!.Value.EpisodeId).ToList();
+
+                    _noteManager.Modify(note);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 MessageBox.Show($"保存失败：{ex.Message}");
+             }
+         }*/
         private void SaveNote()
         {
             try
             {
-                var note = _noteManager.FindById(_noteId);
-                if (note != null)
+                // 在主线程中读取绑定数据
+                var entryIds = EntryComboBoxList
+                    .Where(vm => vm.SelectedEntryItem.HasValue)
+                    .Select(vm => vm.SelectedEntryItem!.Value.EntryId)
+                    .ToList();
+
+                var episodeIds = EpisodeComboBoxList
+                    .Where(vm => vm.SelectedEpisodeItem.HasValue)
+                    .Select(vm => vm.SelectedEpisodeItem!.Value.EpisodeId)
+                    .ToList();
+
+                var noteTitle = NoteTitle;
+
+                // 把耗时操作放到后台线程
+                Task.Run(() =>
                 {
-                    note.NoteTitle = NoteTitle;//这个报错不用管
-                    //note.Content = MarkdownText;
-                    var noteService = new NoteService();
-                    noteService.SaveNote(note, MarkdownText);
-                    note.EntriesId = EntryComboBoxList
-                        .Where(vm => vm.SelectedEntryItem.HasValue)
-                        .Select(vm => vm.SelectedEntryItem!.Value.EntryId).ToList();
+                    try
+                    {
+                        var note = _noteManager.FindById(_noteId);
+                        if (note != null)
+                        {
+                            note.NoteTitle = noteTitle;
 
-                    note.EpisodesId = EpisodeComboBoxList
-                        .Where(vm => vm.SelectedEpisodeItem.HasValue)
-                        .Select(vm => vm.SelectedEpisodeItem!.Value.EpisodeId).ToList();
+                            var noteService = new NoteService();
+                            noteService.SaveNote(note, MarkdownText);
 
-                   _noteManager.Modify(note);
-                }
+                            note.EntriesId = entryIds;
+                            note.EpisodesId = episodeIds;
+
+                            _noteManager.Modify(note);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"保存失败：{ex.Message}");
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -207,22 +254,27 @@ namespace LocalAniHubFront.ViewModels.Windows
         }
         private void LoadAllEntries()
         {
-            var entryManager = new EntryManager();
-            var entries = entryManager.Query(e => true); // 获取所有 Entry
-            EntryItemList = entries.Select(e => new EntryItem(e.Id, e.TranslatedName)).ToList();
+             var entryManager = new EntryManager();
+             var entries = entryManager.Query(e => true); // 获取所有 Entry
+             EntryItemList = entries.Select(e => new EntryItem(e.Id, e.TranslatedName)).ToList();
         }
         private void LoadAllEpisodes()
         {
+            var entryManager = new EntryManager();
             var episodeManager = new EpisodeManager();
-            var episodes = episodeManager.Query(e => true); // 获取所有 Episode
-            EpisodeItemList = episodes
-                .Where(e => e.Entry != null)
-                .Select(e => new EpisodeItem(
-                    e.Entry.Id,
-                    e.Entry.TranslatedName,
-                    e.Id,
-                    e.EpisodeNumber))
-                .ToList();
+             var episodes = episodeManager.Query(e => true); // 获取所有 Episode
+             EpisodeItemList = episodes
+                 .Where(e => e.EntryId != null)
+                 .Select(e =>
+                 {
+                     var entry = entryManager.FindById(e.EntryId.Value);
+                     return new EpisodeItem(
+                         e.EntryId.Value,
+                         entry?.TranslatedName ?? "未知作品",
+                         e.Id,
+                         e.EpisodeNumber);
+                 })
+                 .ToList();
         }
         private void InitializeEntryComboBoxes(Note? note)
         {
@@ -249,13 +301,13 @@ namespace LocalAniHubFront.ViewModels.Windows
         {
             if (note?.EpisodesId != null)
             {
-                foreach (var id in note.EpisodesId)//这个报错不用管
+                foreach (var id in note.EpisodesId)
                 {
                     EpisodeItem? item = EpisodeItemList.FirstOrDefault(e => e.EpisodeId == id);
                     if (item.HasValue)
                     {
                         var row = CreateNewEpisodeRow();
-                        var entryItem = EntryItemList.FirstOrDefault(e => e.EntryId == item.Value.EntryId);
+                        var entryItem = new EntryItem(item.Value.EntryId, item.Value.EntryName);
                         row.SelectedEntryItem = entryItem;
                         row.SelectedEpisodeItem = item;
                         EpisodeComboBoxList.Add(row);
